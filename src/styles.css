@@ -24,3 +24,58 @@
 .about-copy .academic-note{font-size:10px;padding-top:5px}
 @media(max-width:900px) and (min-width:681px){.clearance-note strong{font-size:9px}.clearance-note span{font-size:7px}}
 @media(max-width:680px){.clearance-note{margin-top:17px}.clearance-note strong{font-size:10px}.clearance-note span{font-size:8px}.about-copy .academic-note{font-size:10px}.project-info>p{min-height:0}}
+
+/* A circuit emblem, and the stories that connect it. */
+.brand>.brand-mark{width:47px;height:47px;color:var(--olive)}
+.brand{gap:15px}.brand-name{padding-left:18px}.main-nav{gap:25px}
+.hero-visual{height:565px}.hero-circuit{inset:42px 0 58px;height:auto}
+.scene-loading>.brand-mark{width:55px;height:55px;color:#7a8660}
+.board-caption{position:absolute;bottom:13px;left:16px;right:16px;text-align:center;font-size:9px;line-height:1.5;color:var(--muted);pointer-events:none}
+.visual-bottomline{bottom:37px;font-size:7px;letter-spacing:1px}.visual-topline{z-index:3}
+.photo-slot{width:100%;min-width:0;aspect-ratio:4/3;background:#e7e6d9;border:1px solid #dedfcf}
+.project-art-button{padding:0;background:transparent}.project-photo-slot{position:absolute;inset:0;height:100%;aspect-ratio:auto;border:0;background:#e8e6d8}
+.project-art-line-follower .project-photo-slot{background:#e2e5d8}
+.project-title-row h3>a:hover{color:var(--olive)}
+.art-topline{font-size:8px}.progress-badge{font-size:7px;padding:5px 7px}.art-open{width:33px;height:33px;background:#f5f2e9a6}
+.experience-expanded{padding-top:0}
+.experience-intro{font-size:13px;line-height:1.9;max-width:640px;margin:-10px 0 34px;color:var(--muted)}
+.experience-story{grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);gap:65px;padding:40px 0 43px;align-items:center}
+.experience-photo{margin:0;min-width:0}.experience-photo .photo-slot{aspect-ratio:1.25}
+.experience-photo figcaption{font-size:7px;line-height:1.8;letter-spacing:1px;color:var(--muted);margin-top:11px;text-transform:uppercase}
+.experience-story-content{min-width:0}.experience-story .experience-date{font-size:8px;padding:0;letter-spacing:1.1px}
+.experience-story .experience-role{margin-top:12px}.experience-story .experience-role h3{font-size:35px}
+.experience-story .experience-role>span{font-size:11px;line-height:1.8;margin-top:6px;max-width:530px}
+.experience-lead{font-family:var(--serif);font-size:25px;line-height:1.25;color:var(--olive);max-width:580px;margin-top:19px}
+.experience-details{padding-left:15px;margin:15px 0 0;max-width:620px;color:var(--muted);font-size:12px;line-height:1.9}
+.experience-details li+li{margin-top:7px}.experience-details li::marker{color:#87916c}
+.experience-story .project-tags{margin-top:20px}
+.pickleball-section{background:#ebe9dc;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:70px 0 76px}
+.pickleball-inner{display:grid;grid-template-columns:.9fr 1.15fr;gap:23px 80px;align-items:center}
+.pickleball-copy{grid-column:1;grid-row:1/3;align-self:center}
+.pickleball-copy h2{font-family:var(--serif);font-size:75px;letter-spacing:-1.3px;line-height:1.02;margin-top:25px}
+.pickleball-copy h2 em{color:var(--olive)}.pickleball-copy p{font-size:13px;line-height:1.95;color:var(--muted);margin-top:25px;max-width:350px}
+.pickleball-detail{display:block;margin-top:30px;font-size:8px;letter-spacing:1.2px;color:var(--olive);line-height:1.8}
+.pickleball-main-photo{grid-column:2;aspect-ratio:1.7;background:#dedfcd}
+.pickleball-photo-pair{grid-column:2;display:grid;grid-template-columns:1fr 1fr;gap:23px}
+.pickleball-photo-pair .photo-slot{aspect-ratio:1.5;background:#e2e2d2}.pickleball-photo-pair .photo-slot:last-child{background:#e5e3d4}
+.about-section{border-top:0}.about-links{display:flex;gap:27px;align-items:center;flex-wrap:wrap}
+.about-links button.text-link{background:transparent;border:0;border-bottom:1px solid #9da78b}
+.back-to-top{display:inline-flex;align-items:center;gap:10px;background:transparent;padding:10px 0;font-size:9px}
+.back-to-top>svg{width:13px;height:13px}
+.board-dialog{width:calc(100% - 36px);max-width:590px;max-height:calc(100dvh - 50px);padding:0;border:1px solid #cfd4bd;background:var(--paper);color:var(--ink);overscroll-behavior:contain}
+.board-dialog::backdrop{background:#252b20b8;backdrop-filter:blur(5px)}
+.board-story{padding:38px 40px 39px;position:relative}.board-story-mark{width:44px;height:44px;margin-bottom:22px;color:var(--olive)}
+.board-story-close{position:absolute;top:18px;right:18px;background:transparent;width:40px;height:40px;border:1px solid #a1ac8c;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.board-story-close svg{width:18px;height:18px}.board-story-close:hover{background:#e0e5d4}
+.board-story h2{font-family:var(--serif);font-size:57px;line-height:1.02;letter-spacing:-.8px;color:var(--olive);margin-top:15px;margin-bottom:22px}
+.board-story>p{font-size:13px;line-height:1.9;color:var(--muted)}.board-story>p+p{margin-top:15px}
+.board-story .text-link{margin-top:24px}.board-story-links{margin-top:25px;border-top:1px solid var(--rule)}
+.board-story-links>a{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:19px 0;border-bottom:1px solid var(--rule);font-family:var(--serif);font-size:27px;line-height:1.2}
+.board-story-links>a:hover{color:var(--olive)}.board-story-links small{display:block;font-family:'DM Sans Variable',sans-serif;font-size:9px;line-height:1.8;color:var(--muted);margin-top:8px}
+.academic-record{display:grid;grid-template-columns:1fr 1fr;gap:22px 25px;margin:27px 0}
+.academic-record dt{font-size:7px;letter-spacing:1.1px;color:var(--muted);line-height:1.7}.academic-record dd{font-size:12px;line-height:1.8;margin:6px 0 0}
+.transcript-space{height:110px;border:1px solid #d8dccb;background:#eaeadd}
+.board-story .document-status{font-size:10px;margin-top:12px}.board-resume-download{margin-top:26px;gap:20px}
+@media(max-width:1050px){.experience-story{gap:40px;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr)}.experience-story .experience-role h3{font-size:31px}.experience-lead{font-size:23px}.experience-details{font-size:11px}.pickleball-inner{gap:20px 45px}.pickleball-copy h2{font-size:64px}.pickleball-copy p{font-size:12px}.pickleball-detail{font-size:7px}.hero-visual{height:535px}.art-topline{font-size:7px}.progress-badge{font-size:6px}}
+@media(max-width:780px){.experience-story{gap:27px;grid-template-columns:minmax(0,.75fr) minmax(0,1.4fr)}.experience-lead{font-size:21px}.experience-story .experience-role h3{font-size:28px}.experience-story .experience-role>span{font-size:10px}.experience-details{font-size:10px}.pickleball-inner{gap:20px 30px}.pickleball-copy h2{font-size:54px}.pickleball-copy p{font-size:11px}.pickleball-copy>.eyebrow{font-size:7px;letter-spacing:.8px}.pickleball-detail{font-size:6px}.hero-visual{height:510px}}
+@media(max-width:680px){.brand>.brand-mark{width:38px;height:38px}.brand-name{margin-left:0;padding-left:15px}.main-nav{gap:0}.hero-visual{height:470px}.hero-circuit{inset:36px 0 55px;height:auto}.visual-topline{font-size:7px}.visual-bottomline{font-size:5.5px;left:16px;right:16px;letter-spacing:.6px;bottom:36px}.board-caption{font-size:8px;bottom:12px}.interaction-hint{display:block!important;font-size:5px;letter-spacing:.6px}.experience-expanded{padding-top:0}.experience-intro{font-size:12px;margin-top:-8px;margin-bottom:24px}.experience-story{grid-template-columns:1fr;gap:23px;padding:29px 0 32px}.experience-photo .photo-slot{aspect-ratio:1.6}.experience-photo figcaption{font-size:6px}.experience-story .experience-date{font-size:8px}.experience-story .experience-role{margin-top:9px}.experience-story .experience-role h3{font-size:33px}.experience-story .experience-role>span{font-size:11px}.experience-lead{font-size:25px;margin-top:17px}.experience-details{font-size:12px;line-height:1.9;margin-top:14px}.experience-story .project-tags{margin-top:18px}.pickleball-section{padding:46px 0 49px}.pickleball-inner{grid-template-columns:1fr;gap:21px}.pickleball-copy{grid-column:1;grid-row:auto}.pickleball-copy h2{font-size:68px;margin-top:21px}.pickleball-copy p{font-size:12px;margin-top:19px;max-width:380px}.pickleball-copy>.eyebrow{font-size:8px;letter-spacing:1.1px}.pickleball-detail{font-size:7px;margin-top:22px;margin-bottom:9px}.pickleball-main-photo{grid-column:1;aspect-ratio:1.4}.pickleball-photo-pair{grid-column:1;gap:17px}.pickleball-photo-pair .photo-slot{aspect-ratio:1.1}.site-footer .back-to-top{grid-column:2;grid-row:1/3;justify-self:end;font-size:8px}.art-topline{font-size:7px}.progress-badge{font-size:6px}.board-story{padding:29px 24px 31px}.board-story h2{font-size:49px}.board-story-mark{width:39px;height:39px;margin-bottom:20px}.board-story>p{font-size:12px}.academic-record{gap:19px 20px}.academic-record dd{font-size:11px}.academic-record dt{font-size:6px}.board-story-links>a{font-size:25px}.board-story-close{top:13px;right:13px}.board-dialog{max-height:calc(100dvh - 30px);width:calc(100% - 24px)}}

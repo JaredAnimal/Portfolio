@@ -5,7 +5,30 @@ import './CircuitScene.css'
 const GOLD = '#bda465'
 const CREAM = '#e3dbc4'
 
-function BoardFallback() {
+export type BoardPart = 'projects' | 'experience' | 'transcript' | 'about' | 'pickleball' | 'resume'
+
+type BoardSpot = {
+  part: BoardPart
+  label: string
+  point: [number, number, number]
+  labelPosition: [number, number]
+  fallback: [number, number]
+  radius: number
+  hitSize: [number, number, number]
+}
+
+// Each story belongs to a physical component. Label positions surround the board
+// while the numbered touch targets follow their projected component positions.
+const BOARD_SPOTS: BoardSpot[] = [
+  { part: 'about', label: 'About', point: [-2.8, 0.69, 0.95], labelPosition: [0.18, 0.22], fallback: [0.2344, 0.4277], radius: 0.59, hitSize: [0.9, 0.65, 0.95] },
+  { part: 'pickleball', label: 'Pickleball', point: [-2.45, 0.28, -1.5], labelPosition: [0.5, 0.17], fallback: [0.4018, 0.3106], radius: 0.22, hitSize: [0.5, 0.3, 0.5] },
+  { part: 'transcript', label: 'Transcript', point: [1.16, 0.35, -1.7], labelPosition: [0.82, 0.22], fallback: [0.6780, 0.4658], radius: 0.4, hitSize: [0.65, 0.3, 0.6] },
+  { part: 'resume', label: 'Résumé', point: [-0.64, 0.35, 1.62], labelPosition: [0.18, 0.77], fallback: [0.3351, 0.5358], radius: 0.27, hitSize: [0.55, 0.35, 0.5] },
+  { part: 'projects', label: 'Projects', point: [0, 0.43, 0], labelPosition: [0.5, 0.82], fallback: [0.4955, 0.496], radius: 1.05, hitSize: [1.75, 0.4, 1.75] },
+  { part: 'experience', label: 'Experience', point: [2.45, 0.82, 1.15], labelPosition: [0.82, 0.77], fallback: [0.7013, 0.668], radius: 0.45, hitSize: [0.65, 0.85, 1.0] },
+]
+
+function BoardFallback({ onSelect, onHighlight, activePart }: { onSelect?: (part: BoardPart) => void; onHighlight: (part: BoardPart | null) => void; activePart: BoardPart | null }) {
   return (
     <svg className="circuit-scene__fallback" viewBox="0 0 640 490" aria-hidden="true">
       <defs>
@@ -14,7 +37,7 @@ function BoardFallback() {
         </linearGradient>
         <filter id="board-shadow"><feDropShadow dx="0" dy="24" stdDeviation="18" floodColor="#413b22" floodOpacity=".2" /></filter>
       </defs>
-      <g transform="translate(320 240) rotate(-18) skewX(14) scale(1 .8) translate(-240 -155)" filter="url(#board-shadow)">
+      <g transform="translate(320 245) rotate(25) skewX(-15) scale(.72 .576) translate(-240 -155)" filter="url(#board-shadow)">
         <rect x="0" y="0" width="480" height="310" rx="18" fill="url(#board-fill)" stroke="#7d845c" strokeWidth="3" />
         <g stroke={GOLD} strokeWidth="3" fill="none" opacity=".85">
           <path d="M45 50H140L175 85V120H210M30 80H105L150 125H210M40 190H115L150 155H210M30 245H135L170 210H210M45 275H155L185 240V200" />
@@ -27,20 +50,71 @@ function BoardFallback() {
         <g fill="#2b3027">{[25, 455].flatMap(x => [25, 285].map(y => <circle key={`${x}-${y}`} cx={x} cy={y} r="5" />))}</g>
         <rect x="185" y="100" width="100" height="108" rx="4" fill="#20271f" stroke="#79806b" />
         <g stroke="#d6c89f" strokeWidth="5">{[115, 132, 149, 166, 183, 200].flatMap(y => [175, 287].map(x => <path key={`${x}-${y}`} d={`M${x} ${y}h10`} />))}</g>
-        <text x="235" y="148" textAnchor="middle" fill="#bfc6b0" fontFamily="monospace" fontSize="16">JA — 01</text>
+        <text x="235" y="148" textAnchor="middle" fill="#bfc6b0" fontFamily="monospace" fontSize="16">CORE — 01</text>
         <text x="235" y="171" textAnchor="middle" fill="#8d967f" fontFamily="monospace" fontSize="9">BUILT WITH CURIOSITY</text>
-        <g fill={CREAM} stroke="#b8ae8d"><rect x="60" y="115" width="32" height="48" rx="4" /><rect x="340" y="115" width="40" height="28" rx="4" /><rect x="340" y="160" width="40" height="28" rx="4" /></g>
+        <g fill={CREAM} stroke="#b8ae8d"><rect x="60" y="115" width="32" height="48" rx="4" /><rect x="340" y="115" width="40" height="28" rx="4" /><rect x="340" y="160" width="40" height="28" rx="4" /><rect x="124" y="248" width="32" height="24" rx="3" /></g>
+        <circle cx="85" cy="55" r="8" fill="#d5b460" />
+        <rect x="330" y="30" width="40" height="30" rx="3" fill="#252d25" />
         <rect x="-10" y="200" width="60" height="48" rx="5" fill="#b1b0a0" /><rect x="-11" y="207" width="20" height="33" fill="#3b4035" />
         <text x="45" y="42" fill="#d9dac1" fontFamily="monospace" fontSize="12">JARED ASHMAN</text>
         <text x="45" y="290" fill="#bfc6a9" fontFamily="monospace" fontSize="10">IDEAS → HARDWARE</text>
+        {([
+          { part: 'about', x: -12, y: 198, width: 65, height: 52 },
+          { part: 'pickleball', x: 69, y: 39, width: 32, height: 32 },
+          { part: 'transcript', x: 324, y: 24, width: 52, height: 42 },
+          { part: 'resume', x: 118, y: 242, width: 44, height: 36 },
+          { part: 'projects', x: 179, y: 94, width: 112, height: 120 },
+          { part: 'experience', x: 443, y: 160, width: 30, height: 60 },
+        ] as const).map(spot => <rect
+          key={spot.part}
+          x={spot.x} y={spot.y} width={spot.width} height={spot.height} rx="5"
+          className="circuit-scene__fallback-target"
+          data-active={activePart === spot.part}
+          onClick={() => onSelect?.(spot.part)}
+          onPointerEnter={() => onHighlight(spot.part)}
+          onPointerLeave={() => onHighlight(null)}
+        />)}
       </g>
     </svg>
   )
 }
 
-export default function CircuitScene({ className = '' }: { className?: string }) {
+export default function CircuitScene({ className = '', onSelect }: { className?: string; onSelect?: (part: BoardPart) => void }) {
   const hostRef = useRef<HTMLDivElement>(null)
+  const hotspotRefs = useRef<Partial<Record<BoardPart, HTMLButtonElement>>>({})
+  const lineRefs = useRef<Partial<Record<BoardPart, SVGPathElement>>>({})
+  const selectRef = useRef(onSelect)
+  selectRef.current = onSelect
+  const highlightRef = useRef<(part: BoardPart | null) => void>(() => {})
+  const [activePart, setActivePart] = useState<BoardPart | null>(null)
   const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    const host = hostRef.current
+    if (!host || isReady) return
+    const positionFallback = () => {
+      const width = host.clientWidth, height = host.clientHeight
+      const scale = Math.min(width / 640, height / 490)
+      const offsetX = (width - 640 * scale) / 2, offsetY = (height - 490 * scale) / 2
+      BOARD_SPOTS.forEach(spot => {
+        const button = hotspotRefs.current[spot.part]
+        const line = lineRefs.current[spot.part]
+        const x = offsetX + spot.fallback[0] * 640 * scale, y = offsetY + spot.fallback[1] * 490 * scale
+        const labelX = spot.labelPosition[0] * width, labelY = spot.labelPosition[1] * height
+        if (button) {
+          button.style.left = `${x}px`
+          button.style.top = `${y}px`
+          button.style.setProperty('--label-x', `${labelX - x}px`)
+          button.style.setProperty('--label-y', `${labelY - y}px`)
+        }
+        line?.setAttribute('d', `M${x},${y} L${labelX},${labelY}`)
+      })
+    }
+    const observer = new ResizeObserver(positionFallback)
+    observer.observe(host)
+    positionFallback()
+    return () => observer.disconnect()
+  }, [isReady])
 
   useEffect(() => {
     const host = hostRef.current
@@ -59,7 +133,7 @@ export default function CircuitScene({ className = '' }: { className?: string })
     camera.lookAt(0, 0, 0)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8))
     renderer.shadowMap.enabled = true
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    renderer.shadowMap.type = THREE.PCFShadowMap
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.45
@@ -271,7 +345,7 @@ export default function CircuitScene({ className = '' }: { className?: string })
       mesh.position.set(x, y, z)
       board.add(mesh)
     }
-    label('JA — 01', 1.06, 0.18, 0, -0.12, 0.39, '#c9d0bd', '500 54px monospace')
+    label('CORE — 01', 1.06, 0.18, 0, -0.12, 0.39, '#c9d0bd', '500 46px monospace')
     label('BUILT WITH CURIOSITY', 1.02, 0.14, 0, 0.16, 0.391, '#84917c', '400 32px monospace')
     label('JARED ASHMAN', 1.85, 0.3, -1.7, -1.84)
     label('IDEAS → HARDWARE', 2.0, 0.28, -1.24, 1.91)
@@ -284,15 +358,55 @@ export default function CircuitScene({ className = '' }: { className?: string })
     ground.receiveShadow = true
     scene.add(ground)
 
+    const glowRings = new Map<BoardPart, THREE.Mesh<THREE.RingGeometry, THREE.MeshBasicMaterial>>()
+    const hitBoxes: THREE.Mesh[] = []
+    BOARD_SPOTS.forEach(spot => {
+      const ringMaterial = new THREE.MeshBasicMaterial({ color: '#e6cc81', transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide })
+      const ring = new THREE.Mesh(new THREE.RingGeometry(spot.radius, spot.radius + 0.035, 48), ringMaterial)
+      ring.rotation.x = -Math.PI / 2
+      ring.position.set(spot.point[0], spot.point[1] + 0.015, spot.point[2])
+      board.add(ring)
+      glowRings.set(spot.part, ring)
+
+      const hit = new THREE.Mesh(new THREE.BoxGeometry(...spot.hitSize), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }))
+      hit.position.set(spot.point[0], spot.point[1] - spot.hitSize[1] / 3, spot.point[2])
+      hit.userData.part = spot.part
+      board.add(hit)
+      hitBoxes.push(hit)
+    })
+
     let alive = true
+    let contextAvailable = true
     let frame = 0
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const target = { x: 0, y: -0.3 }
+    const projected = new THREE.Vector3()
+    const updateHotspots = () => {
+      board.updateMatrixWorld()
+      const width = host.clientWidth, height = host.clientHeight
+      BOARD_SPOTS.forEach(spot => {
+        projected.set(...spot.point).applyMatrix4(board.matrixWorld).project(camera)
+        const x = (projected.x + 1) * width / 2
+        const y = (1 - projected.y) * height / 2
+        const labelX = width * spot.labelPosition[0]
+        const labelY = height * spot.labelPosition[1]
+        const button = hotspotRefs.current[spot.part]
+        if (button) {
+          button.style.left = `${x}px`
+          button.style.top = `${y}px`
+          button.style.setProperty('--label-x', `${labelX - x}px`)
+          button.style.setProperty('--label-y', `${labelY - y}px`)
+        }
+        // The outer labels stay legible as their leaders follow the PCB.
+        lineRefs.current[spot.part]?.setAttribute('d', `M${x},${y} L${labelX},${labelY}`)
+      })
+    }
     const render = () => {
-      if (!alive) return
+      if (!alive || !contextAvailable) { frame = 0; return }
       board.rotation.x += (target.x - board.rotation.x) * 0.09
       board.rotation.y += (target.y - board.rotation.y) * 0.09
       renderer.render(scene, camera)
+      updateHotspots()
       if (Math.abs(target.x - board.rotation.x) + Math.abs(target.y - board.rotation.y) > 0.0001) {
         frame = requestAnimationFrame(render)
       } else {
@@ -300,6 +414,24 @@ export default function CircuitScene({ className = '' }: { className?: string })
       }
     }
     const requestRender = () => { if (!frame && alive) frame = requestAnimationFrame(render) }
+    highlightRef.current = part => {
+      glowRings.forEach((ring, ringPart) => { ring.material.opacity = part === ringPart ? 0.9 : 0 })
+      requestRender()
+    }
+    const highlight = (part: BoardPart | null) => {
+      setActivePart(part)
+      highlightRef.current(part)
+      renderer.domElement.style.cursor = part ? 'pointer' : ''
+    }
+    const raycaster = new THREE.Raycaster()
+    const pointer = new THREE.Vector2()
+    const getPart = (event: PointerEvent | MouseEvent): BoardPart | null => {
+      if (!contextAvailable) return null
+      const rect = host.getBoundingClientRect()
+      pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1)
+      raycaster.setFromCamera(pointer, camera)
+      return raycaster.intersectObjects(hitBoxes, false)[0]?.object.userData.part ?? null
+    }
     const resize = () => {
       if (!alive || host.clientWidth === 0 || host.clientHeight === 0) return
       const aspect = host.clientWidth / host.clientHeight
@@ -311,19 +443,26 @@ export default function CircuitScene({ className = '' }: { className?: string })
       requestRender()
     }
     const pointerMove = (event: PointerEvent) => {
+      if ((event.target as Element).closest('[data-board-part], .circuit-scene__fallback')) return
+      highlight(getPart(event))
       if (motionQuery.matches || event.pointerType !== 'mouse') return
       const rect = host.getBoundingClientRect()
       target.x = ((event.clientY - rect.top) / rect.height - 0.5) * 0.12
       target.y = -0.3 + ((event.clientX - rect.left) / rect.width - 0.5) * 0.25
       requestRender()
     }
-    const reset = () => { target.x = 0; target.y = -0.3; requestRender() }
-    const contextLost = (event: Event) => { event.preventDefault(); setIsReady(false) }
-    const contextRestored = () => { setIsReady(true); requestRender() }
+    const clickComponent = (event: MouseEvent) => {
+      const part = getPart(event)
+      if (part) { highlight(part); selectRef.current?.(part) }
+    }
+    const reset = () => { target.x = 0; target.y = -0.3; highlight(null); requestRender() }
+    const contextLost = (event: Event) => { event.preventDefault(); contextAvailable = false; setIsReady(false) }
+    const contextRestored = () => { contextAvailable = true; setIsReady(true); requestRender() }
     const resizeObserver = new ResizeObserver(resize)
     resizeObserver.observe(host)
     host.addEventListener('pointermove', pointerMove)
     host.addEventListener('pointerleave', reset)
+    renderer.domElement.addEventListener('click', clickComponent)
     renderer.domElement.addEventListener('webglcontextlost', contextLost)
     renderer.domElement.addEventListener('webglcontextrestored', contextRestored)
     motionQuery.addEventListener('change', reset)
@@ -336,6 +475,7 @@ export default function CircuitScene({ className = '' }: { className?: string })
       resizeObserver.disconnect()
       host.removeEventListener('pointermove', pointerMove)
       host.removeEventListener('pointerleave', reset)
+      renderer.domElement.removeEventListener('click', clickComponent)
       renderer.domElement.removeEventListener('webglcontextlost', contextLost)
       renderer.domElement.removeEventListener('webglcontextrestored', contextRestored)
       motionQuery.removeEventListener('change', reset)
@@ -347,14 +487,42 @@ export default function CircuitScene({ className = '' }: { className?: string })
         }
       })
       textures.forEach(texture => texture.dispose())
+      highlightRef.current = () => {}
       renderer.dispose()
       renderer.domElement.remove()
     }
   }, [])
 
+  const highlight = (part: BoardPart | null) => {
+    setActivePart(part)
+    highlightRef.current(part)
+  }
+
   return (
-    <div ref={hostRef} className={`circuit-scene ${isReady ? 'is-rendered' : ''} ${className}`} aria-hidden="true">
-      <BoardFallback />
+    <div ref={hostRef} className={`circuit-scene ${isReady ? 'is-rendered' : ''} ${className}`}>
+      <BoardFallback onSelect={onSelect} onHighlight={highlight} activePart={activePart} />
+      <svg className="circuit-scene__leaders" aria-hidden="true">
+        {BOARD_SPOTS.map(spot => <path key={spot.part} ref={node => { if (node) lineRefs.current[spot.part] = node }} data-active={activePart === spot.part} />)}
+      </svg>
+      {BOARD_SPOTS.map((spot, index) => (
+        <button
+          key={spot.part}
+          ref={node => { if (node) hotspotRefs.current[spot.part] = node }}
+          type="button"
+          className="circuit-scene__hotspot"
+          data-board-part={spot.part}
+          data-active={activePart === spot.part}
+          aria-label={`Explore ${spot.part === 'resume' ? 'résumé' : spot.part}`}
+          onPointerEnter={() => highlight(spot.part)}
+          onPointerLeave={() => highlight(null)}
+          onFocus={() => highlight(spot.part)}
+          onBlur={() => highlight(null)}
+          onClick={() => { highlight(spot.part); onSelect?.(spot.part) }}
+        >
+          <span className="circuit-scene__marker" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <span className="circuit-scene__label" aria-hidden="true">{spot.label}<svg viewBox="0 0 16 16" fill="none"><path d="M4 12 12 4M4 4h8v8" stroke="currentColor" strokeWidth="1" /></svg></span>
+        </button>
+      ))}
     </div>
   )
 }

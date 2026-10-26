@@ -36,10 +36,14 @@ To check the production build locally, run `npm run preview -- --port 4174 --str
 ## Content
 
 - `src/projects.ts`: project descriptions and detail views.
-- `src/App.tsx`: bio, experience, contact, and LinkedIn link.
+- `src/App.tsx`: homepage, expanded work experience, UCLA Club Pickleball, board story dialogs, contact links, and hash navigation.
+- `src/components/BrandMark.tsx` and `public/favicon.svg`: matching circuit-inspired chip-and-connections emblem.
+- `src/components/ProjectPage.tsx`: dedicated PiLight, PID car, and dart-robot backstory pages. Routes use `#/projects/pilight`, `#/projects/line-follower`, and `#/projects/dart-robot` so direct links and refreshes work on GitHub Pages without server routing.
 - `src/styles.css`: palette, layout, and responsive styles.
-- `src/components/CircuitScene.tsx`: interactive, decorative circuit study. This is not a model of one of Jared's projects. It renders on demand, respects reduced motion, and falls back to an SVG when WebGL is unavailable.
+- `src/components/CircuitScene.tsx`: interactive circuit board with six components for projects, experience, transcript, about, pickleball, and resume. Labels and component markers support keyboard, touch, and a non-WebGL fallback. It renders on demand and respects reduced motion. This conceptual board is not a model of one of Jared's projects.
 - `src/components/ProjectArtwork.tsx`: conceptual project illustrations. Replace with real project photography when available.
 - `public/Jared-Ashman-Resume.pdf`: the user's approved, one-page LaTeX resume PDF, supplied October 26, 2026. The uploaded PDF is served unchanged, including its contact details.
 
 Project descriptions, education, skills, and experience follow that approved resume: expected UCLA graduation June 2029, GPA 3.9 and Dean's List, Navy SSEP data analysis, UCLA robotics instruction, admissions IT, PiLight (ESP32/Python/FFT), and an in-progress ESP32 PID line-following car using eight brightness sensors and the Arduino IDE. About content also includes the listed clearance, salutatorian distinction, BUR role, and UCLA Club Pickleball. No performance measurements, project source links, or hardware specifications beyond the supplied information have been added. Project artwork is conceptual; it does not document a tested physical configuration. The only external profile link is the LinkedIn URL supplied by Jared.
+
+All photo areas are intentionally empty elements marked `data-photo-slot`, including project pages, homepage cards, work experience, and pickleball. Replace those areas with real photos and meaningful alt text when supplied. No stock images, broken image sources, or filler illustrations are used in photo spaces. The transcript component currently shows known academic information and an explicit unavailable status because a transcript has not been uploaded; it does not expose a fabricated download. The dart-robot backstory currently records the user's confirmed inspiration relationship to the PID car without adding unconfirmed specifications.
