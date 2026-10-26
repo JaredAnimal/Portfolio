@@ -1,9 +1,10 @@
-export type ProjectKind = 'rov' | 'pilight' | 'robot'
+export type ProjectKind = 'pilight' | 'line-follower'
 
 export interface Project {
   id: ProjectKind
   number: string
   title: string
+  eyebrow: string
   subtitle: string
   summary: string
   tags: string[]
@@ -14,48 +15,35 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    id: 'rov',
-    number: '01',
-    title: 'Underwater ROV',
-    subtitle: 'An idea, taken below the surface.',
-    summary: 'An underwater robot built from scratch, from microcontroller firmware to hull design and underwater testing.',
-    tags: ['Robotics', 'Embedded systems'],
-    status: 'Built & tested',
-    overview: 'A hands-on exploration of what it takes to make a robot work underwater. I built an ROV from the ground up, working across the physical structure, embedded firmware, and testing in the water.',
-    contributions: [
-      { title: 'Firmware', text: 'Designed the microcontroller firmware for the underwater robot.' },
-      { title: 'Structure', text: 'Designed and built the hull structure as part of the complete ROV.' },
-      { title: 'Testing', text: 'Took the robot into the water to test the build beyond the workbench.' },
-    ],
-  },
-  {
     id: 'pilight',
-    number: '02',
+    number: '01',
     title: 'PiLight',
-    subtitle: 'Making sound a little more visible.',
-    summary: 'Connecting a Raspberry Pi and Arduino Uno to turn the frequency and volume of analog signals into light.',
-    tags: ['Signal processing', 'Microcontrollers'],
-    status: 'In progress',
-    overview: 'PiLight explores the connection between sound and light. The project uses a Raspberry Pi together with an Arduino Uno to interpret analog signals and use their frequency and volume to control lighting.',
+    eyebrow: 'Frequency → light',
+    subtitle: 'Finding the light in a signal.',
+    summary: 'An ESP32-based reactive LED system using Python and FFT analysis to turn frequency information into light.',
+    tags: ['ESP32', 'Python', 'FFT'],
+    status: 'In development',
+    overview: 'PiLight connects signal processing with a visible response. I’m developing an ESP32-based reactive LED system, writing Python code that uses fast Fourier transform (FFT) analysis to extract frequency information and control LED behavior.',
     contributions: [
-      { title: 'Hardware', text: 'Working with a Raspberry Pi and an Arduino Uno together.' },
-      { title: 'Signals', text: 'Interpreting analog signals to extract frequency and volume.' },
-      { title: 'Light', text: 'Using the extracted signal information to control lights. This project is a work in progress.' },
+      { title: 'Embedded platform', text: 'Developing the reactive LED system around an ESP32 microcontroller.' },
+      { title: 'Frequency analysis', text: 'Writing Python signal-processing code that uses FFT analysis to extract frequency information.' },
+      { title: 'Reactive light', text: 'Using the frequency information to control LED behavior as the system takes shape.' },
     ],
   },
   {
-    id: 'robot',
-    number: '03',
-    title: 'Dart-launching robot',
-    subtitle: 'Movement meets a little friendly aim.',
-    summary: 'An omni-wheeled robot with a dart launcher, aerodynamics testing, and a locally served web interface.',
-    tags: ['Robotics', 'Web interfaces'],
-    status: 'Built & tested',
-    overview: 'A robot that combines omni-wheel movement with a dart-launching mechanism. The project brought physical testing and a web-based control interface into the same build.',
+    id: 'line-follower',
+    number: '02',
+    title: 'PID Line-Following Car',
+    eyebrow: 'Sensing → control',
+    subtitle: 'A little feedback. A clearer path.',
+    summary: 'An ESP32 car in progress, using eight brightness sensors and firmware designed to implement PID line-following control.',
+    tags: ['ESP32', 'Arduino IDE', 'PID control'],
+    status: 'In progress',
+    overview: 'I’m designing an ESP32-based line-following car that uses eight brightness sensors to detect a line. The project brings sensing and control together, with firmware in development in the Arduino IDE to implement PID control using sensor feedback.',
     contributions: [
-      { title: 'Robot', text: 'Built an omni-wheeled robot with the ability to launch darts.' },
-      { title: 'Testing', text: 'Performed aerodynamics testing as part of developing the launcher.' },
-      { title: 'Interface', text: 'Implemented a web-based user interface using a local server.' },
+      { title: 'Line detection', text: 'Designing the car around eight brightness sensors to detect the line.' },
+      { title: 'Embedded firmware', text: 'Developing ESP32 firmware in the Arduino IDE.' },
+      { title: 'Feedback control', text: 'Implementing PID control using sensor feedback as part of the ongoing firmware development.' },
     ],
   },
 ]

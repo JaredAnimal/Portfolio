@@ -92,9 +92,10 @@ function App() {
         <div className="hero-copy">
           <div className="eyebrow hero-eyebrow"><span className="tiny-cross">+</span> HI, I’M JARED</div>
           <h1 id="hero-heading">Curiosity,<br />wired into<br /><em>practice.</em><svg className="hero-spark" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 2v44M2 24h44M8.5 8.5l31 31m0-31-31 31" stroke="currentColor" strokeWidth="1.2" /></svg></h1>
-          <p className="hero-intro">I’m a computer engineering student at UCLA.<br className="desktop-break" /> I build across hardware and software, with a<br className="desktop-break" /> soft spot for things that come to life.</p>
+          <p className="hero-intro">I’m a computer engineering student at UCLA.<br className="desktop-break" /> I’m exploring embedded systems, signals, and<br className="desktop-break" /> controls through hands-on projects.</p>
           <div className="hero-actions"><a className="button button-primary" href="#work">Explore my work <Arrow /></a><a className="resume-link" href={RESUME} download>My résumé <Download /></a></div>
           <div className="availability"><span /> Seeking electrical engineering internships</div>
+          <div className="clearance-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z" /><path d="m8 12 3 3 5-6" /></svg><div><strong>Active Secret Clearance</strong><span>Sponsored by the Department of the Navy</span></div></div>
         </div>
         <div className="hero-visual" role="group" aria-label="Interactive circuit board illustration">
           <div className="visual-topline"><span>EXPLORATIONS IN HARDWARE</span><span className="visual-cross">+</span></div>
@@ -106,16 +107,16 @@ function App() {
       </section>
 
       <div className="intro-strip page-width">
-        <div className="strip-education"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true"><path d="m3 12 13-7 13 7-13 7-13-7Zm5 3v9c5 4 11 4 16 0v-9m5-3v12" /></svg><span>UCLA<span>B.S. Computer Engineering</span></span></div>
-        <div className="strip-gpa"><strong>3.9</strong><span>GPA<br /><span>Always learning.</span></span></div>
+        <div className="strip-education"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true"><path d="m3 12 13-7 13 7-13 7-13-7Zm5 3v9c5 4 11 4 16 0v-9m5-3v12" /></svg><span>UCLA<span>B.S. Computer Engineering</span><span>Expected June 2029</span></span></div>
+        <div className="strip-gpa"><strong>3.9</strong><span>GPA<br /><span>Dean’s List</span></span></div>
         <div className="strip-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" /><circle cx="12" cy="10" r="2.5" /></svg><span>Los Angeles, CA<span>Building from the West Coast.</span></span></div>
       </div>
 
       <section id="work" className="work-section page-width" aria-labelledby="work-heading">
-        <div className="section-heading"><div><div className="eyebrow"><span className="section-number">01 /</span> LEARNING BY BUILDING</div><h2 id="work-heading">A few things I’ve <em>made.</em></h2></div><p>From the workbench to the water.<br />Ideas are better when you build them.</p></div>
+        <div className="section-heading"><div><div className="eyebrow"><span className="section-number">01 /</span> LEARNING BY BUILDING</div><h2 id="work-heading">Ideas on <em>the workbench.</em></h2></div><p>From signals to light. From feedback to motion.<br />Learning how it all connects.</p></div>
         <div className="project-grid">{projects.map(project => <article className="project-card" key={project.id}>
           <button className={`project-art-button project-art-${project.id}`} onClick={() => setActiveProject(project)} aria-label={`Explore ${project.title}`}>
-            <div className="art-topline"><span>{project.number} / {project.id === 'pilight' ? 'SOUND & LIGHT' : project.id === 'rov' ? 'BELOW THE SURFACE' : 'IN MOTION'}</span>{project.id === 'pilight' && <span className="progress-badge"><i />IN PROGRESS</span>}</div>
+            <div className="art-topline"><span>{project.number} / {project.eyebrow}</span><span className="progress-badge"><i />{project.status.toUpperCase()}</span></div>
             <ProjectArtwork kind={project.id} />
             <span className="art-footnote">PROJECT ILLUSTRATION</span><span className="art-open"><Arrow diagonal /></span>
           </button>
@@ -125,16 +126,31 @@ function App() {
 
       <section id="about" className="about-section" aria-labelledby="about-heading">
         <div className="about-inner page-width">
-          <div className="about-copy"><div className="eyebrow"><span className="section-number">02 /</span> THE PERSON BEHIND THE PROJECTS</div><h2 id="about-heading">A hands-on builder.<br />An <em>always-curious</em> mind.</h2><p>I’m Jared, a computer engineering student at UCLA who enjoys connecting the physical and digital worlds. Give me a microcontroller, a new problem, or something that needs figuring out, and I’m happy.</p><p>At Bruin Underwater Racing, I’m part of the software team as Computer Vision Simulation Manager. Outside the lab, I co-founded Minim to help make music education more accessible.</p><a href={RESUME} download className="text-link">A little more about me <span className="link-aside">(RÉSUMÉ)</span><Arrow diagonal /></a></div>
-          <div className="toolbox"><div className="toolbox-heading"><span className="eyebrow">MY TOOLBOX</span><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><rect x="11" y="11" width="22" height="22" rx="2" /><rect x="16" y="16" width="12" height="12" /><path d="M16 5v6m6-6v6m6-6v6M16 33v6m6-6v6m6-6v6M5 16h6m-6 6h6m-6 6h6m22-12h6m-6 6h6m-6 6h6" /></svg></div><div className="toolbox-group"><h3>Closer to the hardware</h3><p>Microcontrollers <span>·</span> Embedded systems<br />Raspberry Pi <span>·</span> Arduino <span>·</span> Robotics</p></div><div className="toolbox-group"><h3>On the software side</h3><p>C++ <span>·</span> Java <span>·</span> JavaScript<br />HTML & CSS <span>·</span> Front-end development</p></div><div className="toolbox-footer"><span className="tiny-cross">+</span> A WORK IN PROGRESS, JUST LIKE ME.</div></div>
+          <div className="about-copy">
+            <div className="eyebrow"><span className="section-number">02 /</span> THE PERSON BEHIND THE PROJECTS</div>
+            <h2 id="about-heading">A hands-on builder.<br />An <em>always-curious</em> mind.</h2>
+            <p>I’m Jared, a computer engineering student at UCLA, with graduation expected in June 2029. I’m drawn to the places where circuits, code, and real-world problems meet.</p>
+            <p>I teach hands-on underwater robotics and biomimetic engineering at UCLA. My experience also includes analyzing Navy hardware-failure data and supporting a network of more than 100 admissions workstations.</p>
+            <p>Outside the classroom, I’m the Computer Vision Simulation Manager on the Bruin Underwater Racing (BUR) software team, and I’m involved in UCLA Club Pickleball.</p>
+            <p className="academic-note">University City High School · Salutatorian, Class of 2025</p>
+            <a href={RESUME} download className="text-link">A little more about me <span className="link-aside">(RÉSUMÉ)</span><Arrow diagonal /></a>
+          </div>
+          <div className="toolbox">
+            <div className="toolbox-heading"><span className="eyebrow">MY TOOLBOX</span><svg viewBox="0 0 44 44" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><rect x="11" y="11" width="22" height="22" rx="2" /><rect x="16" y="16" width="12" height="12" /><path d="M16 5v6m6-6v6m6-6v6M16 33v6m6-6v6m6-6v6M5 16h6m-6 6h6m-6 6h6m22-12h6m-6 6h6m-6 6h6" /></svg></div>
+            <div className="toolbox-group"><h3>Closer to the hardware</h3><p>ESP32 <span>·</span> Arduino <span>·</span> Microcontrollers<br />Circuitry <span>·</span> Digital logic <span>·</span> Soldering</p></div>
+            <div className="toolbox-group"><h3>On the software side</h3><p>C++ <span>·</span> Python <span>·</span> Arduino IDE<br />Hardware/software integration</p></div>
+            <div className="toolbox-group"><h3>Working with signals</h3><p>FFT <span>·</span> Signal processing<br />Hardware-failure data analysis</p></div>
+            <div className="toolbox-footer"><span className="tiny-cross">+</span> A WORK IN PROGRESS, JUST LIKE ME.</div>
+          </div>
         </div>
       </section>
 
       <section id="experience" className="experience-section page-width" aria-labelledby="experience-heading">
         <div className="section-heading"><div><div className="eyebrow"><span className="section-number">03 /</span> ALONG THE WAY</div><h2 id="experience-heading">Learning beyond <em>the classroom.</em></h2></div><a className="text-link experience-resume" href={RESUME} download>Full résumé <Download /></a></div>
         <div className="experience-list">
-          <article className="experience-row"><div className="experience-date">SEP 2025 — JAN 2026</div><div className="experience-role"><h3>IT Specialist</h3><span>UCLA Undergraduate Admissions</span></div><p>Supported a network of over 100 workstations, maintained hardware and software, and kept the admissions website up to date.</p><span className="experience-index" aria-hidden="true">01</span></article>
-          <article className="experience-row"><div className="experience-date">JUN 2023 — JUL 2025</div><div className="experience-role"><h3>Co-Founder & Tech Lead</h3><span>Minim · Music education nonprofit</span></div><p>Helped bring music tutoring to underserved kids. Built and launched the website with HTML, CSS, and JavaScript in partnership with Hack Club.</p><span className="experience-index" aria-hidden="true">02</span></article>
+          <article className="experience-row"><div className="experience-date">SEP 2026 — PRESENT</div><div className="experience-role"><h3>Student Teacher</h3><span>UCLA Henry Samueli School of Engineering and Applied Science</span></div><p>Lead hands-on undergraduate instruction in underwater robotics and biomimetic engineering. Teach Arduino programming, circuitry, soldering, fluid dynamics, logic design, and hardware integration, and mentor teams through assembly, testing, and demonstration.</p><span className="experience-index" aria-hidden="true">01</span></article>
+          <article className="experience-row"><div className="experience-date">JUN 2026 — SEP 2026</div><div className="experience-role"><h3>Student Trainee (SSEP)</h3><span>U.S. Navy · San Diego, CA</span></div><p>Analyzed complex hardware-failure data for Department of the Navy C5 systems to identify trends and support lifecycle sustainment. Used failure data to investigate sustainment issues and support improvements to logistics processes.</p><span className="experience-index" aria-hidden="true">02</span></article>
+          <article className="experience-row"><div className="experience-date">SEP 2025 — JUN 2026</div><div className="experience-role"><h3>IT Specialist</h3><span>UCLA Undergraduate Admissions</span></div><p>Supported more than 100 workstations through hardware maintenance, software deployments, updates, and troubleshooting. Updated admissions website content and helped resolve day-to-day technical issues.</p><span className="experience-index" aria-hidden="true">03</span></article>
         </div>
       </section>
 
