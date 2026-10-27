@@ -3,6 +3,7 @@ import type { SVGProps } from 'react'
 import BrandMark from './components/BrandMark'
 import PlaceholderArt from './components/PlaceholderArt'
 import Photo from './components/Photo'
+import portrait from './assets/photos/jared-ashman-portrait.jpg'
 import { pickleballPhotos } from './photos'
 import ProjectPage from './components/ProjectPage'
 import PortfolioMenu from './components/PortfolioMenu'
@@ -36,7 +37,10 @@ function Home({ onSelectPart, onOpenProject, onOpenRole }: { onSelectPart: (part
       <div className="hero-copy">
         <div className="eyebrow hero-eyebrow"><span className="tiny-cross">+</span> HI, I’M JARED</div>
         <h1 id="hero-heading">Curiosity, <br /><em>wired</em> into <br />practice.<svg className="hero-spark" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 2v44M2 24h44M8.5 8.5l31 31m0-31-31 31" stroke="currentColor" strokeWidth="1.2" /></svg></h1>
-        <p className="hero-intro">I’m a computer engineering student at UCLA.<br className="desktop-break" /> A little hardware, a little software, and a lot<br className="desktop-break" /> of curiosity. Every component has a story.</p>
+        <div className="hero-introduction">
+          <img className="hero-portrait" src={portrait} width="896" height="1200" alt="Jared Ashman in a black suit" loading="eager" decoding="async" />
+          <p className="hero-intro">I’m a computer engineering student at UCLA. A little hardware, a little software, and a lot of curiosity. Every component has a story.</p>
+        </div>
         <div className="hero-actions"><a className="button button-primary" href="#work">Explore my work <Arrow /></a><div className="hero-profile-links"><a className="resume-link" href={RESUME} download>My résumé <Download /></a><a className="resume-link hero-linkedin" href={LINKEDIN} target="_blank" rel="noreferrer"><LinkedInIcon />LinkedIn<span className="sr-only"> (opens in a new tab)</span></a></div></div>
         <div className="availability"><span /> Seeking computer engineering internships</div>
         <div className="clearance-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z" /><path d="m8 12 3 3 5-6" /></svg><div><strong>Active Secret Clearance</strong><span>Sponsored by the Department of the Navy</span></div></div>
