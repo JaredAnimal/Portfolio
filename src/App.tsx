@@ -38,7 +38,7 @@ function Home({ onSelectPart, onOpenProject, onOpenRole }: { onSelectPart: (part
         <div className="eyebrow hero-eyebrow"><span className="tiny-cross">+</span> HI, I’M JARED</div>
         <h1 id="hero-heading">Curiosity, <br /><em>wired</em> into <br />practice.<svg className="hero-spark" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 2v44M2 24h44M8.5 8.5l31 31m0-31-31 31" stroke="currentColor" strokeWidth="1.2" /></svg></h1>
         <div className="hero-introduction">
-          <img className="hero-portrait" src={portrait} width="896" height="1200" alt="Jared Ashman in a black suit" loading="eager" decoding="async" />
+          <div className="hero-portrait"><div className="hero-portrait-crop"><img src={portrait} width="896" height="1200" alt="Jared Ashman in a black suit" loading="eager" decoding="async" /></div></div>
           <p className="hero-intro">I’m a computer engineering student at UCLA. A little hardware, a little software, and a lot of curiosity. Every component has a story.</p>
         </div>
         <div className="hero-actions"><a className="button button-primary" href="#work">Explore my work <Arrow /></a><div className="hero-profile-links"><a className="resume-link" href={RESUME} download>My résumé <Download /></a><a className="resume-link hero-linkedin" href={LINKEDIN} target="_blank" rel="noreferrer"><LinkedInIcon />LinkedIn<span className="sr-only"> (opens in a new tab)</span></a></div></div>

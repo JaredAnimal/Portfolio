@@ -12,7 +12,7 @@ Live site: https://jaredanimal.github.io/Portfolio/
 
 ## Completed work
 
-- Jared’s supplied portrait appears beside the homepage introduction, below the headline. Its original JPEG is renamed `src/assets/photos/jared-ashman-portrait.jpg`, with responsive sizing and descriptive alt text.
+- Jared’s supplied portrait appears beside the homepage introduction, below the headline. Its original JPEG is renamed `src/assets/photos/jared-ashman-portrait.jpg`, with a CSS head-and-shoulders crop, responsive sizing, and descriptive alt text. Preserve the original face and image; the crop only changes the visible framing.
 - Interactive circuit board with six accessible hotspots, keyboard/touch support, reduced motion, and a non-WebGL fallback.
 - Project pages, employment details, concept illustrations, and nested menus with Back, Escape, and focus restoration.
 - The three pickleball projects appear only inside the Pickleball submenu: reservation bot, reservation-sharing website, and a proposed 3D-printed net-base extension.

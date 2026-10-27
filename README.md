@@ -68,7 +68,7 @@ USS Sunflower is Jared’s underwater robotics course robot developed with his u
 
 ## Supplied photo sets
 
-The homepage introduction uses the portrait from `JDA.zip`, renamed `src/assets/photos/jared-ashman-portrait.jpg`. The original JPEG is preserved and displayed at its natural proportions beside the introduction, with responsive sizing and eager loading.
+The homepage introduction uses the portrait from `JDA.zip`, renamed `src/assets/photos/jared-ashman-portrait.jpg`. The original JPEG is preserved; CSS frames a tighter 4:5 head-and-shoulders crop beside the introduction, with responsive sizing and eager loading.
 
 Photos supplied October 27, 2026 are preserved as original JPEGs in `src/assets/photos/`. The image order, alt text, and captions are in `src/photos.ts`. Images retain their natural proportions; portrait galleries and contained lead-image framing keep people and the robot visible without cropping.
 
