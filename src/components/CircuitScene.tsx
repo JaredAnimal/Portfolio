@@ -378,8 +378,15 @@ export default function CircuitScene({ className = '', onSelect }: { className?:
     let alive = true
     let contextAvailable = true
     let frame = 0
+    let lastFrameTime = 0
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const target = { x: 0, y: -0.3 }
+    const target = { x: 0, y: 0 }
+    const motion = { x: 0, y: 0 }
+    const restRotation = board.quaternion.clone()
+    const cameraRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion)
+    const cameraUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion)
+    const horizontalTilt = new THREE.Quaternion()
+    const verticalTilt = new THREE.Quaternion()
     const projected = new THREE.Vector3()
     const updateHotspots = () => {
       board.updateMatrixWorld()
@@ -401,19 +408,36 @@ export default function CircuitScene({ className = '', onSelect }: { className?:
         lineRefs.current[spot.part]?.setAttribute('d', `M${x},${y} L${labelX},${labelY}`)
       })
     }
-    const render = () => {
+    const render = (time: number) => {
       if (!alive || !contextAvailable) { frame = 0; return }
-      board.rotation.x += (target.x - board.rotation.x) * 0.09
-      board.rotation.y += (target.y - board.rotation.y) * 0.09
+      // Keep the same response time on slower GPUs and high-refresh displays.
+      const easing = motionQuery.matches ? 1 : 1 - Math.exp(-Math.max(0, time - lastFrameTime) / 180)
+      lastFrameTime = time
+      motion.x += (target.x - motion.x) * easing
+      motion.y += (target.y - motion.y) * easing
+      // Follow the cursor in screen space. World-Y yaw spun the far edge of
+      // this horizontal PCB against the cursor while the near edge followed it.
+      // Translation leads the small camera-relative tilt, so both edges follow.
+      board.position.set(0, 0.3, 0)
+        .addScaledVector(cameraRight, motion.x * 0.3)
+        .addScaledVector(cameraUp, motion.y * 0.3)
+      horizontalTilt.setFromAxisAngle(cameraUp, motion.x * 0.035)
+      verticalTilt.setFromAxisAngle(cameraRight, -motion.y * 0.035)
+      board.quaternion.copy(restRotation).premultiply(horizontalTilt).premultiply(verticalTilt)
       renderer.render(scene, camera)
       updateHotspots()
-      if (Math.abs(target.x - board.rotation.x) + Math.abs(target.y - board.rotation.y) > 0.0001) {
+      if (Math.abs(target.x - motion.x) + Math.abs(target.y - motion.y) > 0.0001) {
         frame = requestAnimationFrame(render)
       } else {
         frame = 0
       }
     }
-    const requestRender = () => { if (!frame && alive) frame = requestAnimationFrame(render) }
+    const requestRender = () => {
+      if (!frame && alive) {
+        lastFrameTime = performance.now()
+        frame = requestAnimationFrame(render)
+      }
+    }
     highlightRef.current = part => {
       glowRings.forEach((ring, ringPart) => { ring.material.opacity = part === ringPart ? 0.9 : 0 })
       requestRender()
@@ -443,19 +467,18 @@ export default function CircuitScene({ className = '', onSelect }: { className?:
       requestRender()
     }
     const pointerMove = (event: PointerEvent) => {
-      if ((event.target as Element).closest('[data-board-part], .circuit-scene__fallback')) return
-      highlight(getPart(event))
+      if (!(event.target as Element).closest('[data-board-part], .circuit-scene__fallback')) highlight(getPart(event))
       if (motionQuery.matches || event.pointerType !== 'mouse') return
       const rect = host.getBoundingClientRect()
-      target.x = ((event.clientY - rect.top) / rect.height - 0.5) * 0.12
-      target.y = -0.3 + ((event.clientX - rect.left) / rect.width - 0.5) * 0.25
+      target.x = (event.clientX - rect.left) / rect.width * 2 - 1
+      target.y = 1 - (event.clientY - rect.top) / rect.height * 2
       requestRender()
     }
     const clickComponent = (event: MouseEvent) => {
       const part = getPart(event)
       if (part) { highlight(part); selectRef.current?.(part) }
     }
-    const reset = () => { target.x = 0; target.y = -0.3; highlight(null); requestRender() }
+    const reset = () => { target.x = 0; target.y = 0; highlight(null); requestRender() }
     const contextLost = (event: Event) => { event.preventDefault(); contextAvailable = false; setIsReady(false) }
     const contextRestored = () => { contextAvailable = true; setIsReady(true); requestRender() }
     const resizeObserver = new ResizeObserver(resize)

@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import type { RefObject } from 'react'
 import BrandMark from './BrandMark'
 import PlaceholderArt from './PlaceholderArt'
+import { ProjectLinks, ProjectMetrics } from './ProjectDetails'
+import { dartRobotLinks } from '../projectDetails'
 import type { BoardPart } from './CircuitScene'
 import type { ProjectPageId } from './ProjectPage'
 import { projects } from '../projects'
@@ -90,8 +92,8 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
       <h2 id="board-story-title" tabIndex={-1}>{title}</h2>
 
       {selection.type === 'part' && selection.id === 'projects' && <>
-        <p>Turning signals into light, and feedback into motion. Choose a project to explore its details.</p>
-        <div className="submenu-list">{projects.map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.tags.join(' · ')} onClick={() => onSelect({ type: 'project', id: item.id })} />)}<Choice id="dart-robot" title="Dart-launching robot" description="An earlier build and the inspiration for the PID car." onClick={() => onSelect({ type: 'project', id: 'dart-robot' })} /></div>
+        <p>Turning signals into light, feedback into motion, and ideas into underwater designs. Choose a project to explore its details.</p>
+        <div className="submenu-list">{projects.filter(item => item.id !== 'sunflower').map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.tags.join(' · ')} onClick={() => onSelect({ type: 'project', id: item.id })} />)}<Choice id="dart-robot" title="Dart-launching robot" description="An earlier build and the inspiration for the PID car." onClick={() => onSelect({ type: 'project', id: 'dart-robot' })} />{projects.filter(item => item.id === 'sunflower').map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.tags.join(' · ')} onClick={() => onSelect({ type: 'project', id: item.id })} />)}</div>
         <a className="text-link" href="#work" onClick={onClose}>View projects on the page <Arrow /></a>
       </>}
       {selection.type === 'part' && selection.id === 'experience' && <>
@@ -115,6 +117,8 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
       {selection.type === 'project' && <>
         <PlaceholderArt kind={selection.id} label={title} className="submenu-media" />
         {project ? <><p className="submenu-status">{project.status}</p><p>{project.overview}</p><ul className="submenu-details">{project.contributions.map(item => <li key={item.title}><strong>{item.title}.</strong> {item.text}</li>)}</ul><Tags values={project.tags} /></> : <p>My earlier dart-launching robot inspired the PID line-following car I’m currently developing.</p>}
+        {project && <ProjectMetrics metrics={project.metrics} />}
+        <ProjectLinks links={project?.links ?? dartRobotLinks} />
         <a className="text-link" href={`#/projects/${selection.id}`} onClick={onClose}>Read full project story <Arrow /></a>
       </>}
       {role && <>
@@ -123,8 +127,8 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
       </>}
       {pickleball && <>
         <p className="submenu-status">{pickleball.kind}{pickleball.status ? ` · ${pickleball.status}` : ''}</p><p>{pickleball.overview}</p><ul className="submenu-details">{pickleball.details.map(detail => <li key={detail}>{detail}</li>)}</ul><Tags values={pickleball.tags} />
-        {pickleball.sourceUrl && <a className="text-link" href={pickleball.sourceUrl} target="_blank" rel="noreferrer">View project repository <Arrow /></a>}
-        {pickleball.liveUrl && <a className="text-link" href={pickleball.liveUrl} target="_blank" rel="noreferrer">Visit project website <Arrow /></a>}
+        <ProjectMetrics metrics={pickleball.metrics} />
+        <ProjectLinks links={pickleball.links} />
       </>}
     </div>}
   </dialog>

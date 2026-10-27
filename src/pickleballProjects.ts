@@ -1,3 +1,5 @@
+import type { ProjectLink, ProjectMetric } from './projectDetails'
+
 export type PickleballProjectId = 'reservation-bot' | 'reservation-sharing' | 'net-tensioner'
 
 export interface PickleballProject {
@@ -8,8 +10,8 @@ export interface PickleballProject {
   overview: string
   details: string[]
   tags: string[]
-  sourceUrl?: string
-  liveUrl?: string
+  metrics: ProjectMetric[]
+  links: ProjectLink[]
   status?: string
 }
 
@@ -27,6 +29,8 @@ export const pickleballProjects: PickleballProject[] = [
     ],
     tags: ['JavaScript', 'Node.js', 'Playwright', 'Browser automation'],
     status: 'Beta',
+    metrics: [{ caption: 'Booking turnaround' }],
+    links: [{ label: 'Source code' }, { label: 'Demo video' }],
   },
   {
     id: 'reservation-sharing',
@@ -40,7 +44,8 @@ export const pickleballProjects: PickleballProject[] = [
       'Enforce court capacity and practice-time rules on the server, and synchronize reservations with a Google Sheet through an Apps Script bridge.',
     ],
     tags: ['TypeScript', 'Cloudflare Workers', 'D1', 'Google Apps Script'],
-    sourceUrl: 'https://github.com/JaredAnimal/UCLAPickleball',
+    metrics: [{ caption: 'Response time' }, { caption: 'Players served' }],
+    links: [{ label: 'View project repository', href: 'https://github.com/JaredAnimal/UCLAPickleball' }, { label: 'Visit project website' }],
   },
   {
     id: 'net-tensioner',
@@ -54,5 +59,7 @@ export const pickleballProjects: PickleballProject[] = [
     ],
     tags: ['3D printing', 'Mechanical design', 'Prototyping'],
     status: 'In design',
+    metrics: [{ caption: 'Added base length' }, { caption: 'Net tension' }],
+    links: [{ label: 'Design files' }, { label: 'Build photos' }],
   },
 ]

@@ -11,12 +11,12 @@ const boardParts = ['projects', 'experience', 'transcript', 'about', 'pickleball
 const roleTitles = ['Student Teacher', 'Student Trainee (SSEP)', 'IT Specialist']
 const pickleballProjects = ['Picklebot reservation bot', 'Reservation-sharing website', '3D-printed net base extension']
 const supersededClaims = /\b(?:Underwater ROV|Raspberry Pi|Arduino Uno|UNO|Minim|Java)\b/i
-const homeHeading = /The parts\s*that make\s*me\./
+const homeHeading = /Curiosity,\s*wired\s*into\s*practice\./
 
 async function expectLoadedIllustrations(page: Page, expectedKinds: string[]) {
   const slots = page.locator('[data-photo-slot]')
   await expect(slots).toHaveCount(expectedKinds.length)
-  const actualKinds = await slots.evaluateAll(elements => elements.map(element => element.getAttribute('data-placeholder-illustration')).sort())
+  const actualKinds = await slots.evaluateAll(elements => elements.map(element => element.getAttribute('data-placeholder-illustration') ?? element.getAttribute('data-photo-pending')).sort())
   expect(actualKinds).toEqual([...expectedKinds].sort())
   const descriptions: Record<string, RegExp> = {
     pilight: /ESP32|LED|audio|sound|frequency|PiLight/i,
@@ -29,6 +29,11 @@ async function expectLoadedIllustrations(page: Page, expectedKinds: string[]) {
   }
   for (let index = 0; index < expectedKinds.length; index++) {
     const slot = slots.nth(index)
+    if (await slot.getAttribute('data-photo-pending') === 'sunflower') {
+      await expect(slot).toContainText(/Project photos to come/i)
+      await expect(slot.locator('img')).toHaveCount(0)
+      continue
+    }
     const kind = (await slot.getAttribute('data-placeholder-illustration'))!
     const illustration = slot.locator('img')
     await expect(illustration).toHaveCount(1)
@@ -197,14 +202,14 @@ test('all six board hotspots open useful menus, with project and job submenus in
     await expect(dialog).toBeVisible()
     await expect(dialog.getByRole('heading').first()).toBeVisible()
     if (part === 'projects' || part === 'experience' || part === 'pickleball') {
-      const titles = part === 'projects' ? [...projects.map(project => project.title), 'Dart-launching robot'] : part === 'experience' ? roleTitles : pickleballProjects
+      const titles = part === 'projects' ? [...projects.map(project => project.title), 'Dart-launching robot', 'Sunflower'] : part === 'experience' ? roleTitles : pickleballProjects
       await expect(dialog.locator('button:not([aria-label="Close story"])')).toHaveCount(titles.length)
       for (const title of titles) {
         const choice = dialog.getByRole('button').filter({ hasText: title }).first()
         await choice.click()
         await expect(dialog.getByRole('heading', { name: title, exact: true })).toBeVisible()
         await expect(page.getByRole('dialog')).toHaveCount(1)
-        if (part === 'projects' && title !== 'Dart-launching robot') await expectProjectSubmenu(page, title)
+        if (part === 'projects' && projects.some(project => project.title === title)) await expectProjectSubmenu(page, title)
         if (title === 'Dart-launching robot') await expect(dialog.getByRole('link', { name: 'Read full project story', exact: true })).toHaveAttribute('href', '#/projects/dart-robot')
         await dialog.getByRole('button', { name: new RegExp(`Back to ${part}`, 'i') }).click()
         await expect(dialog.locator('button:not([aria-label="Close story"])')).toHaveCount(titles.length)
@@ -282,13 +287,65 @@ test('resume downloads the supplied PDF and contact links keep their supplied de
   const authoritativePDF = await readFile(new URL('../public/Jared-Ashman-Resume.pdf', import.meta.url))
   expect(pdf.equals(authoritativePDF)).toBe(true)
   await expect(page.getByRole('link', { name: /Find me on LinkedIn/ })).toHaveAttribute('href', 'https://www.linkedin.com/in/jareddashman/')
+  const heroLinkedIn = page.locator('.hero').getByRole('link', { name: /LinkedIn/ })
+  await expect(heroLinkedIn).toHaveAttribute('href', 'https://www.linkedin.com/in/jareddashman/')
+  await expect(heroLinkedIn.locator('svg')).toBeVisible()
+  await expect(page.locator('#hero-heading em')).toHaveText('wired')
+  await expect(page.getByRole('main')).not.toContainText(/a work in progress, just like me/i)
   await expect(page.getByRole('link', { name: 'jaredashman0209@gmail.com', exact: true })).toHaveAttribute('href', 'mailto:jaredashman0209@gmail.com')
+})
+
+test('Sunflower opens from the last project, preserves its route, and has honest photo, metric, and link placeholders', async ({ page }) => {
+  await page.goto('./')
+  const card = page.locator('#work .project-card').last()
+  await expect(card.getByRole('heading')).toHaveText('Sunflower')
+  await expect(card.locator('[data-photo-pending="sunflower"]')).toContainText(/Project photos to come/i)
+  await card.getByRole('button', { name: 'Explore Sunflower', exact: true }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog.getByRole('heading', { name: 'Sunflower', exact: true })).toBeVisible()
+  await expect(dialog).toContainText('Team OceanGate')
+  await expect(dialog.locator('[data-project-link-slot="Full design snapshot"]')).toContainText('Coming soon')
+  await expect(dialog.getByRole('link', { name: /Full design snapshot/ })).toHaveCount(0)
+  await dialog.getByRole('button', { name: 'Back to projects', exact: true }).click()
+  await expect(dialog.locator('[data-menu-item]').last()).toContainText('Sunflower')
+  await dialog.locator('[data-menu-item="sunflower"]').click()
+  await dialog.getByRole('link', { name: 'Read full project story', exact: true }).click()
+  await expect(page).toHaveURL(/#\/projects\/sunflower$/)
+  await page.reload()
+  await expect(page.getByRole('heading', { level: 1, name: 'Sunflower', exact: true })).toBeVisible()
+  await expect(page.getByRole('main')).toContainText(/six.motor/)
+  await expect(page.getByRole('main')).toContainText('PS4')
+  await expect(page.getByRole('main').locator('[data-metric-pending]')).toHaveCount(2)
+  for (const width of [320, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await expectNoOverflow(page, `Sunflower overflow at ${width}px`)
+  }
+})
+
+test('every project offers link spaces and pending metrics make no numerical claims', async ({ page }) => {
+  for (const id of ['pilight', 'line-follower', 'dart-robot', 'sunflower']) {
+    await page.goto(`./#/projects/${id}`)
+    await expect(page.getByRole('main').getByRole('list', { name: 'Project links' })).toBeVisible()
+    const metrics = page.getByRole('main').locator('.project-metrics dd')
+    for (const metric of await metrics.all()) await expect(metric).toHaveText('—Measurement to come')
+  }
+  await page.goto('./')
+  await page.locator('[data-board-part="pickleball"]').click()
+  for (const title of pickleballProjects) {
+    const dialog = page.getByRole('dialog')
+    await dialog.getByRole('button').filter({ hasText: title }).first().click()
+    await expect(dialog.getByRole('list', { name: 'Project links' })).toBeVisible()
+    if (title === 'Reservation-sharing website') {
+      await expect(dialog.getByRole('link', { name: /View project repository/ })).toHaveAttribute('href', 'https://github.com/JaredAnimal/UCLAPickleball')
+    }
+    await dialog.getByRole('button', { name: 'Back to pickleball', exact: true }).click()
+  }
 })
 
 test('home and each clickable job preserve current education, clearance, activities, and work history', async ({ page }) => {
   await page.goto('./')
   const projectCards = page.locator('#work .project-card')
-  await expect(projectCards).toHaveCount(2)
+  await expect(projectCards).toHaveCount(3)
   expect(await projectCards.getByRole('heading', { level: 3 }).allTextContents()).toEqual(expect.arrayContaining(projects.map(project => project.title)))
   const main = page.getByRole('main')
   await expect(main).toContainText(/Expected June 2029/i)
@@ -367,7 +424,7 @@ test('the three pickleball projects exist only inside the opened menu and suppor
 
 test('project, experience, and pickleball spaces render the matching accessible placeholder illustrations', async ({ page }) => {
   await page.goto('./')
-  await expectLoadedIllustrations(page, ['pilight', 'line-follower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
+  await expectLoadedIllustrations(page, ['pilight', 'line-follower', 'sunflower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
   const pickleball = page.locator('#pickleball')
   await expect(pickleball.getByRole('heading', { level: 2 })).toBeVisible()
   await expect(pickleball).toContainText(/UCLA Club Pickleball/)
@@ -443,7 +500,7 @@ test('all six projected hotspots remain actionable on a touch screen', async ({ 
 
 test('home, project pages, nested menus, and the transcript pass automated WCAG 2 A/AA checks', async ({ page }) => {
   test.setTimeout(60_000)
-  for (const route of ['', '#/projects/pilight', '#/projects/line-follower', '#/projects/dart-robot']) {
+  for (const route of ['', '#/projects/pilight', '#/projects/line-follower', '#/projects/dart-robot', '#/projects/sunflower']) {
     await page.goto(`./${route}`)
     await page.evaluate(() => document.fonts.ready)
     const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()

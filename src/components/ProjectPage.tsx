@@ -1,9 +1,11 @@
 import { projects } from '../projects'
 import type { Project } from '../projects'
 import PlaceholderArt from './PlaceholderArt'
+import { ProjectLinks, ProjectMetrics } from './ProjectDetails'
+import { dartRobotLinks } from '../projectDetails'
 import './ProjectPage.css'
 
-export type ProjectPageId = 'pilight' | 'line-follower' | 'dart-robot'
+export type ProjectPageId = 'pilight' | 'line-follower' | 'dart-robot' | 'sunflower'
 type Props = { projectId: ProjectPageId; onOpenMenu?: (projectId: ProjectPageId) => void }
 
 function Arrow({ back = false }: { back?: boolean }) {
@@ -20,7 +22,7 @@ function PhotoSpace({ projectId, title, number, caption, wide = false }: { proje
 }
 
 function RelatedProject({ href, eyebrow, title, description, onOpenMenu }: { href: string; eyebrow: string; title: string; description: string; onOpenMenu?: (projectId: ProjectPageId) => void }) {
-  const relatedId = href.match(/^#\/projects\/(pilight|line-follower|dart-robot)$/)?.[1] as ProjectPageId | undefined
+  const relatedId = href.match(/^#\/projects\/(pilight|line-follower|dart-robot|sunflower)$/)?.[1] as ProjectPageId | undefined
   return <a className="project-page-related" href={href} aria-haspopup={onOpenMenu ? 'dialog' : undefined} onClick={event => { if (onOpenMenu && relatedId) { event.preventDefault(); onOpenMenu(relatedId) } }}>
     <div><span className="project-page-kicker">{eyebrow}</span><h2>{title}</h2><p>{description}</p></div>
     <span className="project-page-related-arrow"><Arrow /></span>
@@ -53,6 +55,9 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
         </dl>
       </header>
 
+      <ProjectLinks links={project?.links ?? dartRobotLinks} />
+      {project && <ProjectMetrics metrics={project.metrics} />}
+
       {projectId === 'line-follower' && <aside className="project-page-origin" aria-label="Project inspiration">
         <span className="project-page-origin-line" aria-hidden="true" />
         <div><p>Inspired by my dart-launching robot.</p><a href="#/projects/dart-robot">Explore the earlier project <Arrow /></a></div>
@@ -77,6 +82,7 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
       <section className="project-page-next" aria-label="Continue exploring">
         {projectId === 'pilight' && <RelatedProject href="#/projects/line-follower" eyebrow="ANOTHER IDEA ON THE WORKBENCH" title="PID Line-Following Car" description="Exploring sensing and feedback control with an ESP32." onOpenMenu={onOpenMenu} />}
         {projectId === 'line-follower' && <RelatedProject href="#/projects/pilight" eyebrow="ANOTHER IDEA ON THE WORKBENCH" title="PiLight" description="Connecting frequency information with reactive light." onOpenMenu={onOpenMenu} />}
+        {projectId === 'sunflower' && <RelatedProject href="#/projects/line-follower" eyebrow="ANOTHER IDEA ON THE WORKBENCH" title="PID Line-Following Car" description="A different setting for sensing, movement, and feedback." onOpenMenu={onOpenMenu} />}
         {isBackstory && <RelatedProject href="#/projects/line-follower" eyebrow="THE NEXT CHAPTER" title="PID Line-Following Car" description="The current project inspired by this earlier robot." onOpenMenu={onOpenMenu} />}
       </section>
       <div className="project-page-bottom"><a href="#work"><Arrow back />All projects</a><a href="mailto:jaredashman0209@gmail.com">Let’s talk about the build <Arrow /></a></div>
@@ -86,7 +92,7 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
 
 function ProjectContributions({ project }: { project: Project }) {
   return <section className="project-page-contributions" aria-labelledby="project-focus-title">
-    <div className="project-page-section-head"><p className="project-page-kicker">INSIDE THE PROJECT</p><h2 id="project-focus-title">What I’m working on.</h2></div>
+    <div className="project-page-section-head"><p className="project-page-kicker">INSIDE THE PROJECT</p><h2 id="project-focus-title">{project.id === 'sunflower' ? 'Inside the team’s design.' : 'What I’m working on.'}</h2></div>
     <div className="project-page-contribution-grid">{project.contributions.map((contribution, index) => <section key={contribution.title}>
       <span className="project-page-contribution-number">0{index + 1}</span><h3>{contribution.title}</h3><p>{contribution.text}</p>
     </section>)}</div>
