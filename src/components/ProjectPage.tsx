@@ -1,5 +1,6 @@
 import { projects } from '../projects'
 import type { Project } from '../projects'
+import PlaceholderArt from './PlaceholderArt'
 import './ProjectPage.css'
 
 export type ProjectPageId = 'pilight' | 'line-follower' | 'dart-robot'
@@ -11,9 +12,9 @@ function Arrow({ back = false }: { back?: boolean }) {
   </svg>
 }
 
-function PhotoSpace({ title, number, caption, wide = false }: { title: string; number: string; caption: string; wide?: boolean }) {
+function PhotoSpace({ projectId, title, number, caption, wide = false }: { projectId: ProjectPageId; title: string; number: string; caption: string; wide?: boolean }) {
   return <figure className={`project-page-photo ${wide ? 'project-page-photo-wide' : ''}`}>
-    <div className="blank-photo" data-photo-slot="" role="img" aria-label={`Reserved space for a ${title} project photograph`} />
+    <PlaceholderArt kind={projectId} label={title} className="blank-photo" variant={number === '02' ? 'detail' : number === '03' ? 'secondary' : 'default'} />
     <figcaption><span>{number} / {caption}</span><span>PHOTOGRAPHY TO FOLLOW</span></figcaption>
   </figure>
 }
@@ -55,7 +56,7 @@ export default function ProjectPage({ projectId }: Props) {
         <div><p>Inspired by my dart-launching robot.</p><a href="#/projects/dart-robot">Explore the earlier project <Arrow /></a></div>
       </aside>}
 
-      <PhotoSpace title={title} number="01" caption="PROJECT OVERVIEW" wide />
+      <PhotoSpace projectId={projectId} title={title} number="01" caption="PROJECT OVERVIEW" wide />
 
       <section className="project-page-overview" aria-labelledby="project-overview-title">
         <div><p className="project-page-kicker">THE IDEA</p><h2 id="project-overview-title">{isBackstory ? 'Where the next idea started.' : 'From a question to a project.'}</h2></div>
@@ -67,8 +68,8 @@ export default function ProjectPage({ projectId }: Props) {
       {project && <ProjectContributions project={project} />}
 
       <div className="project-page-photo-grid">
-        <PhotoSpace title={title} number="02" caption="A CLOSER LOOK" />
-        <PhotoSpace title={title} number="03" caption="ON THE WORKBENCH" />
+        <PhotoSpace projectId={projectId} title={title} number="02" caption="A CLOSER LOOK" />
+        <PhotoSpace projectId={projectId} title={title} number="03" caption="ON THE WORKBENCH" />
       </div>
 
       <section className="project-page-next" aria-label="Continue exploring">

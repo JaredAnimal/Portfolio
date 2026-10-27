@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { SVGProps } from 'react'
 import BrandMark from './components/BrandMark'
+import PlaceholderArt from './components/PlaceholderArt'
 import ProjectPage from './components/ProjectPage'
 import type { ProjectPageId } from './components/ProjectPage'
 import type { BoardPart } from './components/CircuitScene'
@@ -15,13 +16,12 @@ const roles = [
   { id: 'teaching', title: 'Student Teacher', organization: 'UCLA Henry Samueli School of Engineering and Applied Science', date: 'SEP 2026 — PRESENT', context: 'Underwater robotics & biomimetic engineering', summary: 'Helping engineering concepts become something students can build, test, and demonstrate.', details: ['Lead hands-on undergraduate instruction in underwater robotics and biomimetic engineering.', 'Teach fluid dynamics, Arduino programming, soldering, circuitry, logic design, and hardware integration.', 'Mentor student teams from foundational concepts through assembly, testing, and demonstration.'], tags: ['Robotics instruction', 'Hardware integration', 'Student mentorship'] },
   { id: 'navy', title: 'Student Trainee (SSEP)', organization: 'U.S. Navy · San Diego, CA', date: 'JUN 2026 — SEP 2026', context: 'Data analysis & systems sustainment', summary: 'Working through complex failure data to better understand the systems behind it.', details: ['Analyzed complex hardware-failure data for Department of the Navy C5 systems to identify trends and support lifecycle sustainment.', 'Used failure data to investigate sustainment issues and support improvements to logistics processes.'], tags: ['Data analysis', 'Analytical problem-solving', 'Lifecycle sustainment'] },
   { id: 'admissions', title: 'IT Specialist', organization: 'UCLA Undergraduate Admissions', date: 'SEP 2025 — JUN 2026', context: 'Technical support & everyday reliability', summary: 'Supporting the hardware, software, and website that help keep admissions moving.', details: ['Supported more than 100 workstations through hardware maintenance, software deployments, updates, and troubleshooting.', 'Updated Undergraduate Admissions website content and helped resolve day-to-day technical issues.'], tags: ['100+ workstations', 'Technical troubleshooting', 'Systems maintenance'] },
-]
+] as const
 
 function Arrow({ diagonal = false, ...props }: SVGProps<SVGSVGElement> & { diagonal?: boolean }) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" {...props}>{diagonal ? <path d="M6 18 18 6M6 6h12v12" /> : <path d="M4 12h15m-6-6 6 6-6 6" />}</svg>
 }
 function Download() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5" /></svg> }
-function PhotoSlot({ label, className = '' }: { label: string; className?: string }) { return <div className={`photo-slot ${className}`.trim()} data-photo-slot="" role="img" aria-label={label} /> }
 function readProjectRoute(): ProjectPageId | null {
   const match = window.location.hash.match(/^#\/projects\/(pilight|line-follower|dart-robot)\/?$/)
   return match ? match[1] as ProjectPageId : null
@@ -80,7 +80,7 @@ function Home({ onSelectPart }: { onSelectPart: (part: BoardPart) => void }) {
     <section id="work" className="work-section page-width" aria-labelledby="work-heading">
       <div className="section-heading"><div><div className="eyebrow"><span className="section-number">01 /</span> LEARNING BY BUILDING</div><h2 id="work-heading">Ideas on <em>the workbench.</em></h2></div><p>From signals to light. From feedback to motion.<br />Learning how it all connects.</p></div>
       <div className="project-grid">{projects.map(project => <article className="project-card" key={project.id}>
-        <a className={`project-art-button project-art-${project.id}`} href={`#/projects/${project.id}`} aria-label={`Explore ${project.title}`}><PhotoSlot label={`${project.title} photo space`} className="project-photo-slot" /><div className="art-topline"><span>{project.number} / {project.eyebrow}</span><span className="progress-badge"><i />{project.status.toUpperCase()}</span></div><span className="art-open"><Arrow diagonal /></span></a>
+        <a className={`project-art-button project-art-${project.id}`} href={`#/projects/${project.id}`} aria-label={`Explore ${project.title}`}><PlaceholderArt kind={project.id} label={project.title} className="project-photo-slot" /><div className="art-topline"><span>{project.number} / {project.eyebrow}</span><span className="progress-badge"><i />{project.status.toUpperCase()}</span></div><span className="art-open"><Arrow diagonal /></span></a>
         <div className="project-info"><div className="project-title-row"><h3><a href={`#/projects/${project.id}`}>{project.title}</a></h3><Arrow diagonal /></div><p>{project.summary}</p><div className="project-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
       </article>)}</div>
     </section>
@@ -89,14 +89,14 @@ function Home({ onSelectPart }: { onSelectPart: (part: BoardPart) => void }) {
       <div className="section-heading"><div><div className="eyebrow"><span className="section-number">02 /</span> WORK, PAST & PRESENT</div><h2 id="experience-heading">Experience that <em>shapes me.</em></h2></div><a className="text-link experience-resume" href={RESUME} download>Full résumé <Download /></a></div>
       <p className="experience-intro">From teaching in the lab to working through Navy hardware-failure data, these roles have brought different kinds of engineering problems into focus.</p>
       <div className="experience-list">{roles.map((role, index) => <article key={role.id} className="experience-row experience-story">
-        <figure className="experience-photo"><PhotoSlot label={`Photo space for ${role.organization}`} /><figcaption>0{index + 1} / {role.context}</figcaption></figure>
+        <figure className="experience-photo"><PlaceholderArt kind={role.id} label={`${role.title} at ${role.organization}`} /><figcaption>0{index + 1} / {role.context}</figcaption></figure>
         <div className="experience-story-content"><div className="experience-date">{role.date}</div><div className="experience-role"><h3>{role.title}</h3><span>{role.organization}</span></div><p className="experience-lead">{role.summary}</p><ul className="experience-details">{role.details.map(detail => <li key={detail}>{detail}</li>)}</ul><div className="project-tags">{role.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
       </article>)}</div>
     </section>
 
     <section id="pickleball" className="pickleball-section" aria-labelledby="pickleball-heading"><div className="pickleball-inner page-width">
       <div className="pickleball-copy"><div className="eyebrow"><span className="section-number">03 /</span> OFF THE WORKBENCH</div><h2 id="pickleball-heading">UCLA Club<br /><em>Pickleball.</em></h2><p>A different side of life at UCLA. Alongside the circuits, code, and engineering projects, I’m involved in UCLA Club Pickleball.</p><span className="pickleball-detail">PART OF THE TEAM. PART OF THE WHOLE.</span></div>
-      <PhotoSlot label="UCLA Club Pickleball team photo space" className="pickleball-main-photo" /><div className="pickleball-photo-pair"><PhotoSlot label="UCLA pickleball court photo space" /><PhotoSlot label="UCLA pickleball club photo space" /></div>
+      <PlaceholderArt kind="pickleball" label="UCLA Club Pickleball" className="pickleball-main-photo" /><div className="pickleball-photo-pair"><PlaceholderArt kind="pickleball" label="Pickleball court" variant="detail" /><PlaceholderArt kind="pickleball" label="Club pickleball" variant="secondary" /></div>
     </div></section>
 
     <section id="about" className="about-section" aria-labelledby="about-heading"><div className="about-inner page-width">

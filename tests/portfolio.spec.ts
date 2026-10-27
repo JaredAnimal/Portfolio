@@ -11,6 +11,43 @@ const boardParts = ['projects', 'experience', 'transcript', 'about', 'pickleball
 const supersededClaims = /\b(?:Underwater ROV|Raspberry Pi|Arduino Uno|UNO|Minim|Java)\b/i
 const homeHeading = /The parts\s*that make\s*me\./
 
+async function expectLoadedIllustrations(page: Page, expectedKinds: string[]) {
+  const slots = page.locator('[data-photo-slot]')
+  await expect(slots).toHaveCount(expectedKinds.length)
+  const actualKinds = await slots.evaluateAll(elements => elements.map(element => element.getAttribute('data-placeholder-illustration')).sort())
+  expect(actualKinds).toEqual([...expectedKinds].sort())
+  const descriptions: Record<string, RegExp> = {
+    pilight: /ESP32|LED|audio|sound|frequency|PiLight/i,
+    'line-follower': /line.follow|car|robot|sensor/i,
+    'dart-robot': /dart|launcher/i,
+    teaching: /teaching|robotics|students?|classroom/i,
+    navy: /Navy|hardware|analysis|data/i,
+    admissions: /workstations?|computer|\bIT\b|admissions/i,
+    pickleball: /pickleball|paddles?|court/i,
+  }
+  for (let index = 0; index < expectedKinds.length; index++) {
+    const slot = slots.nth(index)
+    const kind = (await slot.getAttribute('data-placeholder-illustration'))!
+    const illustration = slot.locator('img')
+    await expect(illustration).toHaveCount(1)
+    await illustration.scrollIntoViewIfNeeded()
+    await expect(illustration).toBeVisible()
+    const alt = await illustration.getAttribute('alt')
+    expect(alt?.trim().length, `${kind} illustration needs a useful description`).toBeGreaterThanOrEqual(20)
+    await expect(illustration).toHaveAccessibleName(descriptions[kind])
+    expect(alt).toMatch(/(?:concept|placeholder) illustration/i)
+    expect(alt).not.toMatch(/reserved space|photo space/i)
+    await expect.poll(() => illustration.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0 && element.naturalHeight > 0), `${kind} illustration must finish loading`).toBe(true)
+    const source = new URL(await illustration.evaluate((element: HTMLImageElement) => element.currentSrc))
+    const location = new URL(page.url())
+    expect(source.origin).toBe(location.origin)
+    const productionAssetPrefix = new URL('./assets/', location).pathname
+    const usesAssetBase = source.pathname.startsWith(productionAssetPrefix)
+    const usesDevAsset = location.pathname === '/' && source.pathname.startsWith('/src/assets/')
+    expect(usesAssetBase || usesDevAsset, `${kind} source must respect the site asset base: ${source.pathname}`).toBe(true)
+  }
+}
+
 async function expectNoOverflow(page: Page, label: string) {
   await page.evaluate(() => document.fonts.ready)
   const width = page.viewportSize()!.width
@@ -147,6 +184,9 @@ test('transcript story is honest about availability and restores keyboard focus'
   await expect(dialog).toContainText(/3\.9/)
   await expect(dialog).toContainText(/Dean[’']s List/i)
   await expect(dialog).toContainText(/June 2029/i)
+  await expect(dialog.locator('[data-document-slot]')).toBeVisible()
+  await expect(dialog.locator('[data-document-slot] img')).toHaveCount(0)
+  await expect(dialog.locator('[data-placeholder-illustration]')).toHaveCount(0)
   await expect(dialog.locator('a[href*="transcript" i]:not([href^="mailto:"])')).toHaveCount(0)
   await expect(dialog.locator('a[download]')).toHaveCount(0)
   for (let index = 0; index < 6; index++) {
@@ -210,21 +250,15 @@ test('home preserves current education, clearance, activities, and all three exp
   await expect(admissions).toContainText(/Sep(?:tember)?\.? 2025\s*[—–-]\s*Jun(?:e)?\.? 2026/i)
 })
 
-test('project, experience, and pickleball photo spaces stay empty until real photos are supplied', async ({ page }) => {
+test('project, experience, and pickleball spaces render the matching accessible placeholder illustrations', async ({ page }) => {
   await page.goto('./')
-  for (const role of ['Student Teacher', 'Student Trainee (SSEP)', 'IT Specialist']) {
-    const experience = page.locator('#experience article').filter({ has: page.getByRole('heading', { name: role, exact: true }) })
-    await expect(experience.locator('[data-photo-slot]').first()).toBeVisible()
-  }
+  await expectLoadedIllustrations(page, ['pilight', 'line-follower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
   const pickleball = page.locator('#pickleball')
   await expect(pickleball.getByRole('heading', { level: 2 })).toBeVisible()
   await expect(pickleball).toContainText(/UCLA Club Pickleball/)
-  await expect(pickleball.locator('[data-photo-slot]').first()).toBeVisible()
-  await expect(page.locator('img')).toHaveCount(0)
-  for (const path of ['#/projects/pilight', '#/projects/line-follower', '#/projects/dart-robot']) {
-    await page.goto(`./${path}`)
-    await expect(page.locator('main [data-photo-slot]').first()).toBeVisible()
-    await expect(page.locator('img')).toHaveCount(0)
+  for (const kind of ['pilight', 'line-follower', 'dart-robot']) {
+    await page.goto(`./#/projects/${kind}`)
+    await expectLoadedIllustrations(page, [kind, kind, kind])
   }
 })
 
