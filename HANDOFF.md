@@ -16,7 +16,7 @@ Live site: https://jaredanimal.github.io/Portfolio/
 - Project pages, employment details, concept illustrations, and nested menus with Back, Escape, and focus restoration.
 - The three pickleball projects appear only inside the Pickleball submenu: reservation bot, reservation-sharing website, and a proposed 3D-printed net-base extension.
 - Approved resume preserved unchanged. Renamed unofficial transcript published as `public/Jared-Ashman-Transcript.pdf`, with student ID and birth date removed and academic content preserved. Never publish the original upload.
-- The portfolio now includes the restored “Curiosity, wired into practice” headline, a matching LinkedIn icon/link beside the résumé, Sunflower with design details and photo/link slots, project metric captions and link slots, and consistent circuit-board pointer motion. The circuit figure’s top caption has been removed; internship wording uses computer engineering.
+- The portfolio now includes the restored “Curiosity, wired into practice” headline, a matching LinkedIn icon/link beside the résumé, USS Sunflower with design details and photo/link slots, project metric captions and link slots, and consistent circuit-board pointer motion. The circuit figure’s top caption has been removed; internship wording uses computer engineering.
 - Validation includes 20 production browser checks, with focused checks for pointer motion, touch, reduced motion, and the non-WebGL fallback.
 - Content lives in `src/projects.ts`, `src/experience.ts`, and `src/pickleballProjects.ts`; shared menus are in `src/components/PortfolioMenu.tsx`. See `README.md` for more detail.
 
@@ -25,7 +25,8 @@ Live site: https://jaredanimal.github.io/Portfolio/
 - Replace concept illustrations with real photos when supplied; slots use `data-photo-slot` and `PlaceholderArt`.
 - Add further project specifications, results, or live links only when confirmed. The car and net extension remain in progress; dart-robot details are intentionally limited.
 - Separate LinkedIn updates remain unapplied. Copy-ready text is saved outside Git at `/workspace/linkedin-profile-updates.md`; no profile edits or posts were made.
-- Sunflower photos, the full design snapshot URL, other project URLs, and verified metric values can be supplied later. The source design PDF is not published.
+- USS Sunflower is available from the Projects menu and its dedicated page at `#/projects/sunflower`, while the homepage features PiLight and the PID car.
+- USS Sunflower photos, the full design snapshot URL, other project URLs, and verified metric values can be supplied later. The source design PDF is not published.
 
 ## Deployment instructions
 

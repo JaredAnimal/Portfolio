@@ -6,6 +6,7 @@ export interface Project {
   id: ProjectKind
   number: string
   title: string
+  featured: boolean
   eyebrow: string
   subtitle: string
   summary: string
@@ -22,6 +23,7 @@ export const projects: Project[] = [
     id: 'pilight',
     number: '01',
     title: 'PiLight',
+    featured: true,
     eyebrow: 'Frequency → light',
     subtitle: 'Finding the light in a signal.',
     summary: 'An ESP32-based reactive LED system using Python and FFT analysis to turn frequency information into light.',
@@ -40,6 +42,7 @@ export const projects: Project[] = [
     id: 'line-follower',
     number: '02',
     title: 'PID Line-Following Car',
+    featured: true,
     eyebrow: 'Sensing → control',
     subtitle: 'A little feedback. A clearer path.',
     summary: 'An ESP32 car in progress, using eight brightness sensors and firmware designed to implement PID line-following control.',
@@ -57,13 +60,14 @@ export const projects: Project[] = [
   {
     id: 'sunflower',
     number: '03',
-    title: 'Sunflower',
+    title: 'USS Sunflower',
+    featured: false,
     eyebrow: 'Design → dive',
     subtitle: 'Taking the next idea underwater.',
-    summary: 'An underwater robotics course project with Team OceanGate, bringing a cylindrical body, motor layout, and custom mounting design together.',
+    summary: 'An underwater robotics team project, bringing a cylindrical body, motor layout, and custom mounting design together.',
     tags: ['Underwater robotics', 'CAD', 'Mechanical design'],
     status: 'Course project',
-    overview: 'Sunflower is the underwater robot I developed with Team OceanGate for my underwater robotics course. Our design snapshot explores a cylindrical body with internal wiring, a six-motor layout, and custom motor mounts. It also documents plans for controller input, 3D-printed parts, and a shark-fin detail.',
+    overview: 'USS Sunflower is the underwater robot I developed with my team for our underwater robotics course. Our design snapshot explores a cylindrical body with internal wiring, a six-motor layout, and custom motor mounts. It also documents plans for controller input, 3D-printed parts, and a shark-fin detail.',
     contributions: [
       { title: 'Movement underwater', text: 'The team’s CAD layout places two motors centrally for vertical movement, with four front and rear motors for horizontal movement and yaw control.' },
       { title: 'Body and motor mounts', text: 'Custom split clamps and supporting brackets attach the motors to the cylindrical body, with openings to route wiring inside.' },

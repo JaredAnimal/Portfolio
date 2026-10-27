@@ -202,7 +202,7 @@ test('all six board hotspots open useful menus, with project and job submenus in
     await expect(dialog).toBeVisible()
     await expect(dialog.getByRole('heading').first()).toBeVisible()
     if (part === 'projects' || part === 'experience' || part === 'pickleball') {
-      const titles = part === 'projects' ? [...projects.map(project => project.title), 'Dart-launching robot', 'Sunflower'] : part === 'experience' ? roleTitles : pickleballProjects
+      const titles = part === 'projects' ? [...projects.map(project => project.title), 'Dart-launching robot', 'USS Sunflower'] : part === 'experience' ? roleTitles : pickleballProjects
       await expect(dialog.locator('button:not([aria-label="Close story"])')).toHaveCount(titles.length)
       for (const title of titles) {
         const choice = dialog.getByRole('button').filter({ hasText: title }).first()
@@ -295,30 +295,46 @@ test('resume downloads the supplied PDF and contact links keep their supplied de
   await expect(page.getByRole('link', { name: 'jaredashman0209@gmail.com', exact: true })).toHaveAttribute('href', 'mailto:jaredashman0209@gmail.com')
 })
 
-test('Sunflower opens from the last project, preserves its route, and has honest photo, metric, and link placeholders', async ({ page }) => {
+test('USS Sunflower stays off the homepage while header and board project menus preserve its full story', async ({ page }) => {
   await page.goto('./')
-  const card = page.locator('#work .project-card').last()
-  await expect(card.getByRole('heading')).toHaveText('Sunflower')
-  await expect(card.locator('[data-photo-pending="sunflower"]')).toContainText(/Project photos to come/i)
-  await card.getByRole('button', { name: 'Explore Sunflower', exact: true }).click()
+  await expect(page.locator('#work .project-card')).toHaveCount(2)
+  await expect(page.getByRole('main')).not.toContainText('USS Sunflower')
+  await expect(page.getByRole('main').locator('[data-photo-pending="sunflower"]')).toHaveCount(0)
   const dialog = page.getByRole('dialog')
-  await expect(dialog.getByRole('heading', { name: 'Sunflower', exact: true })).toBeVisible()
-  await expect(dialog).toContainText('Team OceanGate')
-  await expect(dialog.locator('[data-project-link-slot="Full design snapshot"]')).toContainText('Coming soon')
-  await expect(dialog.getByRole('link', { name: /Full design snapshot/ })).toHaveCount(0)
-  await dialog.getByRole('button', { name: 'Back to projects', exact: true }).click()
-  await expect(dialog.locator('[data-menu-item]').last()).toContainText('Sunflower')
+  const entryPoints = [
+    page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Projects', exact: true }),
+    page.locator('[data-board-part="projects"]'),
+  ]
+  for (const trigger of entryPoints) {
+    await trigger.click()
+    const choice = dialog.locator('[data-menu-item="sunflower"]')
+    await expect(dialog.locator('[data-menu-item]').last()).toHaveText(/USS Sunflower/)
+    await choice.click()
+    await expect(dialog.getByRole('heading', { name: 'USS Sunflower', exact: true })).toBeVisible()
+    await expect(dialog).toContainText(/underwater robotics/i)
+    await expect(dialog.locator('[data-project-link-slot="Full design snapshot"]')).toContainText('Coming soon')
+    await expect(dialog.getByRole('link', { name: /Full design snapshot/ })).toHaveCount(0)
+    await expect(dialog.getByRole('link', { name: 'Read full project story', exact: true })).toHaveAttribute('href', '#/projects/sunflower')
+    await dialog.getByRole('button', { name: 'Back to projects', exact: true }).click()
+    await expect(choice).toBeFocused()
+    await closeBoardStory(page)
+    await expect(trigger).toBeFocused()
+  }
+  await entryPoints[0].click()
   await dialog.locator('[data-menu-item="sunflower"]').click()
   await dialog.getByRole('link', { name: 'Read full project story', exact: true }).click()
   await expect(page).toHaveURL(/#\/projects\/sunflower$/)
   await page.reload()
-  await expect(page.getByRole('heading', { level: 1, name: 'Sunflower', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'USS Sunflower', exact: true })).toBeVisible()
+  await expect(page).toHaveTitle('USS Sunflower — Jared Ashman')
   await expect(page.getByRole('main')).toContainText(/six.motor/)
   await expect(page.getByRole('main')).toContainText('PS4')
   await expect(page.getByRole('main').locator('[data-metric-pending]')).toHaveCount(2)
+  await expect(page.getByRole('main').locator('[data-project-link-slot="Full design snapshot"]')).toContainText('Coming soon')
+  await expectLoadedIllustrations(page, ['sunflower', 'sunflower', 'sunflower'])
   for (const width of [320, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 })
-    await expectNoOverflow(page, `Sunflower overflow at ${width}px`)
+    await expectNoOverflow(page, `USS Sunflower overflow at ${width}px`)
   }
 })
 
@@ -345,7 +361,7 @@ test('every project offers link spaces and pending metrics make no numerical cla
 test('home and each clickable job preserve current education, clearance, activities, and work history', async ({ page }) => {
   await page.goto('./')
   const projectCards = page.locator('#work .project-card')
-  await expect(projectCards).toHaveCount(3)
+  await expect(projectCards).toHaveCount(2)
   expect(await projectCards.getByRole('heading', { level: 3 }).allTextContents()).toEqual(expect.arrayContaining(projects.map(project => project.title)))
   const main = page.getByRole('main')
   await expect(main).toContainText(/Expected June 2029/i)
@@ -424,7 +440,7 @@ test('the three pickleball projects exist only inside the opened menu and suppor
 
 test('project, experience, and pickleball spaces render the matching accessible placeholder illustrations', async ({ page }) => {
   await page.goto('./')
-  await expectLoadedIllustrations(page, ['pilight', 'line-follower', 'sunflower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
+  await expectLoadedIllustrations(page, ['pilight', 'line-follower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
   const pickleball = page.locator('#pickleball')
   await expect(pickleball.getByRole('heading', { level: 2 })).toBeVisible()
   await expect(pickleball).toContainText(/UCLA Club Pickleball/)

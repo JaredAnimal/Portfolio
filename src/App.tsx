@@ -54,7 +54,7 @@ function Home({ onSelectPart, onOpenProject, onOpenRole }: { onSelectPart: (part
 
     <section id="work" className="work-section page-width" aria-labelledby="work-heading">
       <div className="section-heading"><div><div className="eyebrow"><span className="section-number">01 /</span> LEARNING BY BUILDING</div><h2 id="work-heading">Ideas on <em>the workbench.</em></h2></div><p>From signals to light. From feedback to motion.<br />Learning how it all connects.</p></div>
-      <div className="project-grid">{projects.map(project => <article className="project-card" key={project.id}>
+      <div className="project-grid">{projects.filter(project => project.featured).map(project => <article className="project-card" key={project.id}>
         <button type="button" className={`project-art-button project-art-${project.id}`} onClick={() => onOpenProject(project.id)} aria-haspopup="dialog" aria-label={`Explore ${project.title}`}><PlaceholderArt kind={project.id} label={project.title} className="project-photo-slot" /><div className="art-topline"><span>{project.number} / {project.eyebrow}</span><span className="progress-badge"><i />{project.status.toUpperCase()}</span></div><span className="art-open"><Arrow diagonal /></span></button>
         <div className="project-info"><div className="project-title-row"><h3><button type="button" onClick={() => onOpenProject(project.id)} aria-haspopup="dialog">{project.title}</button></h3><Arrow diagonal /></div><p>{project.summary}</p><div className="project-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div><ProjectMetrics metrics={project.metrics} compact /><ProjectLinks links={project.links} compact /></div>
       </article>)}</div>
