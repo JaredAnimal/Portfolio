@@ -13,10 +13,10 @@ const pickleballProjects = ['Picklebot reservation bot', 'Reservation-sharing we
 const supersededClaims = /\b(?:Underwater ROV|Raspberry Pi|Arduino Uno|UNO|Minim|Java)\b/i
 const homeHeading = /Curiosity,\s*wired\s*into\s*practice\./
 
-async function expectLoadedIllustrations(page: Page, expectedKinds: string[]) {
+async function expectLoadedMedia(page: Page, expectedKinds: string[]) {
   const slots = page.locator('[data-photo-slot]')
   await expect(slots).toHaveCount(expectedKinds.length)
-  const actualKinds = await slots.evaluateAll(elements => elements.map(element => element.getAttribute('data-placeholder-illustration') ?? element.getAttribute('data-photo-pending')).sort())
+  const actualKinds = await slots.evaluateAll(elements => elements.map(element => element.getAttribute('data-placeholder-illustration') ?? element.getAttribute('data-photo-subject')).sort())
   expect(actualKinds).toEqual([...expectedKinds].sort())
   const descriptions: Record<string, RegExp> = {
     pilight: /ESP32|LED|audio|sound|frequency|PiLight/i,
@@ -26,26 +26,30 @@ async function expectLoadedIllustrations(page: Page, expectedKinds: string[]) {
     navy: /Navy|hardware|analysis|data/i,
     admissions: /workstations?|computer|\bIT\b|admissions/i,
     pickleball: /pickleball|paddles?|court/i,
+    sunflower: /USS Sunflower|workshop|pool|camera/i,
   }
   for (let index = 0; index < expectedKinds.length; index++) {
     const slot = slots.nth(index)
-    if (await slot.getAttribute('data-photo-pending') === 'sunflower') {
-      await expect(slot).toContainText(/Project photos to come/i)
-      await expect(slot.locator('img')).toHaveCount(0)
-      continue
+    const illustrationKind = await slot.getAttribute('data-placeholder-illustration')
+    const kind = (illustrationKind ?? await slot.getAttribute('data-photo-subject'))!
+    const image = slot.locator('img')
+    await expect(image).toHaveCount(1)
+    await image.scrollIntoViewIfNeeded()
+    await expect(image).toBeVisible()
+    const alt = await image.getAttribute('alt')
+    expect(alt?.trim().length, `${kind} image needs a useful description`).toBeGreaterThanOrEqual(20)
+    await expect(image).toHaveAccessibleName(descriptions[kind])
+    if (illustrationKind) {
+      expect(alt).toMatch(/(?:concept|placeholder) illustration/i)
+      await expect(slot).toContainText('CONCEPT ILLUSTRATION')
+    } else {
+      expect(alt).not.toMatch(/concept|placeholder|to follow/i)
+      await expect(slot.locator('.placeholder-art__caption')).toHaveCount(0)
+      await expect(image).toHaveCSS('object-fit', 'contain')
     }
-    const kind = (await slot.getAttribute('data-placeholder-illustration'))!
-    const illustration = slot.locator('img')
-    await expect(illustration).toHaveCount(1)
-    await illustration.scrollIntoViewIfNeeded()
-    await expect(illustration).toBeVisible()
-    const alt = await illustration.getAttribute('alt')
-    expect(alt?.trim().length, `${kind} illustration needs a useful description`).toBeGreaterThanOrEqual(20)
-    await expect(illustration).toHaveAccessibleName(descriptions[kind])
-    expect(alt).toMatch(/(?:concept|placeholder) illustration/i)
     expect(alt).not.toMatch(/reserved space|photo space/i)
-    await expect.poll(() => illustration.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0 && element.naturalHeight > 0), `${kind} illustration must finish loading`).toBe(true)
-    const source = new URL(await illustration.evaluate((element: HTMLImageElement) => element.currentSrc))
+    await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0 && element.naturalHeight > 0), `${kind} image must finish loading`).toBe(true)
+    const source = new URL(await image.evaluate((element: HTMLImageElement) => element.currentSrc))
     const location = new URL(page.url())
     expect(source.origin).toBe(location.origin)
     const productionAssetPrefix = new URL('./assets/', location).pathname
@@ -299,7 +303,7 @@ test('USS Sunflower stays off the homepage while header and board project menus 
   await page.goto('./')
   await expect(page.locator('#work .project-card')).toHaveCount(2)
   await expect(page.getByRole('main')).not.toContainText('USS Sunflower')
-  await expect(page.getByRole('main').locator('[data-photo-pending="sunflower"]')).toHaveCount(0)
+  await expect(page.getByRole('main').locator('[data-photo-subject="sunflower"]')).toHaveCount(0)
   const dialog = page.getByRole('dialog')
   const entryPoints = [
     page.getByRole('navigation', { name: 'Main navigation' }).getByRole('button', { name: 'Projects', exact: true }),
@@ -312,6 +316,9 @@ test('USS Sunflower stays off the homepage while header and board project menus 
     await choice.click()
     await expect(dialog.getByRole('heading', { name: 'USS Sunflower', exact: true })).toBeVisible()
     await expect(dialog).toContainText(/underwater robotics/i)
+    await expect(dialog.locator('[data-photo-subject="sunflower"]')).toHaveCount(1)
+    await expect(dialog.locator('[data-photo="sunflower-workbench"] img')).toHaveAccessibleName(/USS Sunflower lying on a workshop table/i)
+    await expect(dialog).not.toContainText(/project photos to come|photography to follow/i)
     await expect(dialog.locator('[data-project-link-slot="Full design snapshot"]')).toContainText('Coming soon')
     await expect(dialog.getByRole('link', { name: /Full design snapshot/ })).toHaveCount(0)
     await expect(dialog.getByRole('link', { name: 'Read full project story', exact: true })).toHaveAttribute('href', '#/projects/sunflower')
@@ -331,7 +338,12 @@ test('USS Sunflower stays off the homepage while header and board project menus 
   await expect(page.getByRole('main')).toContainText('PS4')
   await expect(page.getByRole('main').locator('[data-metric-pending]')).toHaveCount(2)
   await expect(page.getByRole('main').locator('[data-project-link-slot="Full design snapshot"]')).toContainText('Coming soon')
-  await expectLoadedIllustrations(page, ['sunflower', 'sunflower', 'sunflower'])
+  await expect(page.locator('.project-page-photo-wide [data-photo]')).toHaveAttribute('data-photo', 'sunflower-workbench')
+  expect(await page.locator('main [data-photo]').evaluateAll(elements => elements.map(element => element.getAttribute('data-photo')))).toEqual([
+    'sunflower-workbench', 'sunflower-hull', 'sunflower-electronics', 'sunflower-workshop-monitor', 'sunflower-poolside', 'sunflower-pool-monitor',
+  ])
+  await expect(page.getByRole('main')).not.toContainText(/project photos to come|photography to follow|concept illustration/i)
+  await expectLoadedMedia(page, Array(6).fill('sunflower'))
   for (const width of [320, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     await expectNoOverflow(page, `USS Sunflower overflow at ${width}px`)
@@ -413,6 +425,7 @@ test('the three pickleball projects exist only inside the opened menu and suppor
   await expectPickleballProjectsAbsent(page)
   await page.locator('[data-board-part="pickleball"]').click()
   const dialog = page.getByRole('dialog')
+  await expect(dialog.locator('[data-photo="pickleball-team"] img')).toHaveAccessibleName(/UCLA Club Pickleball team/i)
   await expect(dialog.locator('button:not([aria-label="Close story"])')).toHaveCount(3)
   for (const title of pickleballProjects) {
     await expect(page.getByRole('main')).not.toContainText(title)
@@ -438,15 +451,20 @@ test('the three pickleball projects exist only inside the opened menu and suppor
   await closeBoardStory(page)
 })
 
-test('project, experience, and pickleball spaces render the matching accessible placeholder illustrations', async ({ page }) => {
+test('project, experience, and pickleball spaces render their accessible photos and concept illustrations', async ({ page }) => {
   await page.goto('./')
-  await expectLoadedIllustrations(page, ['pilight', 'line-follower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
+  await expectLoadedMedia(page, ['pilight', 'line-follower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
   const pickleball = page.locator('#pickleball')
   await expect(pickleball.getByRole('heading', { level: 2 })).toBeVisible()
   await expect(pickleball).toContainText(/UCLA Club Pickleball/)
+  await expect(pickleball.locator('.pickleball-main-photo [data-photo]')).toHaveAttribute('data-photo', 'pickleball-team')
+  expect(await pickleball.locator('[data-photo]').evaluateAll(elements => elements.map(element => element.getAttribute('data-photo')))).toEqual([
+    'pickleball-team', 'pickleball-on-court', 'pickleball-doubles',
+  ])
+  await expect(pickleball).not.toContainText(/concept illustration|photography to follow/i)
   for (const kind of ['pilight', 'line-follower', 'dart-robot']) {
     await page.goto(`./#/projects/${kind}`)
-    await expectLoadedIllustrations(page, [kind, kind, kind])
+    await expectLoadedMedia(page, [kind, kind, kind])
   }
 })
 

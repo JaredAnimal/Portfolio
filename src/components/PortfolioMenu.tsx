@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react'
 import type { RefObject } from 'react'
 import BrandMark from './BrandMark'
 import PlaceholderArt from './PlaceholderArt'
+import Photo from './Photo'
+import { pickleballPhotos, sunflowerPhotos } from '../photos'
 import { ProjectLinks, ProjectMetrics } from './ProjectDetails'
 import { dartRobotLinks } from '../projectDetails'
 import type { BoardPart } from './CircuitScene'
@@ -102,6 +104,7 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
         <a className="text-link" href="#experience" onClick={onClose}>View the full work history <Arrow /></a>
       </>}
       {selection.type === 'part' && selection.id === 'pickleball' && <>
+        <Photo photo={pickleballPhotos[0]} className="submenu-media submenu-team-photo" />
         <p>Club pickleball has also become a place to build useful things. Explore the projects behind the court time.</p>
         <div className="submenu-list" data-pickleball-project-menu="">{pickleballProjects.map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.summary} onClick={() => onSelect({ type: 'pickleball-project', id: item.id })} />)}</div>
         <a className="text-link" href="#pickleball" onClick={onClose}>Back to the club section <Arrow /></a>
@@ -115,7 +118,7 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
       {selection.type === 'part' && selection.id === 'resume' && <><p>My education, technical experience, current projects, and activities in one place.</p><p>UCLA Computer Engineering · Expected June 2029<br />Active Secret Clearance · Sponsored by the Department of the Navy</p><a className="button button-primary board-resume-download" href={RESUME} download>Download my résumé <Arrow /></a></>}
 
       {selection.type === 'project' && <>
-        <PlaceholderArt kind={selection.id} label={title} className="submenu-media" />
+        {selection.id === 'sunflower' ? <Photo photo={sunflowerPhotos[0]} className="submenu-media submenu-sunflower-photo" /> : <PlaceholderArt kind={selection.id} label={title} className="submenu-media" />}
         {project ? <><p className="submenu-status">{project.status}</p><p>{project.overview}</p><ul className="submenu-details">{project.contributions.map(item => <li key={item.title}><strong>{item.title}.</strong> {item.text}</li>)}</ul><Tags values={project.tags} /></> : <p>My earlier dart-launching robot inspired the PID line-following car I’m currently developing.</p>}
         {project && <ProjectMetrics metrics={project.metrics} />}
         <ProjectLinks links={project?.links ?? dartRobotLinks} />

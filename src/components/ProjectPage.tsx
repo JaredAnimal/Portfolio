@@ -1,6 +1,8 @@
 import { projects } from '../projects'
 import type { Project } from '../projects'
 import PlaceholderArt from './PlaceholderArt'
+import Photo from './Photo'
+import { sunflowerPhotos } from '../photos'
 import { ProjectLinks, ProjectMetrics } from './ProjectDetails'
 import { dartRobotLinks } from '../projectDetails'
 import './ProjectPage.css'
@@ -63,7 +65,10 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
         <div><p>Inspired by my dart-launching robot.</p><a href="#/projects/dart-robot">Explore the earlier project <Arrow /></a></div>
       </aside>}
 
-      <PhotoSpace projectId={projectId} title={title} number="01" caption="PROJECT OVERVIEW" wide />
+      {projectId === 'sunflower' ? <figure className="project-page-photo project-page-photo-wide project-page-photo-real">
+        <Photo photo={sunflowerPhotos[0]} className="project-page-photo-lead" loading="eager" />
+        <figcaption><span>01 / {sunflowerPhotos[0].caption}</span></figcaption>
+      </figure> : <PhotoSpace projectId={projectId} title={title} number="01" caption="PROJECT OVERVIEW" wide />}
 
       <section className="project-page-overview" aria-labelledby="project-overview-title">
         <div><p className="project-page-kicker">THE IDEA</p><h2 id="project-overview-title">{isBackstory ? 'Where the next idea started.' : 'From a question to a project.'}</h2></div>
@@ -74,10 +79,15 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
 
       {project && <ProjectContributions project={project} />}
 
-      <div className="project-page-photo-grid">
+      {projectId === 'sunflower' ? <div className="project-page-photo-grid project-page-photo-grid--sunflower" role="group" aria-label="USS Sunflower photo gallery">
+        {sunflowerPhotos.slice(1).map((photo, index) => <figure className="project-page-photo project-page-photo-real" key={photo.id}>
+          <Photo photo={photo} className="project-page-photo-detail" />
+          <figcaption><span>{String(index + 2).padStart(2, '0')} / {photo.caption}</span></figcaption>
+        </figure>)}
+      </div> : <div className="project-page-photo-grid">
         <PhotoSpace projectId={projectId} title={title} number="02" caption="A CLOSER LOOK" />
         <PhotoSpace projectId={projectId} title={title} number="03" caption="ON THE WORKBENCH" />
-      </div>
+      </div>}
 
       <section className="project-page-next" aria-label="Continue exploring">
         {projectId === 'pilight' && <RelatedProject href="#/projects/line-follower" eyebrow="ANOTHER IDEA ON THE WORKBENCH" title="PID Line-Following Car" description="Exploring sensing and feedback control with an ESP32." onOpenMenu={onOpenMenu} />}

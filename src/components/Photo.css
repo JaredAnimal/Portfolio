@@ -1,0 +1,2 @@
+.portfolio-photo{position:relative;display:block;overflow:hidden;background:#e5e5d8;min-width:0}
+.portfolio-photo>img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}

@@ -2,6 +2,8 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { SVGProps } from 'react'
 import BrandMark from './components/BrandMark'
 import PlaceholderArt from './components/PlaceholderArt'
+import Photo from './components/Photo'
+import { pickleballPhotos } from './photos'
 import ProjectPage from './components/ProjectPage'
 import PortfolioMenu from './components/PortfolioMenu'
 import { ProjectLinks, ProjectMetrics } from './components/ProjectDetails'
@@ -71,7 +73,7 @@ function Home({ onSelectPart, onOpenProject, onOpenRole }: { onSelectPart: (part
 
     <section id="pickleball" className="pickleball-section" aria-labelledby="pickleball-heading"><div className="pickleball-inner page-width">
       <div className="pickleball-copy"><div className="eyebrow"><span className="section-number">03 /</span> OFF THE WORKBENCH</div><h2 id="pickleball-heading"><button type="button" className="pickleball-title" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog">UCLA Club<br /><em>Pickleball.</em></button></h2><p>A different side of life at UCLA. Alongside the circuits, code, and engineering projects, I’m involved in UCLA Club Pickleball.</p><span className="pickleball-detail">PART OF THE TEAM. PART OF THE WHOLE.</span><button type="button" className="text-link pickleball-projects-trigger" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog">Explore pickleball projects <Arrow /></button></div>
-      <button type="button" className="pickleball-open-photo pickleball-main-photo" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog" aria-label="Explore UCLA Club Pickleball"><PlaceholderArt kind="pickleball" label="UCLA Club Pickleball" /></button><div className="pickleball-photo-pair"><PlaceholderArt kind="pickleball" label="Pickleball court" variant="detail" /><PlaceholderArt kind="pickleball" label="Club pickleball" variant="secondary" /></div>
+      <button type="button" className="pickleball-open-photo pickleball-main-photo" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog" aria-label="Explore UCLA Club Pickleball"><Photo photo={pickleballPhotos[0]} /></button><div className="pickleball-photo-pair">{pickleballPhotos.slice(1).map(photo => <Photo key={photo.id} photo={photo} />)}</div>
     </div></section>
 
     <section id="about" className="about-section" aria-labelledby="about-heading"><div className="about-inner page-width">

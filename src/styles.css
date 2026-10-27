@@ -101,3 +101,8 @@
 .hero-linkedin svg{width:17px;height:17px}
 .project-art-sunflower{background:#e5e7db}
 @media(max-width:680px){.hero-profile-links{gap:22px}.hero-actions{gap:17px 22px}.toolbox{padding-bottom:25px}}
+
+/* Real club photos preserve the full team and the portrait framing. */
+.pickleball-main-photo{aspect-ratio:2600/1733}
+.pickleball-open-photo>.portfolio-photo{position:absolute;inset:0;height:100%}
+.pickleball-photo-pair .portfolio-photo{aspect-ratio:1733/2600}

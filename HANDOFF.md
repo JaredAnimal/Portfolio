@@ -1,6 +1,6 @@
 # Portfolio handoff
 
-Saved October 26, 2026. Repository: `JaredAnimal/Portfolio`.
+Saved October 27, 2026. Repository: `JaredAnimal/Portfolio`.
 Live site: https://jaredanimal.github.io/Portfolio/
 
 ## Project setup
@@ -22,11 +22,12 @@ Live site: https://jaredanimal.github.io/Portfolio/
 
 ## Remaining tasks
 
-- Replace concept illustrations with real photos when supplied; slots use `data-photo-slot` and `PlaceholderArt`.
+- Pickleball now uses three supplied photos, led by the team portrait. USS Sunflower uses six photos, led by the close-up on the workshop table. Photos live in `src/assets/photos/` with captions and ordering in `src/photos.ts`.
+- Replace the remaining concept illustrations with real photos when supplied; slots use `data-photo-slot` and `PlaceholderArt`.
 - Add further project specifications, results, or live links only when confirmed. The car and net extension remain in progress; dart-robot details are intentionally limited.
 - Separate LinkedIn updates remain unapplied. Copy-ready text is saved outside Git at `/workspace/linkedin-profile-updates.md`; no profile edits or posts were made.
 - USS Sunflower is available from the Projects menu and its dedicated page at `#/projects/sunflower`, while the homepage features PiLight and the PID car.
-- USS Sunflower photos, the full design snapshot URL, other project URLs, and verified metric values can be supplied later. The source design PDF is not published.
+- The full USS Sunflower design snapshot URL, other project URLs, and verified metric values can be supplied later. The source design PDF is not published.
 
 ## Deployment instructions
 

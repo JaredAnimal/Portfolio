@@ -70,3 +70,13 @@
 .project-page-header+.project-links{margin-top:-20px;margin-bottom:27px}
 .project-page-inner>.project-metrics{max-width:650px;margin-bottom:36px}
 @media(max-width:600px){.project-page-menu-button{font-size:9px;padding:8px 10px;margin-left:0}}
+
+/* Original portrait photographs stay fully visible within their gallery frames. */
+.project-page-photo-lead.portfolio-photo{height:clamp(360px,55vw,680px);aspect-ratio:auto;background:#e8e7da;border:1px solid #dfdfcf}
+.project-page-photo-detail.portfolio-photo{aspect-ratio:3/4;background:#e8e7da;border:1px solid #dfdfcf}
+.project-page-photo-real .portfolio-photo>img{object-fit:contain;object-position:center}
+.project-page-photo-real figcaption{letter-spacing:.6px;font-size:9px}
+.project-page-photo-real figcaption>span:last-child{font-size:inherit;letter-spacing:inherit;text-align:left}
+.project-page-photo-grid--sunflower{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 24px}
+@media(max-width:900px){.project-page-photo-grid--sunflower{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.project-page-photo-lead.portfolio-photo{height:auto;aspect-ratio:3/4}.project-page-photo-grid--sunflower{grid-template-columns:1fr;gap:27px}.project-page-photo-real figcaption{font-size:8px}}
