@@ -1,0 +1,20 @@
+.submenu-story #board-story-title:focus{outline:none}
+.submenu-back{display:inline-flex;align-items:center;gap:9px;background:transparent;padding:9px 0;margin:0 0 25px;font-size:10px;color:var(--olive)}
+.submenu-back>svg{width:15px;height:15px}
+.submenu-list{margin-top:24px;border-top:1px solid var(--rule)}
+.submenu-choice{display:flex;align-items:center;justify-content:space-between;gap:22px;width:100%;background:transparent;border-bottom:1px solid var(--rule);padding:19px 4px;text-align:left}
+.submenu-choice:hover{background:#e5e9d96b}.submenu-choice-title{display:block;font-family:var(--serif);font-size:27px;line-height:1.15;color:var(--ink)}
+.submenu-choice small{display:block;font-size:10px;line-height:1.8;color:var(--muted);margin-top:8px}
+.submenu-choice>svg{width:18px;height:18px;color:var(--olive)}
+.submenu-choice-copy{min-width:0}.submenu-media{aspect-ratio:1.8;margin:21px 0}
+.submenu-story .submenu-meta{font-size:10px;line-height:1.9;color:var(--muted);margin-bottom:18px}
+.submenu-story .submenu-status{font-size:9px;line-height:1.7;letter-spacing:.6px;color:var(--olive);margin-bottom:15px}
+.submenu-details{padding-left:17px;margin:20px 0 0;color:var(--muted);font-size:12px;line-height:1.9}
+.submenu-details li+li{margin-top:11px}.submenu-details strong{font-weight:500;color:var(--ink)}
+.submenu-story .project-tags{margin-top:23px}
+.transcript-download-card{padding:24px;background:#e9ebde;border:1px solid #d5dcc8;margin-top:24px}
+.transcript-download-card h3{font-family:var(--serif);font-size:31px;line-height:1.2;margin-top:13px}
+.transcript-download-card p{font-size:10px;line-height:1.8;color:var(--muted);margin-top:10px}
+.transcript-actions{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-top:23px}
+.transcript-actions .text-link{margin-top:0}.transcript-actions .button{padding:13px 15px;gap:13px;font-size:10px}
+@media(max-width:680px){.submenu-choice{padding:17px 0;gap:17px}.submenu-choice-title{font-size:26px}.submenu-choice small{font-size:10px}.submenu-media{aspect-ratio:1.5}.submenu-details{font-size:11px}.transcript-download-card{padding:19px}.transcript-download-card h3{font-size:29px}.transcript-actions{gap:15px}.transcript-actions .button{padding:12px 13px;font-size:9px;gap:10px}.transcript-actions .text-link{font-size:10px}.submenu-back{font-size:10px}}

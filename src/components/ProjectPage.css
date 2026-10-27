@@ -65,3 +65,6 @@
 @media(prefers-reduced-motion:reduce){.project-page-related-arrow{transition:none}}
 /* Route focus announces the heading without outlining a noninteractive title. */
 .project-page h1[tabindex='-1']:focus{outline:none}
+.project-page-menu-button{display:inline-flex;align-items:center;gap:10px;background:transparent;border:1px solid #abb39b;padding:9px 12px;margin-left:auto;font-size:10px;color:var(--olive)}
+.project-page-menu-button>svg{width:14px;height:14px}.project-page-menu-button:hover{background:#e5e9db}
+@media(max-width:600px){.project-page-menu-button{font-size:9px;padding:8px 10px;margin-left:0}}

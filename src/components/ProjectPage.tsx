@@ -4,7 +4,7 @@ import PlaceholderArt from './PlaceholderArt'
 import './ProjectPage.css'
 
 export type ProjectPageId = 'pilight' | 'line-follower' | 'dart-robot'
-type Props = { projectId: ProjectPageId }
+type Props = { projectId: ProjectPageId; onOpenMenu?: (projectId: ProjectPageId) => void }
 
 function Arrow({ back = false }: { back?: boolean }) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true" focusable="false">
@@ -19,14 +19,15 @@ function PhotoSpace({ projectId, title, number, caption, wide = false }: { proje
   </figure>
 }
 
-function RelatedProject({ href, eyebrow, title, description }: { href: string; eyebrow: string; title: string; description: string }) {
-  return <a className="project-page-related" href={href}>
+function RelatedProject({ href, eyebrow, title, description, onOpenMenu }: { href: string; eyebrow: string; title: string; description: string; onOpenMenu?: (projectId: ProjectPageId) => void }) {
+  const relatedId = href.match(/^#\/projects\/(pilight|line-follower|dart-robot)$/)?.[1] as ProjectPageId | undefined
+  return <a className="project-page-related" href={href} aria-haspopup={onOpenMenu ? 'dialog' : undefined} onClick={event => { if (onOpenMenu && relatedId) { event.preventDefault(); onOpenMenu(relatedId) } }}>
     <div><span className="project-page-kicker">{eyebrow}</span><h2>{title}</h2><p>{description}</p></div>
     <span className="project-page-related-arrow"><Arrow /></span>
   </a>
 }
 
-export default function ProjectPage({ projectId }: Props) {
+export default function ProjectPage({ projectId, onOpenMenu }: Props) {
   const isBackstory = projectId === 'dart-robot'
   const project = isBackstory ? null : projects.find(item => item.id === projectId)
   const title = project?.title ?? 'Dart-launching robot'
@@ -37,6 +38,7 @@ export default function ProjectPage({ projectId }: Props) {
     <article className="project-page-inner page-width">
       <nav className="project-page-breadcrumb" aria-label="Project breadcrumb">
         <a href="#work"><Arrow back />Back to projects</a><span aria-hidden="true">/</span><span>{title}</span>
+        {onOpenMenu && <button type="button" className="project-page-menu-button" onClick={() => onOpenMenu(projectId)} aria-haspopup="dialog">Project menu <Arrow /></button>}
       </nav>
 
       <header className="project-page-header">
@@ -73,9 +75,9 @@ export default function ProjectPage({ projectId }: Props) {
       </div>
 
       <section className="project-page-next" aria-label="Continue exploring">
-        {projectId === 'pilight' && <RelatedProject href="#/projects/line-follower" eyebrow="ANOTHER IDEA ON THE WORKBENCH" title="PID Line-Following Car" description="Exploring sensing and feedback control with an ESP32." />}
-        {projectId === 'line-follower' && <RelatedProject href="#/projects/pilight" eyebrow="ANOTHER IDEA ON THE WORKBENCH" title="PiLight" description="Connecting frequency information with reactive light." />}
-        {isBackstory && <RelatedProject href="#/projects/line-follower" eyebrow="THE NEXT CHAPTER" title="PID Line-Following Car" description="The current project inspired by this earlier robot." />}
+        {projectId === 'pilight' && <RelatedProject href="#/projects/line-follower" eyebrow="ANOTHER IDEA ON THE WORKBENCH" title="PID Line-Following Car" description="Exploring sensing and feedback control with an ESP32." onOpenMenu={onOpenMenu} />}
+        {projectId === 'line-follower' && <RelatedProject href="#/projects/pilight" eyebrow="ANOTHER IDEA ON THE WORKBENCH" title="PiLight" description="Connecting frequency information with reactive light." onOpenMenu={onOpenMenu} />}
+        {isBackstory && <RelatedProject href="#/projects/line-follower" eyebrow="THE NEXT CHAPTER" title="PID Line-Following Car" description="The current project inspired by this earlier robot." onOpenMenu={onOpenMenu} />}
       </section>
       <div className="project-page-bottom"><a href="#work"><Arrow back />All projects</a><a href="mailto:jaredashman0209@gmail.com">Let’s talk about the build <Arrow /></a></div>
     </article>

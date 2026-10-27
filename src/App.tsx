@@ -3,6 +3,10 @@ import type { SVGProps } from 'react'
 import BrandMark from './components/BrandMark'
 import PlaceholderArt from './components/PlaceholderArt'
 import ProjectPage from './components/ProjectPage'
+import PortfolioMenu from './components/PortfolioMenu'
+import type { MenuSelection } from './components/PortfolioMenu'
+import { roles } from './experience'
+import type { RoleId } from './experience'
 import type { ProjectPageId } from './components/ProjectPage'
 import type { BoardPart } from './components/CircuitScene'
 import { projects } from './projects'
@@ -12,11 +16,7 @@ const RESUME = `${import.meta.env.BASE_URL}Jared-Ashman-Resume.pdf`
 const LINKEDIN = 'https://www.linkedin.com/in/jareddashman/'
 const EMAIL = 'jaredashman0209@gmail.com'
 
-const roles = [
-  { id: 'teaching', title: 'Student Teacher', organization: 'UCLA Henry Samueli School of Engineering and Applied Science', date: 'SEP 2026 — PRESENT', context: 'Underwater robotics & biomimetic engineering', summary: 'Helping engineering concepts become something students can build, test, and demonstrate.', details: ['Lead hands-on undergraduate instruction in underwater robotics and biomimetic engineering.', 'Teach fluid dynamics, Arduino programming, soldering, circuitry, logic design, and hardware integration.', 'Mentor student teams from foundational concepts through assembly, testing, and demonstration.'], tags: ['Robotics instruction', 'Hardware integration', 'Student mentorship'] },
-  { id: 'navy', title: 'Student Trainee (SSEP)', organization: 'U.S. Navy · San Diego, CA', date: 'JUN 2026 — SEP 2026', context: 'Data analysis & systems sustainment', summary: 'Working through complex failure data to better understand the systems behind it.', details: ['Analyzed complex hardware-failure data for Department of the Navy C5 systems to identify trends and support lifecycle sustainment.', 'Used failure data to investigate sustainment issues and support improvements to logistics processes.'], tags: ['Data analysis', 'Analytical problem-solving', 'Lifecycle sustainment'] },
-  { id: 'admissions', title: 'IT Specialist', organization: 'UCLA Undergraduate Admissions', date: 'SEP 2025 — JUN 2026', context: 'Technical support & everyday reliability', summary: 'Supporting the hardware, software, and website that help keep admissions moving.', details: ['Supported more than 100 workstations through hardware maintenance, software deployments, updates, and troubleshooting.', 'Updated Undergraduate Admissions website content and helped resolve day-to-day technical issues.'], tags: ['100+ workstations', 'Technical troubleshooting', 'Systems maintenance'] },
-] as const
+
 
 function Arrow({ diagonal = false, ...props }: SVGProps<SVGSVGElement> & { diagonal?: boolean }) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true" {...props}>{diagonal ? <path d="M6 18 18 6M6 6h12v12" /> : <path d="M4 12h15m-6-6 6 6-6 6" />}</svg>
@@ -26,33 +26,7 @@ function readProjectRoute(): ProjectPageId | null {
   const match = window.location.hash.match(/^#\/projects\/(pilight|line-follower|dart-robot)\/?$/)
   return match ? match[1] as ProjectPageId : null
 }
-const partTitles: Record<BoardPart, string> = { projects: 'Projects', experience: 'Experience', transcript: 'Transcript', about: 'About me', pickleball: 'UCLA Club Pickleball', resume: 'My résumé' }
-
-function BoardDialog({ part, onClose }: { part: BoardPart | null; onClose: () => void }) {
-  const dialog = useRef<HTMLDialogElement>(null)
-  useEffect(() => {
-    const element = dialog.current
-    if (!element || !part) return
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    element.showModal()
-    return () => { element.close(); document.body.style.overflow = previousOverflow }
-  }, [part])
-  return <dialog ref={dialog} className="board-dialog" aria-labelledby="board-story-title" onCancel={event => { event.preventDefault(); onClose() }} onClick={event => { if (event.target === event.currentTarget) onClose() }}>
-    {part && <div className="board-story">
-      <button type="button" className="board-story-close" aria-label="Close story" onClick={onClose}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
-      <BrandMark className="board-story-mark" /><div className="eyebrow">ONE PART OF THE WHOLE</div><h2 id="board-story-title">{partTitles[part]}</h2>
-      {part === 'projects' && <><p>Turning signals into light, and feedback into motion. These are the ideas I’m working on at the moment.</p><div className="board-story-links">{projects.map(project => <a href={`#/projects/${project.id}`} key={project.id} onClick={onClose}><span>{project.title}<small>{project.tags.join(' · ')}</small></span><Arrow diagonal /></a>)}</div></>}
-      {part === 'experience' && <><p>Hands-on robotics instruction, Navy hardware-failure data analysis, and technical support for more than 100 workstations. Each role adds a different perspective to how I approach a problem.</p><a className="text-link" href="#experience" onClick={onClose}>Explore my work experience <Arrow /></a></>}
-      {part === 'transcript' && <><p>The academic foundations behind the projects.</p><dl className="academic-record"><div><dt>UNIVERSITY</dt><dd>University of California, Los Angeles</dd></div><div><dt>DEGREE</dt><dd>B.S. Computer Engineering</dd></div><div><dt>EXPECTED GRADUATION</dt><dd>June 2029</dd></div><div><dt>ACADEMIC STANDING</dt><dd>3.9 GPA · Dean’s List</dd></div></dl><div className="transcript-space" data-document-slot="" role="img" aria-label="Reserved space for a future transcript" /><p className="document-status">Transcript not uploaded yet.</p></>}
-      {part === 'about' && <><p>I’m Jared, a computer engineering student at UCLA. I’m interested in the places where circuits, code, and real-world problems meet.</p><p>I’m also the Computer Vision Simulation Manager on the Bruin Underwater Racing software team, and a member of UCLA Club Pickleball.</p><a className="text-link" href="#about" onClick={onClose}>A little more about me <Arrow /></a></>}
-      {part === 'pickleball' && <><p>A different side of life at UCLA. Club pickleball is another part of who I am, alongside the circuits and code.</p><a className="text-link" href="#pickleball" onClick={onClose}>Off the workbench <Arrow /></a></>}
-      {part === 'resume' && <><p>My education, technical experience, current projects, and activities in one place.</p><p>UCLA Computer Engineering · Expected June 2029<br />Active Secret Clearance · Sponsored by the Department of the Navy</p><a className="button button-primary board-resume-download" href={RESUME} download>Download my résumé <Download /></a></>}
-    </div>}
-  </dialog>
-}
-
-function Home({ onSelectPart }: { onSelectPart: (part: BoardPart) => void }) {
+function Home({ onSelectPart, onOpenProject, onOpenRole }: { onSelectPart: (part: BoardPart) => void; onOpenProject: (id: ProjectPageId) => void; onOpenRole: (id: RoleId) => void }) {
   return <main id="main">
     <section className="hero page-width" aria-labelledby="hero-heading">
       <div className="hero-copy">
@@ -80,8 +54,8 @@ function Home({ onSelectPart }: { onSelectPart: (part: BoardPart) => void }) {
     <section id="work" className="work-section page-width" aria-labelledby="work-heading">
       <div className="section-heading"><div><div className="eyebrow"><span className="section-number">01 /</span> LEARNING BY BUILDING</div><h2 id="work-heading">Ideas on <em>the workbench.</em></h2></div><p>From signals to light. From feedback to motion.<br />Learning how it all connects.</p></div>
       <div className="project-grid">{projects.map(project => <article className="project-card" key={project.id}>
-        <a className={`project-art-button project-art-${project.id}`} href={`#/projects/${project.id}`} aria-label={`Explore ${project.title}`}><PlaceholderArt kind={project.id} label={project.title} className="project-photo-slot" /><div className="art-topline"><span>{project.number} / {project.eyebrow}</span><span className="progress-badge"><i />{project.status.toUpperCase()}</span></div><span className="art-open"><Arrow diagonal /></span></a>
-        <div className="project-info"><div className="project-title-row"><h3><a href={`#/projects/${project.id}`}>{project.title}</a></h3><Arrow diagonal /></div><p>{project.summary}</p><div className="project-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
+        <button type="button" className={`project-art-button project-art-${project.id}`} onClick={() => onOpenProject(project.id)} aria-haspopup="dialog" aria-label={`Explore ${project.title}`}><PlaceholderArt kind={project.id} label={project.title} className="project-photo-slot" /><div className="art-topline"><span>{project.number} / {project.eyebrow}</span><span className="progress-badge"><i />{project.status.toUpperCase()}</span></div><span className="art-open"><Arrow diagonal /></span></button>
+        <div className="project-info"><div className="project-title-row"><h3><button type="button" onClick={() => onOpenProject(project.id)} aria-haspopup="dialog">{project.title}</button></h3><Arrow diagonal /></div><p>{project.summary}</p><div className="project-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
       </article>)}</div>
     </section>
 
@@ -89,14 +63,14 @@ function Home({ onSelectPart }: { onSelectPart: (part: BoardPart) => void }) {
       <div className="section-heading"><div><div className="eyebrow"><span className="section-number">02 /</span> WORK, PAST & PRESENT</div><h2 id="experience-heading">Experience that <em>shapes me.</em></h2></div><a className="text-link experience-resume" href={RESUME} download>Full résumé <Download /></a></div>
       <p className="experience-intro">From teaching in the lab to working through Navy hardware-failure data, these roles have brought different kinds of engineering problems into focus.</p>
       <div className="experience-list">{roles.map((role, index) => <article key={role.id} className="experience-row experience-story">
-        <figure className="experience-photo"><PlaceholderArt kind={role.id} label={`${role.title} at ${role.organization}`} /><figcaption>0{index + 1} / {role.context}</figcaption></figure>
-        <div className="experience-story-content"><div className="experience-date">{role.date}</div><div className="experience-role"><h3>{role.title}</h3><span>{role.organization}</span></div><p className="experience-lead">{role.summary}</p><ul className="experience-details">{role.details.map(detail => <li key={detail}>{detail}</li>)}</ul><div className="project-tags">{role.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
+        <figure className="experience-photo"><button type="button" className="experience-photo-button" onClick={() => onOpenRole(role.id)} aria-haspopup="dialog" aria-label={`Explore ${role.title}`}><PlaceholderArt kind={role.id} label={`${role.title} at ${role.organization}`} /></button><figcaption>0{index + 1} / {role.context}</figcaption></figure>
+        <div className="experience-story-content"><div className="experience-date">{role.date}</div><div className="experience-role"><h3><button type="button" className="job-title-button" onClick={() => onOpenRole(role.id)} aria-haspopup="dialog">{role.title}<Arrow diagonal /></button></h3><span>{role.organization}</span></div><p className="experience-lead">{role.summary}</p><ul className="experience-details">{role.details.map(detail => <li key={detail}>{detail}</li>)}</ul><div className="project-tags">{role.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
       </article>)}</div>
     </section>
 
     <section id="pickleball" className="pickleball-section" aria-labelledby="pickleball-heading"><div className="pickleball-inner page-width">
-      <div className="pickleball-copy"><div className="eyebrow"><span className="section-number">03 /</span> OFF THE WORKBENCH</div><h2 id="pickleball-heading">UCLA Club<br /><em>Pickleball.</em></h2><p>A different side of life at UCLA. Alongside the circuits, code, and engineering projects, I’m involved in UCLA Club Pickleball.</p><span className="pickleball-detail">PART OF THE TEAM. PART OF THE WHOLE.</span></div>
-      <PlaceholderArt kind="pickleball" label="UCLA Club Pickleball" className="pickleball-main-photo" /><div className="pickleball-photo-pair"><PlaceholderArt kind="pickleball" label="Pickleball court" variant="detail" /><PlaceholderArt kind="pickleball" label="Club pickleball" variant="secondary" /></div>
+      <div className="pickleball-copy"><div className="eyebrow"><span className="section-number">03 /</span> OFF THE WORKBENCH</div><h2 id="pickleball-heading"><button type="button" className="pickleball-title" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog">UCLA Club<br /><em>Pickleball.</em></button></h2><p>A different side of life at UCLA. Alongside the circuits, code, and engineering projects, I’m involved in UCLA Club Pickleball.</p><span className="pickleball-detail">PART OF THE TEAM. PART OF THE WHOLE.</span><button type="button" className="text-link pickleball-projects-trigger" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog">Explore pickleball projects <Arrow /></button></div>
+      <button type="button" className="pickleball-open-photo pickleball-main-photo" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog" aria-label="Explore UCLA Club Pickleball"><PlaceholderArt kind="pickleball" label="UCLA Club Pickleball" /></button><div className="pickleball-photo-pair"><PlaceholderArt kind="pickleball" label="Pickleball court" variant="detail" /><PlaceholderArt kind="pickleball" label="Club pickleball" variant="secondary" /></div>
     </div></section>
 
     <section id="about" className="about-section" aria-labelledby="about-heading"><div className="about-inner page-width">
@@ -111,10 +85,12 @@ function Home({ onSelectPart }: { onSelectPart: (part: BoardPart) => void }) {
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [projectId, setProjectId] = useState<ProjectPageId | null>(readProjectRoute)
-  const [activePart, setActivePart] = useState<BoardPart | null>(null)
+  const [activeMenu, setActiveMenu] = useState<MenuSelection | null>(null)
+  const menuTrigger = useRef<HTMLElement | null>(null)
+  const openMenu = (selection: MenuSelection) => { menuTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; setActiveMenu(selection); setMenuOpen(false) }
   const menuButton = useRef<HTMLButtonElement>(null)
   useEffect(() => {
-    const updateRoute = () => { setProjectId(readProjectRoute()); setMenuOpen(false); setActivePart(null) }
+    const updateRoute = () => { setProjectId(readProjectRoute()); setMenuOpen(false); setActiveMenu(null) }
     window.addEventListener('hashchange', updateRoute)
     return () => window.removeEventListener('hashchange', updateRoute)
   }, [])
@@ -140,11 +116,11 @@ function App() {
     <header id="top" className="site-header"><div className="header-inner page-width">
       <a href="#top" className="brand" aria-label="Jared Ashman, home"><BrandMark /><span className="brand-name">Jared Ashman<span>THE PARTS THAT MAKE ME</span></span></a>
       <button type="button" ref={menuButton} className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-controls="main-nav" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}><span className={menuOpen ? 'menu-lines is-open' : 'menu-lines'}><i /><i /></span></button>
-      <nav id="main-nav" className={menuOpen ? 'main-nav is-open' : 'main-nav'} aria-label="Main navigation"><a href="#work" onClick={() => setMenuOpen(false)}>Projects</a><a href="#experience" onClick={() => setMenuOpen(false)}>Experience</a><a href="#pickleball" onClick={() => setMenuOpen(false)}>Pickleball</a><a href="#about" onClick={() => setMenuOpen(false)}>About</a><a className="nav-contact" href="#contact" onClick={() => setMenuOpen(false)}>Let’s connect <Arrow diagonal /></a></nav>
+      <nav id="main-nav" className={menuOpen ? 'main-nav is-open' : 'main-nav'} aria-label="Main navigation">{(['projects', 'experience', 'pickleball'] as const).map(part => <button type="button" key={part} className="nav-menu" onClick={() => openMenu({ type: 'part', id: part })} aria-haspopup="dialog" aria-controls="portfolio-menu">{part.charAt(0).toUpperCase() + part.slice(1)}<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg></button>)}<a href="#about" onClick={() => setMenuOpen(false)}>About</a><a className="nav-contact" href="#contact" onClick={() => setMenuOpen(false)}>Let’s connect <Arrow diagonal /></a></nav>
     </div></header>
-    {projectId ? <ProjectPage projectId={projectId} /> : <Home onSelectPart={setActivePart} />}
+    {projectId ? <ProjectPage projectId={projectId} onOpenMenu={id => openMenu({ type: 'project', id })} /> : <Home onSelectPart={id => openMenu({ type: 'part', id })} onOpenProject={id => openMenu({ type: 'project', id })} onOpenRole={id => openMenu({ type: 'role', id })} />}
     <footer className="site-footer page-width"><a href="#top" className="footer-signature" aria-label="Jared Ashman, back to home">Jared Ashman<span>.</span></a><p>Every part has a story.</p><button type="button" className="back-to-top" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })}>Back to top <Arrow diagonal /></button></footer>
-    <BoardDialog part={activePart} onClose={() => setActivePart(null)} />
+    <PortfolioMenu selection={activeMenu} onSelect={setActiveMenu} onClose={() => setActiveMenu(null)} triggerRef={menuTrigger} />
   </>
 }
 
