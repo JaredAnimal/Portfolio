@@ -7,7 +7,10 @@ import sunflowerElectronics from './assets/photos/sunflower/poolside-electronics
 import sunflowerWorkshopMonitor from './assets/photos/sunflower/workshop-monitor.jpg'
 import sunflowerPoolside from './assets/photos/sunflower/poolside.jpg'
 import sunflowerPoolMonitor from './assets/photos/sunflower/pool-monitor.jpg'
-import robotPlatform from './assets/photos/line-follower/robot-platform.jpg'
+import robotPlatform from './assets/photos/line-follower/robot-platform.png'
+import imageofPID from './assets/photos/line-follower/imageofPID.png'
+import brightLightDisplay from './assets/photos/brightlight/esp32-led-display.png'
+import brightLightBench from './assets/photos/brightlight/esp32-bench-test.png'
 import districtShowcase from './assets/photos/dart-robot/district-showcase.png'
 import dartFlowSimulation from './assets/photos/dart-robot/dart-flow-simulation.jpg'
 import launchAngleChart from './assets/photos/dart-robot/launch-angle-chart.png'
@@ -19,7 +22,7 @@ import type { ProjectKind } from './projects'
 
 export interface PortfolioPhoto {
   id: string
-  subject: 'pickleball' | 'sunflower' | 'line-follower' | 'dart-robot' | RoleId
+  subject: 'pickleball' | 'sunflower' | 'pilight' | 'line-follower' | 'dart-robot' | RoleId
   src: string
   alt: string
   caption: string
@@ -44,7 +47,14 @@ export const sunflowerPhotos: PortfolioPhoto[] = [
 ]
 
 export const lineFollowerPhotos: PortfolioPhoto[] = [
-  { id: 'line-follower-platform', subject: 'line-follower', src: robotPlatform, width: 1200, height: 627, caption: 'Robot platform', alt: 'A red two-wheeled robot with exposed circuit boards, wiring, and front-mounted sensors on a white background.' },
+  { id: 'line-follower-platform', subject: 'line-follower', src: robotPlatform, width: 691, height: 361, caption: 'Robot platform', alt: 'A red two-wheeled line-following robot with exposed circuit boards, wiring, and front-mounted sensors.' },
+  { id: 'line-follower-sum-error', subject: 'line-follower', src: imageofPID, width: 1178, height: 722, caption: 'SUM vs. ERROR', alt: 'PID line-following car SUM vs. ERROR graph showing the sensor sum plotted against error.' },
+]
+
+// Full project page only; homepage and menu retain the BrightLight concept art.
+export const brightLightPhotos: PortfolioPhoto[] = [
+  { id: 'brightlight-esp32-display', subject: 'pilight', src: brightLightDisplay, width: 690, height: 1130, caption: 'ESP32 and LED display', alt: 'BrightLight ESP32 wired on a breadboard beside an illuminated LED matrix, with the controller labeled.' },
+  { id: 'brightlight-esp32-bench', subject: 'pilight', src: brightLightBench, width: 514, height: 766, caption: 'ESP32 bench testing', alt: 'BrightLight ESP32 breadboard setup connected to test equipment, with waveform traces visible on an oscilloscope.' },
 ]
 
 export const dartRobotPhotos: PortfolioPhoto[] = [

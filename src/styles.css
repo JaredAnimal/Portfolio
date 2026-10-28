@@ -121,3 +121,6 @@
 .experience-photo .portfolio-photo{aspect-ratio:auto}
 .experience-photo .portfolio-photo>img{height:auto}
 .experience-photo-button:hover .portfolio-photo{outline:1px solid #a1ac8e;outline-offset:3px}
+
+/* The transparent car cutout shares BrightLight’s concept-art background. */
+.photo-slot.placeholder-art-pilight,.photo-slot.portfolio-photo[data-photo="line-follower-platform"]{background:#e8e6d8}

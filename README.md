@@ -83,3 +83,7 @@ The wind-turbine project records team testing of four designs: Savonius, HAWT, V
 ## Additional images — October 28, 2026
 
 `Addimages.zip` supplies seven images, preserved unchanged with descriptive filenames. The PID car uses `line-follower/robot-platform.jpg` on its homepage card, submenu, and dedicated page. The dart robot uses `dart-robot/district-showcase.png` as its lead, with `dart-flow-simulation.jpg` and `launch-angle-chart.png` as uncropped supporting diagrams. Experience entries and their submenus use `experience/underwater-robotics.jpg`, `navy-ships.jpg`, and `ucla-web-portals.jpg`. Captions describe visible content without treating the images as evidence of unconfirmed hardware specifications or individual contributions.
+
+## PID and BrightLight images — October 28, 2026
+
+The supplied transparent PNG replaces the PID car image on the homepage, in menus, and on its project page. Its background matches BrightLight’s concept art. The PID page also includes the supplied SUM vs. ERROR graph (`imageofPID.png`), displayed uncropped at full gallery width. BrightLight retains its concept image on the homepage and in menus; the two supplied portrait ESP32 photographs appear only in its full project page gallery, side by side on desktop and stacked on phones, with their natural proportions preserved.

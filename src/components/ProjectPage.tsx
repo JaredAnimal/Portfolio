@@ -5,7 +5,7 @@ import { pickleballProjects } from '../pickleballProjects'
 import type { PickleballProjectId } from '../pickleballProjects'
 import PlaceholderArt from './PlaceholderArt'
 import Photo from './Photo'
-import { projectPhotos } from '../photos'
+import { brightLightPhotos, projectPhotos } from '../photos'
 import { ProjectLinks, ProjectMetrics } from './ProjectDetails'
 import { dartRobotLinks } from '../projectDetails'
 import './ProjectPage.css'
@@ -37,6 +37,7 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
   const title = projectTitle(projectId)
   const photos = projectPhotos[projectId as keyof typeof projectPhotos]
   const leadPhoto = photos?.[0]
+  const galleryPhotos = projectId === 'pilight' ? brightLightPhotos : photos?.slice(1)
   const status = project?.status ?? pickleball?.status ?? (pickleball ? 'Club project' : 'Robotics project')
   const tags = project?.tags ?? pickleball?.tags ?? ['Robotics', 'Mechanical design']
   const overview = project?.overview ?? pickleball?.overview ?? 'I built a dart-launching robot. See the district innovation showcase for the project presentation.'
@@ -65,7 +66,7 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
       {project && <section className="project-page-contributions" aria-labelledby="project-focus-title"><div className="project-page-section-head"><h2 id="project-focus-title">Design and implementation</h2></div><div className="project-page-contribution-grid">{project.contributions.map((contribution, index) => <section key={contribution.title}><span className="project-page-contribution-number">0{index + 1}</span><h3>{contribution.title}</h3><p>{contribution.text}</p></section>)}</div></section>}
       {pickleball && <section className="project-page-implementation" aria-labelledby="project-implementation-title"><h2 id="project-implementation-title">Implementation</h2><ul>{pickleball.details.map(detail => <li key={detail}>{detail}</li>)}</ul></section>}
 
-      {photos ? photos.length > 1 && <div className={`project-page-photo-grid ${projectId === 'sunflower' ? 'project-page-photo-grid--sunflower' : 'project-page-photo-grid--supplied'}`} role="group" aria-label={`${title} ${projectId === 'sunflower' ? 'photo' : 'image'} gallery`}>{photos.slice(1).map(photo => <figure className="project-page-photo project-page-photo-real" key={photo.id}><Photo photo={photo} className={projectId === 'sunflower' ? 'project-page-photo-detail' : 'project-page-photo-natural'} /><figcaption><span>{photo.caption}</span></figcaption></figure>)}</div>
+      {galleryPhotos ? galleryPhotos.length > 0 && <div className={`project-page-photo-grid ${projectId === 'sunflower' ? 'project-page-photo-grid--sunflower' : projectId === 'pilight' ? 'project-page-photo-grid--portrait' : 'project-page-photo-grid--supplied'}`} role="group" aria-label={`${title} ${projectId === 'sunflower' ? 'photo' : 'image'} gallery`}>{galleryPhotos.map(photo => <figure className="project-page-photo project-page-photo-real" key={photo.id}><Photo photo={photo} className={projectId === 'sunflower' ? 'project-page-photo-detail' : 'project-page-photo-natural'} /><figcaption><span>{photo.caption}</span></figcaption></figure>)}</div>
         : !pickleball && projectId !== 'wind-turbine' && <div className="project-page-photo-grid"><PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="02" caption="DETAIL" /><PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="03" caption="BUILD" /></div>}
 
       {related && <section className="project-page-next" aria-label="Related project"><a className="project-page-related" href={projectHref(related.id)}><div><span className="project-page-kicker">Related project</span><h2>{related.title}</h2><p>{related.summary}</p></div><span className="project-page-related-arrow"><Arrow /></span></a></section>}

@@ -99,3 +99,9 @@
 .project-page-photo-natural.portfolio-photo>img{height:auto}
 .project-page-photo-grid--supplied{align-items:start;max-width:1100px;margin-inline:auto;gap:32px}
 @media(max-width:600px){.project-page-photo-grid--supplied{grid-template-columns:1fr;gap:27px}}
+
+/* BrightLight's portrait build photos appear only on its full project page. */
+.project-page-photo-grid--portrait{max-width:800px;margin-inline:auto;align-items:start;gap:32px}
+@media(max-width:600px){.project-page-photo-grid--portrait{grid-template-columns:1fr;max-width:380px;gap:30px}}
+
+.project-page-photo-grid--supplied:has(>figure:only-child){grid-template-columns:minmax(0,1fr);max-width:1000px}
