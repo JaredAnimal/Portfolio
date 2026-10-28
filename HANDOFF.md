@@ -14,11 +14,11 @@ Live site: https://jaredanimal.github.io/Portfolio/
 
 - Jared’s supplied portrait appears beside the homepage introduction, below the headline. Its original JPEG is renamed `src/assets/photos/jared-ashman-portrait.jpg`, with a CSS head-and-shoulders crop, responsive sizing, and descriptive alt text. Preserve the original face and image; the crop only changes the visible framing.
 - Interactive circuit board with six accessible hotspots, keyboard/touch support, reduced motion, and a non-WebGL fallback.
-- Project pages, employment details, concept illustrations, and nested menus with Back, Escape, and focus restoration.
-- The three pickleball projects appear only inside the Pickleball submenu: reservation bot, reservation-sharing website, and a proposed 3D-printed net-base extension.
+- Project pages, employment details, concept illustrations, and nested menus with Back, Escape, and focus restoration. The net-extension project includes an interactive Three.js concept model; the dart robot is independent and links to the district showcase. Decorative short sayings were reduced in favor of descriptive labels.
+- All eight projects appear at `#/projects`, including the three pickleball projects and the wind turbine. Pickleball projects also remain in the club submenu and have dedicated shareable pages. BrightLight is the new display name, with the old `pilight` route preserved as an alias.
 - Approved resume preserved unchanged. Renamed unofficial transcript published as `public/Jared-Ashman-Transcript.pdf`, with student ID and birth date removed and academic content preserved. Never publish the original upload.
 - The portfolio now includes the restored “Curiosity, wired into practice” headline, a matching LinkedIn icon/link beside the résumé, USS Sunflower with design details and photo/link slots, project metric captions and link slots, and consistent circuit-board pointer motion. The circuit figure’s top caption has been removed; internship wording uses computer engineering.
-- Validation includes 20 production browser checks, with focused checks for pointer motion, touch, reduced motion, and the non-WebGL fallback.
+- Browser validation covers project and source dialogs, routes, metrics, downloads, accessibility, pointer motion, touch, reduced motion, and non-WebGL fallbacks.
 - Content lives in `src/projects.ts`, `src/experience.ts`, and `src/pickleballProjects.ts`; shared menus are in `src/components/PortfolioMenu.tsx`. See `README.md` for more detail.
 
 ## Remaining tasks
@@ -27,8 +27,8 @@ Live site: https://jaredanimal.github.io/Portfolio/
 - Replace the remaining concept illustrations with real photos when supplied; slots use `data-photo-slot` and `PlaceholderArt`.
 - Add further project specifications, results, or live links only when confirmed. The car and net extension remain in progress; dart-robot details are intentionally limited.
 - Separate LinkedIn updates remain unapplied. Copy-ready text is saved outside Git at `/workspace/linkedin-profile-updates.md`; no profile edits or posts were made.
-- USS Sunflower is available from the Projects menu and its dedicated page at `#/projects/sunflower`, while the homepage features PiLight and the PID car.
-- The full USS Sunflower design snapshot URL, other project URLs, and verified metric values can be supplied later. The source design PDF is not published.
+- USS Sunflower is available from the Projects menu and its dedicated page at `#/projects/sunflower`, while the homepage features BrightLight and the PID car.
+- The USS Sunflower design-snapshot link and video slots outside BrightLight have been removed. The source design PDF is not published. Wind turbine voltage/RPM and net-extension metrics remain pending; other displayed measurements were supplied by Jared. Picklebot links to the v0.2.6 Windows installer and shows the exact supplied JavaScript in an in-page viewer.
 
 ## Deployment instructions
 

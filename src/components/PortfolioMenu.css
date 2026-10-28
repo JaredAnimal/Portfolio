@@ -19,6 +19,8 @@
 .transcript-actions .text-link{margin-top:0}.transcript-actions .button{padding:13px 15px;gap:13px;font-size:10px}
 @media(max-width:680px){.submenu-choice{padding:17px 0;gap:17px}.submenu-choice-title{font-size:26px}.submenu-choice small{font-size:10px}.submenu-media{aspect-ratio:1.5}.submenu-details{font-size:11px}.transcript-download-card{padding:19px}.transcript-download-card h3{font-size:29px}.transcript-actions{gap:15px}.transcript-actions .button{padding:12px 13px;font-size:9px;gap:10px}.transcript-actions .text-link{font-size:10px}.submenu-back{font-size:10px}}
 
-.submenu-media.submenu-sunflower-photo{aspect-ratio:auto;height:clamp(280px,54vw,430px);background:#e8e7da}
+.submenu-media.submenu-sunflower-photo{aspect-ratio:4/3;height:auto;background:#e8e7da}
 .submenu-media.submenu-team-photo{aspect-ratio:2600/1733;background:#e8e7da}
 .submenu-media.portfolio-photo>img{object-fit:contain;object-position:center}
+
+.submenu-media.submenu-sunflower-photo.portfolio-photo>img{object-fit:cover;object-position:center 39%}

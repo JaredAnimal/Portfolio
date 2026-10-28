@@ -25,12 +25,12 @@ export const pickleballProjects: PickleballProject[] = [
     details: [
       'Use JavaScript, Node.js, and Playwright to drive the reservation browser flow.',
       'Coordinate timed reservation actions and repeated interactions with booking controls.',
-      'Leave sign-in and Duo verification in the browser flow for the user to complete.',
+      'Load login credentials from a local environment file and allow time for Duo verification.',
     ],
     tags: ['JavaScript', 'Node.js', 'Playwright', 'Browser automation'],
     status: 'Beta',
-    metrics: [{ caption: 'Booking turnaround' }],
-    links: [{ label: 'Source code' }, { label: 'Demo video' }],
+    metrics: [{ caption: 'Booking turnaround', value: '<0.3 s' }],
+    links: [{ label: 'Source code', source: 'picklebot' }, { label: 'Download Windows installer', href: 'https://github.com/JaredAnimal/UCLAPickleball/releases/download/picklebot-v0.2.6/Picklebot-Setup-0.2.6.exe', download: true }],
   },
   {
     id: 'reservation-sharing',
@@ -44,7 +44,7 @@ export const pickleballProjects: PickleballProject[] = [
       'Enforce court capacity and practice-time rules on the server, and synchronize reservations with a Google Sheet through an Apps Script bridge.',
     ],
     tags: ['TypeScript', 'Cloudflare Workers', 'D1', 'Google Apps Script'],
-    metrics: [{ caption: 'Response time' }, { caption: 'Players served' }],
+    metrics: [{ caption: 'Active monthly users', value: '45' }],
     links: [{ label: 'View project repository', href: 'https://github.com/JaredAnimal/UCLAPickleball' }, { label: 'Visit project website' }],
   },
   {

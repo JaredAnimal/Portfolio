@@ -4,12 +4,21 @@ import AxeBuilder from '@axe-core/playwright'
 import { readFile } from 'node:fs/promises'
 
 const projects = [
-  { title: 'PiLight', path: '#/projects/pilight' },
+  { title: 'BrightLight', path: '#/projects/brightlight' },
   { title: 'PID Line-Following Car', path: '#/projects/line-follower' },
 ]
 const boardParts = ['projects', 'experience', 'transcript', 'about', 'pickleball', 'resume']
 const roleTitles = ['Student Teacher', 'Student Trainee (SSEP)', 'IT Specialist']
 const pickleballProjects = ['Picklebot reservation bot', 'Reservation-sharing website', '3D-printed net base extension']
+const additionalProjects = [
+  { title: 'Dart-launching robot', path: '#/projects/dart-robot' },
+  { title: 'USS Sunflower', path: '#/projects/sunflower' },
+  { title: pickleballProjects[0], path: '#/projects/reservation-bot' },
+  { title: pickleballProjects[1], path: '#/projects/reservation-sharing' },
+  { title: pickleballProjects[2], path: '#/projects/net-tensioner' },
+  { title: 'Wind turbine', path: '#/projects/wind-turbine' },
+]
+const allProjects = [...projects, ...additionalProjects]
 const supersededClaims = /\b(?:Underwater ROV|Raspberry Pi|Arduino Uno|UNO|Minim|Java)\b/i
 const homeHeading = /Curiosity,\s*wired\s*into\s*practice\./
 
@@ -19,7 +28,7 @@ async function expectLoadedMedia(page: Page, expectedKinds: string[]) {
   const actualKinds = await slots.evaluateAll(elements => elements.map(element => element.getAttribute('data-placeholder-illustration') ?? element.getAttribute('data-photo-subject')).sort())
   expect(actualKinds).toEqual([...expectedKinds].sort())
   const descriptions: Record<string, RegExp> = {
-    pilight: /ESP32|LED|audio|sound|frequency|PiLight/i,
+    pilight: /ESP32|LED|audio|sound|frequency|BrightLight/i,
     'line-follower': /line.follow|car|robot|sensor/i,
     'dart-robot': /dart|launcher/i,
     teaching: /teaching|robotics|students?|classroom/i,
@@ -45,7 +54,8 @@ async function expectLoadedMedia(page: Page, expectedKinds: string[]) {
     } else {
       expect(alt).not.toMatch(/concept|placeholder|to follow/i)
       await expect(slot.locator('.placeholder-art__caption')).toHaveCount(0)
-      await expect(image).toHaveCSS('object-fit', 'contain')
+      const isCroppedLead = kind === 'sunflower' && await slot.evaluate(element => !!element.closest('.project-page-photo-wide'))
+      await expect(image).toHaveCSS('object-fit', isCroppedLead ? 'cover' : 'contain')
     }
     expect(alt).not.toMatch(/reserved space|photo space/i)
     await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 0 && element.naturalHeight > 0), `${kind} image must finish loading`).toBe(true)
@@ -70,7 +80,7 @@ async function expectProjectFacts(page: Page, title: string) {
   await expect(page.getByRole('heading', { level: 1, name: title, exact: true })).toBeVisible()
   await expect(main).toContainText('ESP32')
   await expect(main).not.toContainText(supersededClaims)
-  if (title === 'PiLight') {
+  if (title === 'BrightLight') {
     await expect(main).toContainText('Python')
     await expect(main).toContainText(/FFT/)
   } else {
@@ -87,7 +97,7 @@ async function expectProjectSubmenu(page: Page, title: string) {
   await expect(dialog.getByRole('heading', { name: title, exact: true })).toBeVisible()
   await expect(dialog).toContainText('ESP32')
   await expect(dialog).not.toContainText(supersededClaims)
-  if (title === 'PiLight') {
+  if (title === 'BrightLight') {
     await expect(dialog).toContainText('Python')
     await expect(dialog).toContainText(/FFT/)
   } else {
@@ -149,7 +159,7 @@ test('project images and titles open submenus that lead to the full shareable st
   }
 })
 
-test('deep project URLs survive reload and the car links to its dart-robot backstory and back', async ({ page }) => {
+test('deep project URLs survive reload and the dart robot is an independent project with its showcase link', async ({ page }) => {
   for (const project of projects) {
     await page.goto(`./${project.path}`)
     await expectProjectFacts(page, project.title)
@@ -159,25 +169,18 @@ test('deep project URLs survive reload and the car links to its dart-robot backs
     await expectProjectSubmenu(page, project.title)
     await closeBoardStory(page)
   }
-  await expect(page.getByRole('main')).toContainText(/Inspired by my dart.launching robot/i)
-  await page.locator('main a[href="#/projects/dart-robot"]').first().click()
-  await expect(page).toHaveURL(/#\/projects\/dart-robot$/)
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(/dart/i)
-  await expect(page.getByRole('main')).toContainText(/earlier|inspired/i)
-  await expect(page.getByRole('main')).toContainText(/line.following car/i)
+  await page.goto('./#/projects/pilight')
+  await expectProjectFacts(page, 'BrightLight')
+  await page.goto('./#/projects/dart-robot')
+  await expect(page.getByRole('heading', { level: 1, name: 'Dart-launching robot', exact: true })).toBeVisible()
+  await expect(page.getByRole('main')).not.toContainText(/earlier|backstory|next chapter/i)
+  await expect(page.getByRole('main').getByRole('link', { name: /district showcase/i })).toHaveAttribute('href', 'https://sites.google.com/sandi.net/sdusdccte-innovation-showcase/home')
   await page.reload()
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(/dart/i)
-  const backToCar = page.locator('main a[href="#/projects/line-follower"]').first()
-  await expect(backToCar).toBeVisible()
-  await backToCar.click()
-  await expectProjectFacts(page, 'PID Line-Following Car')
-  await page.goBack()
-  await expect(page).toHaveURL(/#\/projects\/dart-robot$/)
-  await expect(page.getByRole('heading', { level: 1 })).toContainText(/dart/i)
+  await expect(page.getByRole('heading', { level: 1, name: 'Dart-launching robot', exact: true })).toBeVisible()
 })
 
 test('keyboard skip link focuses the current project without navigating home', async ({ page }) => {
-  for (const path of ['#/projects/pilight', '#/projects/line-follower', '#/projects/dart-robot']) {
+  for (const path of ['#/projects/brightlight', '#/projects/line-follower', '#/projects/dart-robot', '#/projects', '#/projects/reservation-bot', '#/projects/wind-turbine']) {
     await page.goto(`./${path}`)
     const title = await page.getByRole('heading', { level: 1 }).innerText()
     await page.getByRole('link', { name: 'Skip to content', exact: true }).focus()
@@ -206,7 +209,7 @@ test('all six board hotspots open useful menus, with project and job submenus in
     await expect(dialog).toBeVisible()
     await expect(dialog.getByRole('heading').first()).toBeVisible()
     if (part === 'projects' || part === 'experience' || part === 'pickleball') {
-      const titles = part === 'projects' ? [...projects.map(project => project.title), 'Dart-launching robot', 'USS Sunflower'] : part === 'experience' ? roleTitles : pickleballProjects
+      const titles = part === 'projects' ? allProjects.map(project => project.title) : part === 'experience' ? roleTitles : pickleballProjects
       await expect(dialog.locator('button:not([aria-label="Close story"])')).toHaveCount(titles.length)
       for (const title of titles) {
         const choice = dialog.getByRole('button').filter({ hasText: title }).first()
@@ -236,6 +239,7 @@ test('transcript menu serves the clean three-page public PDF and restores keyboa
   await expect(dialog).toBeVisible()
   await expect(dialog).toContainText(/transcript/i)
   await expect(dialog).toContainText(/unofficial/i)
+  await expect(dialog).not.toContainText(/personal identifiers redacted/i)
   await expect(dialog).not.toContainText(/not uploaded|no transcript|transcript unavailable/i)
   await expect(dialog).toContainText(/3\.9/)
   await expect(dialog).toContainText(/Dean[’']s List/i)
@@ -312,14 +316,14 @@ test('USS Sunflower stays off the homepage while header and board project menus 
   for (const trigger of entryPoints) {
     await trigger.click()
     const choice = dialog.locator('[data-menu-item="sunflower"]')
-    await expect(dialog.locator('[data-menu-item]').last()).toHaveText(/USS Sunflower/)
+    await expect(choice).toBeVisible()
     await choice.click()
     await expect(dialog.getByRole('heading', { name: 'USS Sunflower', exact: true })).toBeVisible()
     await expect(dialog).toContainText(/underwater robotics/i)
     await expect(dialog.locator('[data-photo-subject="sunflower"]')).toHaveCount(1)
     await expect(dialog.locator('[data-photo="sunflower-workbench"] img')).toHaveAccessibleName(/USS Sunflower lying on a workshop table/i)
     await expect(dialog).not.toContainText(/project photos to come|photography to follow/i)
-    await expect(dialog.locator('[data-project-link-slot="Full design snapshot"]')).toContainText('Coming soon')
+    await expect(dialog).not.toContainText(/Full design snapshot/i)
     await expect(dialog.getByRole('link', { name: /Full design snapshot/ })).toHaveCount(0)
     await expect(dialog.getByRole('link', { name: 'Read full project story', exact: true })).toHaveAttribute('href', '#/projects/sunflower')
     await dialog.getByRole('button', { name: 'Back to projects', exact: true }).click()
@@ -336,8 +340,8 @@ test('USS Sunflower stays off the homepage while header and board project menus 
   await expect(page).toHaveTitle('USS Sunflower — Jared Ashman')
   await expect(page.getByRole('main')).toContainText(/six.motor/)
   await expect(page.getByRole('main')).toContainText('PS4')
-  await expect(page.getByRole('main').locator('[data-metric-pending]')).toHaveCount(2)
-  await expect(page.getByRole('main').locator('[data-project-link-slot="Full design snapshot"]')).toContainText('Coming soon')
+  await expect(page.getByRole('main').locator('[data-metric-pending]')).toHaveCount(0)
+  await expect(page.getByRole('main')).not.toContainText(/Full design snapshot/i)
   await expect(page.locator('.project-page-photo-wide [data-photo]')).toHaveAttribute('data-photo', 'sunflower-workbench')
   expect(await page.locator('main [data-photo]').evaluateAll(elements => elements.map(element => element.getAttribute('data-photo')))).toEqual([
     'sunflower-workbench', 'sunflower-hull', 'sunflower-electronics', 'sunflower-workshop-monitor', 'sunflower-poolside', 'sunflower-pool-monitor',
@@ -350,24 +354,39 @@ test('USS Sunflower stays off the homepage while header and board project menus 
   }
 })
 
-test('every project offers link spaces and pending metrics make no numerical claims', async ({ page }) => {
-  for (const id of ['pilight', 'line-follower', 'dart-robot', 'sunflower']) {
+test('project measurements use the supplied values and unmeasured wind and net results remain pending', async ({ page }) => {
+  const expectedMetrics: Record<string, [RegExp, RegExp][]> = {
+    brightlight: [[/Response latency/i, /<\s*50\s*ms/], [/Frequency resolution/i, /<\s*2\.5\s*Hz/i]],
+    'line-follower': [[/Tracking error/i, /4\s*%/], [/loop (?:period|time|rate)/i, /17\s*ms/]],
+    sunflower: [[/Dive depth/i, /33\s*(?:ft|feet)/i], [/Underwater runtime/i, /10\s*min/i]],
+    'reservation-bot': [[/Booking turnaround/i, /<\s*0?\.3\s*s/]],
+    'reservation-sharing': [[/Active monthly users/i, /^45$/]],
+  }
+  for (const [id, metrics] of Object.entries(expectedMetrics)) {
     await page.goto(`./#/projects/${id}`)
-    await expect(page.getByRole('main').getByRole('list', { name: 'Project links' })).toBeVisible()
-    const metrics = page.getByRole('main').locator('.project-metrics dd')
-    for (const metric of await metrics.all()) await expect(metric).toHaveText('—Measurement to come')
-  }
-  await page.goto('./')
-  await page.locator('[data-board-part="pickleball"]').click()
-  for (const title of pickleballProjects) {
-    const dialog = page.getByRole('dialog')
-    await dialog.getByRole('button').filter({ hasText: title }).first().click()
-    await expect(dialog.getByRole('list', { name: 'Project links' })).toBeVisible()
-    if (title === 'Reservation-sharing website') {
-      await expect(dialog.getByRole('link', { name: /View project repository/ })).toHaveAttribute('href', 'https://github.com/JaredAnimal/UCLAPickleball')
+    const main = page.getByRole('main')
+    await expect(main.locator('.project-metrics dt')).toHaveCount(metrics.length)
+    for (const [caption, value] of metrics) {
+      const metric = main.locator('.project-metrics > div').filter({ has: page.locator('dt').filter({ hasText: caption }) })
+      await expect(metric.locator('dd')).toHaveText(value)
     }
-    await dialog.getByRole('button', { name: 'Back to pickleball', exact: true }).click()
+    await expect(main.locator('[data-metric-pending]')).toHaveCount(0)
+    if (id !== 'brightlight') await expect(main).not.toContainText(/(?:Demo|Build) video/i)
   }
+  await expect(page.getByRole('main')).not.toContainText(/Response time|Players served/i)
+  await expect(page.getByRole('main').getByRole('link', { name: /View project repository/ })).toHaveAttribute('href', 'https://github.com/JaredAnimal/UCLAPickleball')
+  await page.goto('./#/projects/wind-turbine')
+  for (const caption of [/Output voltage/i, /Max(?:imum)? RPM/i]) {
+    const metric = page.getByRole('main').locator('.project-metrics > div').filter({ has: page.locator('dt').filter({ hasText: caption }) })
+    await expect(metric).toHaveAttribute('data-metric-pending', '')
+    await expect(metric.locator('dd')).toHaveText('—Measurement to come')
+  }
+  await expect(page.getByRole('main')).toContainText(/Savonius/i)
+  await expect(page.getByRole('main')).toContainText(/HAWT/)
+  await expect(page.getByRole('main')).toContainText(/VAWT/)
+  await expect(page.getByRole('main')).toContainText(/bladeless/i)
+  await page.goto('./#/projects/net-tensioner')
+  await expect(page.getByRole('main').locator('[data-metric-pending]')).toHaveCount(2)
 })
 
 test('home and each clickable job preserve current education, clearance, activities, and work history', async ({ page }) => {
@@ -420,7 +439,7 @@ test('home and each clickable job preserve current education, clearance, activit
   }
 })
 
-test('the three pickleball projects exist only inside the opened menu and support nested navigation', async ({ page }) => {
+test('the pickleball section keeps its three nested projects and restores focus', async ({ page }) => {
   await page.goto('./')
   await expectPickleballProjectsAbsent(page)
   await page.locator('[data-board-part="pickleball"]').click()
@@ -533,15 +552,15 @@ test('all six projected hotspots remain actionable on a touch screen', async ({ 
 })
 
 test('home, project pages, nested menus, and the transcript pass automated WCAG 2 A/AA checks', async ({ page }) => {
-  test.setTimeout(60_000)
-  for (const route of ['', '#/projects/pilight', '#/projects/line-follower', '#/projects/dart-robot', '#/projects/sunflower']) {
+  test.setTimeout(90_000)
+  for (const route of ['', '#/projects', ...allProjects.map(project => project.path)]) {
     await page.goto(`./${route}`)
     await page.evaluate(() => document.fonts.ready)
     const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
     expect.soft(result.violations.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => ({ target: node.target, message: node.any[0]?.message })) })), `accessibility at ${route || 'home'}`).toEqual([])
   }
   await page.goto('./')
-  for (const [part, child] of [['projects', 'PiLight'], ['experience', 'Student Teacher'], ['pickleball', 'Picklebot reservation bot'], ['transcript', '']]) {
+  for (const [part, child] of [['projects', 'BrightLight'], ['experience', 'Student Teacher'], ['pickleball', 'Picklebot reservation bot'], ['transcript', '']]) {
     await page.locator(`[data-board-part="${part}"]`).click()
     if (child) await page.getByRole('dialog').getByRole('button').filter({ hasText: child }).first().click()
     const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
@@ -560,10 +579,10 @@ test('reduced-motion users can use every board hotspot and open project stories'
     await expect(page.getByRole('dialog')).toBeVisible()
     await closeBoardStory(page)
   }
-  await page.getByRole('button', { name: 'Explore PiLight', exact: true }).first().click()
-  await expectProjectSubmenu(page, 'PiLight')
+  await page.getByRole('button', { name: 'Explore BrightLight', exact: true }).first().click()
+  await expectProjectSubmenu(page, 'BrightLight')
   await page.getByRole('dialog').getByRole('link', { name: 'Read full project story', exact: true }).click()
-  await expectProjectFacts(page, 'PiLight')
+  await expectProjectFacts(page, 'BrightLight')
 })
 
 test('without WebGL the circuit and all six navigation stories still work', async ({ baseURL }) => {
@@ -583,5 +602,127 @@ test('without WebGL the circuit and all six navigation stories still work', asyn
     await expectProjectSubmenu(page, 'PID Line-Following Car')
     await page.getByRole('dialog').getByRole('link', { name: 'Read full project story', exact: true }).click()
     await expectProjectFacts(page, 'PID Line-Following Car')
+    await page.goto(new URL('./#/projects/net-tensioner', baseURL).href)
+    await expect(page.locator('.pickleball-net__fallback')).toBeVisible()
+    await expect(page.locator('.pickleball-net__canvas')).toHaveCount(0)
+    await expect(page.getByRole('main')).toContainText(/Static view/i)
   } finally { await browser.close() }
+})
+
+test('the projects directory includes pickleball and wind projects with shareable detail pages', async ({ page }) => {
+  test.setTimeout(60_000)
+  await page.goto('./')
+  const allProjectsLink = page.getByRole('main').locator('a[href="#/projects"]').first()
+  await expect(allProjectsLink).toBeVisible()
+  await allProjectsLink.click()
+  await expect(page).toHaveURL(/#\/projects$/)
+  await expect(page.getByRole('heading', { level: 1, name: /Projects/i })).toBeVisible()
+  const directory = page.getByRole('main')
+  for (const project of allProjects) {
+    const entry = directory.locator(`a[href="${project.path}"]`).first()
+    await expect(entry).toBeVisible()
+    await expect(directory).toContainText(project.title)
+  }
+  for (const project of additionalProjects) {
+    await page.goto('./#/projects')
+    await page.getByRole('main').locator(`a[href="${project.path}"]`).first().click()
+    await expect(page).toHaveURL(new RegExp(`${project.path}$`))
+    await expect(page.getByRole('heading', { level: 1, name: project.title, exact: true })).toBeVisible()
+    await page.reload()
+    await expect(page.getByRole('heading', { level: 1, name: project.title, exact: true })).toBeVisible()
+    await expect(page.getByRole('main')).not.toContainText(/(?:Demo|Build) video/i)
+    await page.getByRole('main').locator('a[href="#/projects"]').first().click()
+    await expect(page).toHaveURL(/#\/projects$/)
+  }
+})
+
+test('Picklebot source opens as exact text in the same page and nested dialogs restore focus', async ({ page, context }) => {
+  test.setTimeout(60_000)
+  const source = await readFile(new URL('../src/assets/source/picklebot.js', import.meta.url), 'utf8')
+  const externalRequests: string[] = []
+  page.on('request', request => {
+    if (/recreation\.ucla\.edu/.test(request.url())) externalRequests.push(request.url())
+  })
+  await page.goto('./#/projects/reservation-bot')
+  const main = page.getByRole('main')
+  const exe = main.locator('a[href*="/releases/download/"][href$=".exe"]')
+  await expect(exe).toBeVisible()
+  expect(new URL((await exe.getAttribute('href'))!).host).toBe('github.com')
+  const sourceButton = main.getByRole('button', { name: 'Source code', exact: true })
+  await sourceButton.click()
+  const viewer = page.getByRole('dialog', { name: 'picklebot.js', exact: true })
+  await expect(viewer).toBeVisible()
+  expect(await viewer.locator('pre code').textContent()).toBe(source)
+  await expect(viewer.getByRole('button', { name: 'Copy code', exact: true })).toBeVisible()
+  await expect(viewer.getByRole('button', { name: 'Close source code', exact: true })).toBeVisible()
+  expect(context.pages()).toHaveLength(1)
+  expect(externalRequests).toEqual([])
+  await page.setViewportSize({ width: 320, height: 812 })
+  await expectNoOverflow(page, 'source viewer at 320px')
+  expect(await viewer.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+  const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
+  expect(result.violations.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => node.target) }))).toEqual([])
+  await page.keyboard.press('Escape')
+  await expect(viewer).not.toBeVisible()
+  await expect(sourceButton).toBeFocused()
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe('')
+
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await page.goto('./')
+  const projectsTrigger = page.locator('[data-board-part="projects"]')
+  await projectsTrigger.click()
+  const menu = page.locator('#portfolio-menu')
+  await menu.locator('[data-menu-item="reservation-bot"]').click()
+  const nestedSourceButton = menu.getByRole('button', { name: 'Source code', exact: true })
+  await nestedSourceButton.click()
+  await expect(viewer).toBeVisible()
+  expect(await viewer.locator('pre code').textContent()).toBe(source)
+  await page.keyboard.press('Escape')
+  await expect(viewer).not.toBeVisible()
+  await expect(menu).toBeVisible()
+  await expect(nestedSourceButton).toBeFocused()
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe('hidden')
+  await page.keyboard.press('Escape')
+  await expect(menu).not.toBeVisible()
+  await expect(projectsTrigger).toBeFocused()
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe('')
+
+  await projectsTrigger.click()
+  await menu.locator('[data-menu-item="reservation-bot"]').click()
+  await menu.getByRole('button', { name: 'Source code', exact: true }).click()
+  await expect(viewer).toBeVisible()
+  await page.evaluate(() => { window.location.hash = '#/projects' })
+  await expect(page.getByRole('heading', { level: 1, name: 'Projects', exact: true })).toBeVisible()
+  await expect(viewer).not.toBeVisible()
+  await expect(menu).not.toBeVisible()
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe('')
+})
+
+test('the net project renders a controllable three.js concept without mobile overflow', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('./#/projects/net-tensioner')
+  const scene = page.locator('[data-net-scene]')
+  await scene.scrollIntoViewIfNeeded()
+  await expect(scene).toHaveClass(/is-rendered/)
+  const canvas = scene.locator('.pickleball-net__canvas')
+  await expect(canvas).toBeVisible()
+  await expect.poll(() => canvas.evaluate((element: HTMLCanvasElement) => element.width)).toBeGreaterThan(100)
+  await expect(scene.locator('.pickleball-net__fallback')).toBeHidden()
+  await expect(scene).toContainText(/Concept visualization/i)
+  for (const name of ['Rotate net left', 'Rotate net right', 'Reset view']) {
+    const button = scene.getByRole('button', { name, exact: true })
+    await button.focus()
+    await page.keyboard.press('Enter')
+    await expect(button).toBeFocused()
+  }
+  for (const width of [320, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await expectNoOverflow(page, `net page overflow at ${width}px`)
+    await expect(canvas).toBeVisible()
+  }
+  const accessibility = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
+  expect(accessibility.violations.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => node.target) }))).toEqual([])
+  expect(errors).toEqual([])
 })

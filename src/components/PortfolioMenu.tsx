@@ -7,6 +7,7 @@ import { pickleballPhotos, sunflowerPhotos } from '../photos'
 import { ProjectLinks, ProjectMetrics } from './ProjectDetails'
 import { dartRobotLinks } from '../projectDetails'
 import type { BoardPart } from './CircuitScene'
+import { NetProjectMedia, projectHref } from './ProjectPage'
 import type { ProjectPageId } from './ProjectPage'
 import { projects } from '../projects'
 import { roles } from '../experience'
@@ -19,7 +20,7 @@ export type MenuSelection =
   | { type: 'part'; id: BoardPart }
   | { type: 'project'; id: ProjectPageId }
   | { type: 'role'; id: RoleId }
-  | { type: 'pickleball-project'; id: PickleballProjectId }
+  | { type: 'pickleball-project'; id: PickleballProjectId; parent?: 'projects' | 'pickleball' }
 
 type Props = {
   selection: MenuSelection | null
@@ -81,22 +82,21 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
 
   const project = selection?.type === 'project' ? projects.find(item => item.id === selection.id) : undefined
   const role = selection?.type === 'role' ? roles.find(item => item.id === selection.id) : undefined
-  const pickleball = selection?.type === 'pickleball-project' ? pickleballProjects.find(item => item.id === selection.id) : undefined
+  const pickleball = selection?.type === 'pickleball-project' || selection?.type === 'project' ? pickleballProjects.find(item => item.id === selection.id) : undefined
   const title = selection?.type === 'part' ? titles[selection.id] : project?.title ?? role?.title ?? pickleball?.title ?? 'Dart-launching robot'
-  const parent: BoardPart | null = selection?.type === 'project' ? 'projects' : selection?.type === 'role' ? 'experience' : selection?.type === 'pickleball-project' ? 'pickleball' : null
+  const parent: BoardPart | null = selection?.type === 'project' ? 'projects' : selection?.type === 'role' ? 'experience' : selection?.type === 'pickleball-project' ? selection.parent ?? 'pickleball' : null
   const goBack = () => { if (parent && selection) { returnItem.current = selection.id; onSelect({ type: 'part', id: parent }) } }
 
   return <dialog id="portfolio-menu" ref={dialogRef} className="board-dialog" aria-labelledby="board-story-title" onCancel={event => { event.preventDefault(); onClose() }} onClick={event => { if (event.target === event.currentTarget) onClose() }}>
     {selection && <div className="board-story submenu-story">
       <button type="button" className="board-story-close" aria-label="Close story" onClick={onClose}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
       {parent ? <button type="button" className="submenu-back" onClick={goBack} aria-label={`Back to ${parent}`}><Arrow back />Back to {parent}</button> : <BrandMark className="board-story-mark" />}
-      <div className="eyebrow">{selection.type === 'part' ? 'ONE PART OF THE WHOLE' : selection.type === 'role' ? 'WORK, PAST & PRESENT' : 'INSIDE THE PROJECT'}</div>
       <h2 id="board-story-title" tabIndex={-1}>{title}</h2>
 
       {selection.type === 'part' && selection.id === 'projects' && <>
-        <p>Turning signals into light, feedback into motion, and ideas into underwater designs. Choose a project to explore its details.</p>
-        <div className="submenu-list">{projects.filter(item => item.id !== 'sunflower').map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.tags.join(' · ')} onClick={() => onSelect({ type: 'project', id: item.id })} />)}<Choice id="dart-robot" title="Dart-launching robot" description="An earlier build and the inspiration for the PID car." onClick={() => onSelect({ type: 'project', id: 'dart-robot' })} />{projects.filter(item => item.id === 'sunflower').map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.tags.join(' · ')} onClick={() => onSelect({ type: 'project', id: item.id })} />)}</div>
-        <a className="text-link" href="#work" onClick={onClose}>View projects on the page <Arrow /></a>
+        <p>Engineering and pickleball projects. Choose a project for details, results, and links.</p>
+        <a className="text-link" href="#/projects" onClick={onClose}>View all projects <Arrow /></a>
+        <div className="submenu-list">{projects.map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.tags.join(' · ')} onClick={() => onSelect({ type: 'project', id: item.id })} />)}<Choice id="dart-robot" title="Dart-launching robot" description="Robotics · Mechanical design" onClick={() => onSelect({ type: 'project', id: 'dart-robot' })} />{pickleballProjects.map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.summary} onClick={() => onSelect({ type: 'pickleball-project', id: item.id, parent: 'projects' })} />)}</div>
       </>}
       {selection.type === 'part' && selection.id === 'experience' && <>
         <p>Teaching, data analysis, and technical support. Choose a role to see the work behind it.</p>
@@ -105,33 +105,34 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
       </>}
       {selection.type === 'part' && selection.id === 'pickleball' && <>
         <Photo photo={pickleballPhotos[0]} className="submenu-media submenu-team-photo" />
-        <p>Club pickleball has also become a place to build useful things. Explore the projects behind the court time.</p>
+        <p>Software and hardware projects for UCLA Club Pickleball.</p>
         <div className="submenu-list" data-pickleball-project-menu="">{pickleballProjects.map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.summary} onClick={() => onSelect({ type: 'pickleball-project', id: item.id })} />)}</div>
         <a className="text-link" href="#pickleball" onClick={onClose}>Back to the club section <Arrow /></a>
       </>}
       {selection.type === 'part' && selection.id === 'transcript' && <>
-        <p>The academic foundations behind the projects.</p>
         <dl className="academic-record"><div><dt>UNIVERSITY</dt><dd>University of California, Los Angeles</dd></div><div><dt>DEGREE</dt><dd>B.S. Computer Engineering</dd></div><div><dt>EXPECTED GRADUATION</dt><dd>June 2029</dd></div><div><dt>ACADEMIC STANDING</dt><dd>3.9 GPA · Dean’s List</dd></div></dl>
-        <div className="transcript-download-card"><span className="eyebrow">UCLA · ACADEMIC RECORD</span><h3>Unofficial transcript</h3><p>Three-page student copy. Personal identifiers redacted.</p><div className="transcript-actions"><a className="text-link" href={TRANSCRIPT} target="_blank" rel="noreferrer">View transcript <Arrow /></a><a className="button button-primary" href={TRANSCRIPT} download="Jared-Ashman-Transcript.pdf">Download transcript <Arrow /></a></div></div>
+        <div className="transcript-download-card"><span className="eyebrow">UCLA · ACADEMIC RECORD</span><h3>Unofficial transcript</h3><p>Three-page student copy.</p><div className="transcript-actions"><a className="text-link" href={TRANSCRIPT} target="_blank" rel="noreferrer">View transcript <Arrow /></a><a className="button button-primary" href={TRANSCRIPT} download="Jared-Ashman-Transcript.pdf">Download transcript <Arrow /></a></div></div>
       </>}
       {selection.type === 'part' && selection.id === 'about' && <><p>I’m Jared, a computer engineering student at UCLA. I’m interested in the places where circuits, code, and real-world problems meet.</p><p>I’m also the Computer Vision Simulation Manager on the Bruin Underwater Racing software team, and a member of UCLA Club Pickleball.</p><a className="text-link" href="#about" onClick={onClose}>A little more about me <Arrow /></a></>}
       {selection.type === 'part' && selection.id === 'resume' && <><p>My education, technical experience, current projects, and activities in one place.</p><p>UCLA Computer Engineering · Expected June 2029<br />Active Secret Clearance · Sponsored by the Department of the Navy</p><a className="button button-primary board-resume-download" href={RESUME} download>Download my résumé <Arrow /></a></>}
 
-      {selection.type === 'project' && <>
-        {selection.id === 'sunflower' ? <Photo photo={sunflowerPhotos[0]} className="submenu-media submenu-sunflower-photo" /> : <PlaceholderArt kind={selection.id} label={title} className="submenu-media" />}
-        {project ? <><p className="submenu-status">{project.status}</p><p>{project.overview}</p><ul className="submenu-details">{project.contributions.map(item => <li key={item.title}><strong>{item.title}.</strong> {item.text}</li>)}</ul><Tags values={project.tags} /></> : <p>My earlier dart-launching robot inspired the PID line-following car I’m currently developing.</p>}
+      {selection.type === 'project' && !pickleball && <>
+        {selection.id === 'sunflower' ? <Photo photo={sunflowerPhotos[0]} className="submenu-media submenu-sunflower-photo" /> : <PlaceholderArt kind={project?.id ?? 'dart-robot'} label={title} className="submenu-media" />}
+        {project ? <><p className="submenu-status">{project.status}</p><p>{project.overview}</p><ul className="submenu-details">{project.contributions.map(item => <li key={item.title}><strong>{item.title}.</strong> {item.text}</li>)}</ul><Tags values={project.tags} /></> : <p>I built a dart-launching robot. See the district innovation showcase for the project presentation.</p>}
         {project && <ProjectMetrics metrics={project.metrics} />}
         <ProjectLinks links={project?.links ?? dartRobotLinks} />
-        <a className="text-link" href={`#/projects/${selection.id}`} onClick={onClose}>Read full project story <Arrow /></a>
+        <a className="text-link" href={projectHref(selection.id)} onClick={onClose}>Read full project story <Arrow /></a>
       </>}
       {role && <>
         <p className="submenu-meta">{role.organization}<br />{role.date}</p><PlaceholderArt kind={role.id} label={role.title} className="submenu-media" /><p>{role.summary}</p><ul className="submenu-details">{role.details.map(detail => <li key={detail}>{detail}</li>)}</ul><Tags values={role.tags} />
         <a className="text-link" href="#experience" onClick={onClose}>View the full work history <Arrow /></a>
       </>}
       {pickleball && <>
+        {pickleball.id === 'net-tensioner' && <NetProjectMedia />}
         <p className="submenu-status">{pickleball.kind}{pickleball.status ? ` · ${pickleball.status}` : ''}</p><p>{pickleball.overview}</p><ul className="submenu-details">{pickleball.details.map(detail => <li key={detail}>{detail}</li>)}</ul><Tags values={pickleball.tags} />
         <ProjectMetrics metrics={pickleball.metrics} />
         <ProjectLinks links={pickleball.links} />
+        <a className="text-link" href={projectHref(pickleball.id)} onClick={onClose}>Read full project story <Arrow /></a>
       </>}
     </div>}
   </dialog>

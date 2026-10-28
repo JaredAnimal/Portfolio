@@ -80,3 +80,15 @@
 .project-page-photo-grid--sunflower{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 24px}
 @media(max-width:900px){.project-page-photo-grid--sunflower{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.project-page-photo-lead.portfolio-photo{height:auto;aspect-ratio:3/4}.project-page-photo-grid--sunflower{grid-template-columns:1fr;gap:27px}.project-page-photo-real figcaption{font-size:8px}}
+
+/* A landscape frame focuses the original workbench photo on the complete robot. */
+.sunflower-lead-figure{max-width:940px;margin-inline:auto}
+.project-page-photo-lead.sunflower-crop.portfolio-photo{aspect-ratio:4/3;height:auto}
+.project-page-photo-real .sunflower-crop.portfolio-photo>img{object-fit:cover;object-position:center 39%}
+.project-page-implementation{padding:40px 0 48px;border-bottom:1px solid var(--rule)}
+.project-page-implementation h2{font-family:var(--serif);font-size:34px;color:var(--olive)}
+.project-page-implementation ul{font-size:14px;line-height:1.9;color:var(--muted);padding-left:22px;max-width:850px;margin:22px 0 0}
+.project-page-implementation li+li{margin-top:12px}
+.net-project-media{margin:20px 0 0}.net-project-media figcaption{display:block;font-size:9px;letter-spacing:.4px;margin-top:12px;color:var(--muted)}
+.net-scene-loading{min-height:260px;display:grid;place-items:center;background:#e8e7da;font-size:12px;color:var(--olive)}
+@media(max-width:600px){.project-page-implementation{padding:28px 0 34px}.project-page-implementation ul{font-size:13px}.project-page-implementation h2{font-size:31px}}

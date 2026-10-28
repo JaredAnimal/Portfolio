@@ -32,7 +32,7 @@ function ESP32({ x, y, rotate = 0, scale = 1 }: { x: number; y: number; rotate?:
   </g>
 }
 
-function PiLight() {
+function BrightLight() {
   const bands = [10, 16, 24, 42, 72, 54, 34, 20, 28, 62, 92, 68, 42, 27, 47, 58, 32, 21, 14, 8]
   return <>
     <ellipse cx="262" cy="251" rx="176" ry="25" fill="#727852" opacity=".09" />
@@ -141,7 +141,7 @@ export default function ProjectArtwork({ kind, className }: Props) {
     </defs>
     <rect width="520" height="340" fill={`url(#${uid}-grid)`} />
     <ellipse cx="262" cy="180" rx="237" ry="161" fill={`url(#${uid}-wash)`} />
-    {kind === 'pilight' ? <PiLight /> : <LineFollower />}
+    {kind === 'pilight' ? <BrightLight /> : <LineFollower />}
     <g stroke={ink} strokeWidth=".8" opacity=".4"><path d="M22 24h9m-4.5-4.5v9M489 316h9m-4.5-4.5v9" /></g>
   </svg>
 }
