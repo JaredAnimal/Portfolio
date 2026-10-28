@@ -28,7 +28,7 @@ Live site: https://jaredanimal.github.io/Portfolio/
 - Add further project specifications, results, or live links only when confirmed. The car and net extension remain in progress; dart-robot details are intentionally limited.
 - Separate LinkedIn updates remain unapplied. Copy-ready text is saved outside Git at `/workspace/linkedin-profile-updates.md`; no profile edits or posts were made.
 - USS Sunflower is available from the Projects menu and its dedicated page at `#/projects/sunflower`, while the homepage features BrightLight and the PID car.
-- The USS Sunflower design-snapshot link and video slots outside BrightLight have been removed. The source design PDF is not published. Wind turbine voltage/RPM and net-extension metrics remain pending; other displayed measurements were supplied by Jared. Picklebot links to the v0.2.6 Windows installer and shows the exact supplied JavaScript in an in-page viewer.
+- The USS Sunflower design-snapshot link and video slots outside BrightLight have been removed. The source design PDF is not published. Wind turbine output voltage is 17 V and maximum speed is 82 RPM, supplied by Jared. Wind project photos and net-extension metrics remain pending; other displayed measurements were also supplied by Jared. Picklebot links to the v0.2.6 Windows installer and shows the exact supplied JavaScript in an in-page viewer.
 
 ## Deployment instructions
 

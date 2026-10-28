@@ -354,12 +354,13 @@ test('USS Sunflower stays off the homepage while header and board project menus 
   }
 })
 
-test('project measurements use the supplied values and unmeasured wind and net results remain pending', async ({ page }) => {
+test('project measurements use the supplied values and unmeasured net results remain pending', async ({ page }) => {
   const expectedMetrics: Record<string, [RegExp, RegExp][]> = {
     brightlight: [[/Response latency/i, /<\s*50\s*ms/], [/Frequency resolution/i, /<\s*2\.5\s*Hz/i]],
     'line-follower': [[/Tracking error/i, /4\s*%/], [/loop (?:period|time|rate)/i, /17\s*ms/]],
     sunflower: [[/Dive depth/i, /33\s*(?:ft|feet)/i], [/Underwater runtime/i, /10\s*min/i]],
     'reservation-bot': [[/Booking turnaround/i, /<\s*0?\.3\s*s/]],
+    'wind-turbine': [[/Output voltage/i, /^17\s*V$/], [/Max RPM/i, /^82$/]],
     'reservation-sharing': [[/Active monthly users/i, /^45$/]],
   }
   for (const [id, metrics] of Object.entries(expectedMetrics)) {
@@ -376,11 +377,6 @@ test('project measurements use the supplied values and unmeasured wind and net r
   await expect(page.getByRole('main')).not.toContainText(/Response time|Players served/i)
   await expect(page.getByRole('main').getByRole('link', { name: /View project repository/ })).toHaveAttribute('href', 'https://github.com/JaredAnimal/UCLAPickleball')
   await page.goto('./#/projects/wind-turbine')
-  for (const caption of [/Output voltage/i, /Max(?:imum)? RPM/i]) {
-    const metric = page.getByRole('main').locator('.project-metrics > div').filter({ has: page.locator('dt').filter({ hasText: caption }) })
-    await expect(metric).toHaveAttribute('data-metric-pending', '')
-    await expect(metric.locator('dd')).toHaveText('—Measurement to come')
-  }
   await expect(page.getByRole('main')).toContainText(/Savonius/i)
   await expect(page.getByRole('main')).toContainText(/HAWT/)
   await expect(page.getByRole('main')).toContainText(/VAWT/)

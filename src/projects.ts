@@ -91,7 +91,7 @@ export const projects: Project[] = [
       { title: 'Four designs', text: 'Tested Savonius, horizontal-axis, vertical-axis, and bladeless configurations.' },
       { title: 'Building and testing', text: 'Worked as a team to build the turbine and compare the designs through testing.' },
     ],
-    metrics: [{ caption: 'Output voltage' }, { caption: 'Max RPM' }],
+    metrics: [{ caption: 'Output voltage', value: '17 V' }, { caption: 'Max RPM', value: '82' }],
     links: [{ label: 'Project files' }],
   },
 ]
