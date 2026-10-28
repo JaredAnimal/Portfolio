@@ -24,3 +24,5 @@
 .submenu-media.portfolio-photo>img{object-fit:contain;object-position:center}
 
 .submenu-media.submenu-sunflower-photo.portfolio-photo>img{object-fit:cover;object-position:center 39%}
+.submenu-media.submenu-supplied-photo{aspect-ratio:auto;height:auto}
+.submenu-media.submenu-supplied-photo>img{height:auto}

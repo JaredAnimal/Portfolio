@@ -1,6 +1,6 @@
 # Portfolio handoff
 
-Saved October 27, 2026. Repository: `JaredAnimal/Portfolio`.
+Saved October 28, 2026. Repository: `JaredAnimal/Portfolio`.
 Live site: https://jaredanimal.github.io/Portfolio/
 
 ## Project setup
@@ -11,6 +11,9 @@ Live site: https://jaredanimal.github.io/Portfolio/
 - Validate: `npm run build` and `npm test`. Playwright uses `/usr/bin/chromium`, or `CHROMIUM_PATH`.
 
 ## Completed work
+
+- Added all seven images from `Addimages.zip`: PID robot, dart showcase plus two diagrams, and imagery for robotics teaching, Navy SSEP, and admissions IT. Reused the corresponding lead images in homepage cards and menus. Original files and uncropped chart content are preserved.
+- BUR is a past role: Computer Vision Simulation Manager during 2025–2026; Jared is no longer participating this year. About and its menu use past tense.
 
 - Jared’s supplied portrait appears beside the homepage introduction, below the headline. Its original JPEG is renamed `src/assets/photos/jared-ashman-portrait.jpg`, with a CSS head-and-shoulders crop, responsive sizing, and descriptive alt text. Preserve the original face and image; the crop only changes the visible framing.
 - Interactive circuit board with six accessible hotspots, keyboard/touch support, reduced motion, and a non-WebGL fallback.

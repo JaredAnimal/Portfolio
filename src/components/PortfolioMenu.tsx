@@ -3,7 +3,7 @@ import type { RefObject } from 'react'
 import BrandMark from './BrandMark'
 import PlaceholderArt from './PlaceholderArt'
 import Photo from './Photo'
-import { pickleballPhotos, sunflowerPhotos } from '../photos'
+import { pickleballPhotos, projectPhotos, rolePhotos } from '../photos'
 import { ProjectLinks, ProjectMetrics } from './ProjectDetails'
 import { dartRobotLinks } from '../projectDetails'
 import type { BoardPart } from './CircuitScene'
@@ -82,6 +82,7 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
 
   const project = selection?.type === 'project' ? projects.find(item => item.id === selection.id) : undefined
   const role = selection?.type === 'role' ? roles.find(item => item.id === selection.id) : undefined
+  const projectPhoto = selection?.type === 'project' ? projectPhotos[selection.id as keyof typeof projectPhotos]?.[0] : undefined
   const pickleball = selection?.type === 'pickleball-project' || selection?.type === 'project' ? pickleballProjects.find(item => item.id === selection.id) : undefined
   const title = selection?.type === 'part' ? titles[selection.id] : project?.title ?? role?.title ?? pickleball?.title ?? 'Dart-launching robot'
   const parent: BoardPart | null = selection?.type === 'project' ? 'projects' : selection?.type === 'role' ? 'experience' : selection?.type === 'pickleball-project' ? selection.parent ?? 'pickleball' : null
@@ -113,18 +114,18 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
         <dl className="academic-record"><div><dt>UNIVERSITY</dt><dd>University of California, Los Angeles</dd></div><div><dt>DEGREE</dt><dd>B.S. Computer Engineering</dd></div><div><dt>EXPECTED GRADUATION</dt><dd>June 2029</dd></div><div><dt>ACADEMIC STANDING</dt><dd>3.9 GPA · Dean’s List</dd></div></dl>
         <div className="transcript-download-card"><span className="eyebrow">UCLA · ACADEMIC RECORD</span><h3>Unofficial transcript</h3><p>Three-page student copy.</p><div className="transcript-actions"><a className="text-link" href={TRANSCRIPT} target="_blank" rel="noreferrer">View transcript <Arrow /></a><a className="button button-primary" href={TRANSCRIPT} download="Jared-Ashman-Transcript.pdf">Download transcript <Arrow /></a></div></div>
       </>}
-      {selection.type === 'part' && selection.id === 'about' && <><p>I’m Jared, a computer engineering student at UCLA. I’m interested in the places where circuits, code, and real-world problems meet.</p><p>I’m also the Computer Vision Simulation Manager on the Bruin Underwater Racing software team, and a member of UCLA Club Pickleball.</p><a className="text-link" href="#about" onClick={onClose}>A little more about me <Arrow /></a></>}
+      {selection.type === 'part' && selection.id === 'about' && <><p>I’m Jared, a computer engineering student at UCLA. I’m interested in the places where circuits, code, and real-world problems meet.</p><p>In 2025–2026, I served as Computer Vision Simulation Manager for the Bruin Underwater Racing software team. I’m currently a member of UCLA Club Pickleball.</p><a className="text-link" href="#about" onClick={onClose}>A little more about me <Arrow /></a></>}
       {selection.type === 'part' && selection.id === 'resume' && <><p>My education, technical experience, current projects, and activities in one place.</p><p>UCLA Computer Engineering · Expected June 2029<br />Active Secret Clearance · Sponsored by the Department of the Navy</p><a className="button button-primary board-resume-download" href={RESUME} download>Download my résumé <Arrow /></a></>}
 
       {selection.type === 'project' && !pickleball && <>
-        {selection.id === 'sunflower' ? <Photo photo={sunflowerPhotos[0]} className="submenu-media submenu-sunflower-photo" /> : <PlaceholderArt kind={project?.id ?? 'dart-robot'} label={title} className="submenu-media" />}
+        {projectPhoto ? <Photo photo={projectPhoto} className={`submenu-media ${selection.id === 'sunflower' ? 'submenu-sunflower-photo' : 'submenu-supplied-photo'}`} /> : <PlaceholderArt kind={project?.id ?? 'dart-robot'} label={title} className="submenu-media" />}
         {project ? <><p className="submenu-status">{project.status}</p><p>{project.overview}</p><ul className="submenu-details">{project.contributions.map(item => <li key={item.title}><strong>{item.title}.</strong> {item.text}</li>)}</ul><Tags values={project.tags} /></> : <p>I built a dart-launching robot. See the district innovation showcase for the project presentation.</p>}
         {project && <ProjectMetrics metrics={project.metrics} />}
         <ProjectLinks links={project?.links ?? dartRobotLinks} />
         <a className="text-link" href={projectHref(selection.id)} onClick={onClose}>Read full project story <Arrow /></a>
       </>}
       {role && <>
-        <p className="submenu-meta">{role.organization}<br />{role.date}</p><PlaceholderArt kind={role.id} label={role.title} className="submenu-media" /><p>{role.summary}</p><ul className="submenu-details">{role.details.map(detail => <li key={detail}>{detail}</li>)}</ul><Tags values={role.tags} />
+        <p className="submenu-meta">{role.organization}<br />{role.date}</p><Photo photo={rolePhotos[role.id]} className="submenu-media submenu-supplied-photo" /><p>{role.summary}</p><ul className="submenu-details">{role.details.map(detail => <li key={detail}>{detail}</li>)}</ul><Tags values={role.tags} />
         <a className="text-link" href="#experience" onClick={onClose}>View the full work history <Arrow /></a>
       </>}
       {pickleball && <>

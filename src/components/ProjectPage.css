@@ -92,3 +92,10 @@
 .net-project-media{margin:20px 0 0}.net-project-media figcaption{display:block;font-size:9px;letter-spacing:.4px;margin-top:12px;color:var(--muted)}
 .net-scene-loading{min-height:260px;display:grid;place-items:center;background:#e8e7da;font-size:12px;color:var(--olive)}
 @media(max-width:600px){.project-page-implementation{padding:28px 0 34px}.project-page-implementation ul{font-size:13px}.project-page-implementation h2{font-size:31px}}
+
+/* Landscape photos and diagrams use their natural proportions, without cropping. */
+.project-page-supplied-lead{max-width:1000px;margin-inline:auto}
+.project-page-photo-natural.portfolio-photo{aspect-ratio:auto;height:auto;background:#fff}
+.project-page-photo-natural.portfolio-photo>img{height:auto}
+.project-page-photo-grid--supplied{align-items:start;max-width:1100px;margin-inline:auto;gap:32px}
+@media(max-width:600px){.project-page-photo-grid--supplied{grid-template-columns:1fr;gap:27px}}

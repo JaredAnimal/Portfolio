@@ -30,10 +30,10 @@ async function expectLoadedMedia(page: Page, expectedKinds: string[]) {
   const descriptions: Record<string, RegExp> = {
     pilight: /ESP32|LED|audio|sound|frequency|BrightLight/i,
     'line-follower': /line.follow|car|robot|sensor/i,
-    'dart-robot': /dart|launcher/i,
-    teaching: /teaching|robotics|students?|classroom/i,
-    navy: /Navy|hardware|analysis|data/i,
-    admissions: /workstations?|computer|\bIT\b|admissions/i,
+    'dart-robot': /dart|launcher|launch angle|horizontal distance/i,
+    teaching: /teaching|robot|biomimetic|students?|classroom/i,
+    navy: /Navy|ships?|helicopter|hardware|analysis|data/i,
+    admissions: /workstations?|computer|\bIT\b|admissions|UCLA.*portal/i,
     pickleball: /pickleball|paddles?|court/i,
     sunflower: /USS Sunflower|workshop|pool|camera/i,
   }
@@ -398,6 +398,9 @@ test('home and each clickable job preserve current education, clearance, activit
   await expect(main).toContainText(/Department of the Navy/i)
   await expect(main).toContainText(/Computer Vision Simulation Manager/i)
   await expect(main).toContainText(/Bruin Underwater Racing/)
+  const about = page.locator('#about')
+  await expect(about).toContainText(/2025\s*[–—-]\s*2026.*served as Computer Vision Simulation Manager/i)
+  await expect(about).not.toContainText(/I[’']m (?:also )?the Computer Vision Simulation Manager/i)
   await expect(main).toContainText(/UCLA Club Pickleball/)
   await expect(main).not.toContainText(supersededClaims)
   const teacher = page.locator('#experience .experience-row').filter({ hasText: 'Student Teacher' })
@@ -416,6 +419,7 @@ test('home and each clickable job preserve current education, clearance, activit
     'Student Trainee (SSEP)': [/Jun(?:e)?\.? 2026\s*[—–-]\s*Sep(?:tember)?\.? 2026/i, /hardware.failure data/i, /U\.S\. Navy/],
     'IT Specialist': [/Sep(?:tember)?\.? 2025\s*[—–-]\s*Jun(?:e)?\.? 2026/i, /100.*workstations/i, /Undergraduate Admissions/],
   }
+  const roleSubjects: Record<string, string> = { 'Student Teacher': 'teaching', 'Student Trainee (SSEP)': 'navy', 'IT Specialist': 'admissions' }
   for (const title of roleTitles) {
     const role = page.locator('#experience .experience-row').filter({ hasText: title })
     const trigger = role.getByRole('button', { name: `Explore ${title}`, exact: true }).first()
@@ -424,6 +428,10 @@ test('home and each clickable job preserve current education, clearance, activit
     const dialog = page.getByRole('dialog')
     await expect(dialog.getByRole('heading', { name: title, exact: true })).toBeVisible()
     for (const fact of facts[title]) await expect(dialog).toContainText(fact)
+    const photo = dialog.locator(`[data-photo-subject="${roleSubjects[title]}"] img`)
+    await expect(photo).toBeVisible()
+    await expect.poll(() => photo.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true)
+    await expect(dialog.locator('[data-placeholder-illustration]')).toHaveCount(0)
     await page.keyboard.press('Escape')
     await expect(dialog).not.toBeVisible()
     await expect(trigger).toBeFocused()
@@ -433,6 +441,11 @@ test('home and each clickable job preserve current education, clearance, activit
     for (const roleTitle of roleTitles) await expect(dialog.getByRole('button').filter({ hasText: roleTitle }).first()).toBeVisible()
     await closeBoardStory(page)
   }
+  await page.locator('[data-board-part="about"]').click()
+  const aboutMenu = page.getByRole('dialog')
+  await expect(aboutMenu).toContainText(/2025\s*[–—-]\s*2026.*served as Computer Vision Simulation Manager/i)
+  await expect(aboutMenu).not.toContainText(/I[’']m (?:also )?the Computer Vision Simulation Manager/i)
+  await closeBoardStory(page)
 })
 
 test('the pickleball section keeps its three nested projects and restores focus', async ({ page }) => {
@@ -469,6 +482,10 @@ test('the pickleball section keeps its three nested projects and restores focus'
 test('project, experience, and pickleball spaces render their accessible photos and concept illustrations', async ({ page }) => {
   await page.goto('./')
   await expectLoadedMedia(page, ['pilight', 'line-follower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
+  for (const subject of ['line-follower', 'teaching', 'navy', 'admissions']) {
+    await expect(page.locator(`[data-photo-subject="${subject}"]`)).toHaveCount(1)
+    await expect(page.locator(`[data-placeholder-illustration="${subject}"]`)).toHaveCount(0)
+  }
   const pickleball = page.locator('#pickleball')
   await expect(pickleball.getByRole('heading', { level: 2 })).toBeVisible()
   await expect(pickleball).toContainText(/UCLA Club Pickleball/)
@@ -479,7 +496,18 @@ test('project, experience, and pickleball spaces render their accessible photos 
   await expect(pickleball).not.toContainText(/concept illustration|photography to follow/i)
   for (const kind of ['pilight', 'line-follower', 'dart-robot']) {
     await page.goto(`./#/projects/${kind}`)
-    await expectLoadedMedia(page, [kind, kind, kind])
+    await expectLoadedMedia(page, Array(kind === 'line-follower' ? 1 : 3).fill(kind))
+    if (kind !== 'pilight') {
+      await expect(page.locator('[data-placeholder-illustration]')).toHaveCount(0)
+      await expect(page.getByRole('main')).not.toContainText(/concept illustration|photography to follow/i)
+    }
+    if (kind === 'dart-robot') {
+      await expect(page.locator('.project-page-photo-wide img')).toHaveAccessibleName(/showcase.*Jared|Jared.*showcase/i)
+      const galleryImages = page.locator('.project-page-photo-grid img')
+      await expect(galleryImages).toHaveCount(2)
+      expect(await galleryImages.evaluateAll(images => images.map(image => image.getAttribute('alt')).join(' '))).toMatch(/flow|simulation/i)
+      expect(await galleryImages.evaluateAll(images => images.map(image => image.getAttribute('alt')).join(' '))).toMatch(/launch angle.*horizontal distance/i)
+    }
   }
 })
 
