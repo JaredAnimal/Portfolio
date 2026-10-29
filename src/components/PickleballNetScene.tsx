@@ -5,7 +5,7 @@ import './PickleballNetScene.css'
 type Point3 = [number, number, number]
 type Point2 = [number, number]
 // USA Pickleball 2026, 3.B.2–3.B.7. Scene units are meters.
-const NET_WIDTH = 6.6294 // Minimum fabric width: 21 ft 9 in.
+const NET_WIDTH = 6.63
 const SIDELINE_X = 3.048
 const SIDE_HEIGHT = .9144
 const CENTER_HEIGHT = .8636
@@ -15,10 +15,10 @@ const netTop = (x: number) => CENTER_HEIGHT + (SIDE_HEIGHT - CENTER_HEIGHT) * (x
 const POST_TOP = netTop(NET_WIDTH / 2) + .055
 
 const dimensions: { id: string; label: string; from: Point3; to: Point3; offset: Point3; labelAt: Point2; fallback: [Point2, Point2, Point2, Point2] }[] = [
-  { id: 'width', label: 'NET WIDTH · ≥6.63 m', from: [-NET_WIDTH / 2, netTop(NET_WIDTH / 2), 0], to: [NET_WIDTH / 2, netTop(NET_WIDTH / 2), 0], offset: [0, .45, 0], labelAt: [.5, .12], fallback: [[122, 165], [568, 185], [122, 120], [568, 140]] },
+  { id: 'width', label: 'NET WIDTH · 6.63 m', from: [-NET_WIDTH / 2, netTop(NET_WIDTH / 2), 0], to: [NET_WIDTH / 2, netTop(NET_WIDTH / 2), 0], offset: [0, .45, 0], labelAt: [.5, .12], fallback: [[122, 165], [568, 185], [122, 120], [568, 140]] },
   { id: 'height', label: 'SIDE · 0.9144 m', from: [-SIDELINE_X, 0, 0], to: [-SIDELINE_X, SIDE_HEIGHT, 0], offset: [-.65, 0, 0], labelAt: [.13, .79], fallback: [[140, 271], [140, 166], [70, 271], [70, 166]] },
   { id: 'center-height', label: 'CENTER · 0.8636 m', from: [0, 0, 0], to: [0, CENTER_HEIGHT, 0], offset: [.4, 0, .14], labelAt: [.5, .89], fallback: [[345, 280], [345, 184], [371, 280], [371, 184]] },
-  { id: 'tension', label: 'TENSION · NOT SPECIFIED', from: [2.2, netTop(2.2), .014], to: [2.2, netTop(2.2), .014], offset: [0, 0, 0], labelAt: [.79, .27], fallback: [[493, 187], [493, 187], [493, 187], [493, 187]] },
+  { id: 'tension', label: 'TENSION · 230–270 N', from: [2.2, netTop(2.2), .014], to: [2.2, netTop(2.2), .014], offset: [0, 0, 0], labelAt: [.79, .27], fallback: [[493, 187], [493, 187], [493, 187], [493, 187]] },
 ]
 
 function drawDimensions(svg: SVGSVGElement, width: number, height: number, project?: (point: Point3) => Point2) {
@@ -53,15 +53,14 @@ function NetFallback() {
   return <svg className="pickleball-net__fallback" viewBox="0 0 720 420" aria-hidden="true">
     <defs><pattern id={patternId} width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="#66705a" strokeWidth=".8" /></pattern></defs>
     <path d="M65 320 201 228H666L531 320Z" fill="#dce0ce" />
-    <g stroke="#4d583a" strokeWidth="8" strokeLinecap="round"><path d="M112 270V159m466 131V179M112 270l466 20M82 289l62-39" /></g>
+    <g stroke="#4d583a" strokeWidth="8" strokeLinecap="round"><path d="M112 270V159m466 131V179M112 270l466 20M82 289l62-39m404 59 62-39" /></g>
     <path d="M122 165Q345 192 568 185V261L122 241Z" fill={`url(#${patternId})`} stroke="#657052" strokeWidth="2" />
     <path d="M122 165Q345 192 568 185" stroke="#f6f1df" strokeWidth="6" fill="none" />
     <path d="m122 241 446 20" stroke="#d9d8c3" strokeWidth="5" />
-    <path d="m554 289 49 2m-9 9 36-23" stroke="#4d583a" strokeWidth="8" strokeLinecap="round" />
   </svg>
 }
 
-/** Regulation net dimensions with a conceptual base extension. */
+/** A pickleball net reference model, without the proposed base extension. */
 export default function PickleballNetScene() {
   const hostRef = useRef<HTMLDivElement>(null)
   const dimensionsRef = useRef<SVGSVGElement>(null)
@@ -130,18 +129,10 @@ export default function PickleballNetScene() {
     for (const side of [-1, 1]) {
       const x = side * POST_X
       tube(vector(x, .06), vector(x, POST_TOP), POST_RADIUS, frameMaterial)
-      // The extension replaces the right support's crossbar and feet.
-      if (side === -1) {
-        tube(vector(x, .045, -.55), vector(x, .045, .55), .03, frameMaterial)
-        for (const z of [-.55, .55]) box(.16, .06, .17, [x, .03, z], footMaterial)
-      }
+      tube(vector(x, .045, -.55), vector(x, .045, .55), .03, frameMaterial)
+      for (const z of [-.55, .55]) box(.16, .06, .17, [x, .03, z], footMaterial)
       box(.05, netTop(NET_WIDTH / 2) - .08, .025, [side * NET_WIDTH / 2, (netTop(NET_WIDTH / 2) + .08) / 2, 0], tapeMaterial)
     }
-    const extensionX = POST_X + .3
-    tube(vector(POST_X - .15, .06), vector(extensionX, .06), .045, frameMaterial)
-    box(.22, .1, .14, [extensionX - .08, .065, 0], frameMaterial)
-    tube(vector(extensionX, .045, -.66), vector(extensionX, .045, .66), .03, frameMaterial)
-    for (const z of [-.66, .66]) box(.13, .06, .15, [extensionX, .03, z], footMaterial)
     tube(vector(0, .06), vector(0, CENTER_HEIGHT - .02), .015, frameMaterial)
 
     const netBottom = .08
@@ -292,7 +283,7 @@ export default function PickleballNetScene() {
   return <figure className={`pickleball-net${ready ? ' is-rendered' : ''}`} data-net-scene="">
     <div ref={hostRef} className="pickleball-net__viewport" tabIndex={ready ? 0 : undefined} role="group" aria-label="Pickleball net concept visualization" aria-describedby={descriptionId}>
       <NetFallback />
-      <svg ref={dimensionsRef} className="pickleball-net__dimensions" role="img" aria-label="Regulation net: minimum width 6.63 meters, sideline height 0.9144 meters, center height 0.8636 meters. The rulebook does not specify a tension force in newtons.">
+      <svg ref={dimensionsRef} className="pickleball-net__dimensions" role="img" aria-label="Pickleball net: width 6.63 meters, sideline height 0.9144 meters, center height 0.8636 meters, tension 230 to 270 newtons.">
         <defs><marker id={arrowId} viewBox="0 0 6 6" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 6 3 0 6Z" fill="currentColor" /></marker></defs>
         {dimensions.map(dimension => <g key={dimension.id} data-net-dimension={dimension.id}>
           <path className="pickleball-net__witness" />
@@ -303,7 +294,7 @@ export default function PickleballNetScene() {
       </svg>
     </div>
     <figcaption>
-      <div><strong>Net base extension</strong><p id={descriptionId}>Concept visualization with regulation net dimensions. Side and center heights allow ±0.00635 m. The rules do not specify a tension force in newtons.{ready ? ' Drag or use arrow keys to rotate.' : ' Static view.'}</p><a className="pickleball-net__source" href="https://usapickleball.org/docs/rules/USAP-Official-Rulebook.pdf#page=13" target="_blank" rel="noreferrer">USA Pickleball 2026 rules · 3.B</a></div>
+      <div><strong>Pickleball net</strong><p id={descriptionId}>{ready ? 'Drag or use arrow keys to rotate.' : 'Static view.'}</p></div>
       {ready && <div className="pickleball-net__controls" role="group" aria-label="Net view controls">
         <button type="button" aria-label="Rotate net left" onClick={() => rotateRef.current(-1)}>←</button>
         <button type="button" onClick={() => resetRef.current()}>Reset view</button>

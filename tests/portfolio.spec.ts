@@ -78,7 +78,7 @@ async function expectNoOverflow(page: Page, label: string) {
 async function expectNetDimensions(page: Page) {
   const dimensions = page.locator('.pickleball-net__dimensions')
   await expect(dimensions).toBeVisible()
-  for (const [id, label] of Object.entries({ width: 'NET WIDTH · ≥6.63 m', height: 'SIDE · 0.9144 m', 'center-height': 'CENTER · 0.8636 m', tension: 'TENSION · NOT SPECIFIED' })) {
+  for (const [id, label] of Object.entries({ width: 'NET WIDTH · 6.63 m', height: 'SIDE · 0.9144 m', 'center-height': 'CENTER · 0.8636 m', tension: 'TENSION · 230–270 N' })) {
     const dimension = dimensions.locator(`[data-net-dimension="${id}"]`)
     await expect(dimension).toBeVisible()
     await expect(dimension).toContainText(label)
@@ -752,7 +752,7 @@ test('Picklebot source opens as exact text in the same page and nested dialogs r
   expect(await page.evaluate(() => document.body.style.overflow)).toBe('')
 })
 
-test('the net project renders a controllable three.js concept without mobile overflow', async ({ page }) => {
+test('the net project renders a controllable three.js net without mobile overflow', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', error => errors.push(error.message))
   await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -764,8 +764,9 @@ test('the net project renders a controllable three.js concept without mobile ove
   await expect(canvas).toBeVisible()
   await expect.poll(() => canvas.evaluate((element: HTMLCanvasElement) => element.width)).toBeGreaterThan(100)
   await expect(scene.locator('.pickleball-net__fallback')).toBeHidden()
-  await expect(scene).toContainText(/Concept visualization/i)
-  await expect(scene.locator('a[href^="https://usapickleball.org/docs/rules/USAP-Official-Rulebook.pdf"]')).toBeVisible()
+  await expect(scene.locator('figcaption strong')).toHaveText('Pickleball net')
+  await expect(scene.locator('a[href*="usapickleball.org"]')).toHaveCount(0)
+  await expect(scene).not.toContainText(/regulation|USA Pickleball|tension force/i)
   const dimensions = await expectNetDimensions(page)
   const projectedPaths = () => dimensions.locator('path').evaluateAll(elements => elements.map(element => element.getAttribute('d')))
   const initialPaths = await projectedPaths()

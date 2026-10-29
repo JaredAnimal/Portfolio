@@ -15,7 +15,6 @@
 .pickleball-net>figcaption>div:first-child{flex:1;min-width:180px}
 .pickleball-net>figcaption strong{font-size:12px;font-weight:500}
 .pickleball-net>figcaption p{font-size:11px;line-height:1.7;color:#59624b;margin-top:5px;max-width:440px}
-.pickleball-net__source{display:inline-block;margin-top:6px;font-size:10px;text-decoration:underline;text-underline-offset:3px;color:#35412b}
 .pickleball-net__controls{display:flex;align-items:center;gap:6px}
 .pickleball-net__controls button{display:inline-flex;align-items:center;justify-content:center;min-width:36px;min-height:36px;padding:8px 11px;background:#f5f2e9;border:1px solid #a6ad96;font-size:10px;color:#35412b}
 .pickleball-net__controls button:hover{background:#dce1cd}
