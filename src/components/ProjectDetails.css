@@ -1,6 +1,8 @@
 .project-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:25px;margin:28px 0;border-block:1px solid var(--rule,#d9d9c9);padding:24px 0}
 .project-metrics>div{display:flex;flex-direction:column;min-width:0}
 .project-metrics dt{font-size:10px;line-height:1.6;letter-spacing:.4px;color:var(--muted,#656b58)}
+.project-metric-live{display:inline-block;margin-left:4px;padding:1px 5px;border:1px solid #b9c8a5;border-radius:3px;background:#e1e8d5;color:#3f5a34;font-size:8px;font-weight:600;letter-spacing:.2px;white-space:nowrap;vertical-align:middle}
+.project-metrics>div:has(.project-metric-live){grid-column:1/-1}
 .project-metrics dd{order:-1;font-family:var(--serif,'Instrument Serif',Georgia,serif);font-size:52px;line-height:1.1;letter-spacing:-1px;color:var(--olive,#4d583a);margin:0 0 8px;overflow-wrap:anywhere}
 .project-metrics [data-metric-pending] dd{color:#76815d}
 .project-metrics--compact{margin:20px 0 0;padding:16px 0;gap:15px}

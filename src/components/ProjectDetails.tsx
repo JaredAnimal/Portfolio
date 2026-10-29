@@ -24,7 +24,7 @@ export function ProjectMetrics({ metrics, compact = false }: { metrics: ProjectM
   if (!metrics.length) return null
   return <dl className={`project-metrics${compact ? ' project-metrics--compact' : ''}`} aria-label="Project metrics">
     {metrics.map(metric => <div key={metric.caption} data-metric-pending={metric.value || metric.valueAtDate ? undefined : ''}>
-      <dt>{metric.caption}</dt>
+      <dt>{metric.caption}{metric.valueAtDate && <> <span className="project-metric-live" title="Estimated total, updated daily">[Live]</span></>}</dt>
       <dd title={metric.valueAtDate ? 'Estimated total, updated daily' : undefined}>{metric.valueAtDate ? <DailyMetricValue getValue={metric.valueAtDate} /> : metric.value ?? <><span aria-hidden="true">—</span><span className="sr-only">Measurement to come</span></>}</dd>
     </div>)}
   </dl>
