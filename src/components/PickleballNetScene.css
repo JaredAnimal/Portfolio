@@ -6,6 +6,11 @@
 .pickleball-net__canvas:active{cursor:grabbing}
 .pickleball-net.is-rendered .pickleball-net__fallback{visibility:hidden}
 .pickleball-net:not(.is-rendered) .pickleball-net__canvas{visibility:hidden}
+.pickleball-net__dimensions{position:absolute;inset:0;z-index:1;width:100%;height:100%;pointer-events:none;overflow:visible;color:#49553c}
+.pickleball-net__dimensions path{fill:none;stroke:currentColor;stroke-width:1;vector-effect:non-scaling-stroke}
+.pickleball-net__dimensions marker path{fill:currentColor;stroke:none}
+.pickleball-net__witness{opacity:.6}.pickleball-net__leader{opacity:.75}
+.pickleball-net__dimensions text{font-family:'DM Sans Variable',sans-serif;font-size:11px;font-weight:500;letter-spacing:.6px;fill:#35412b;stroke:#edf0e2;stroke-width:5px;stroke-linejoin:round;paint-order:stroke fill}
 .pickleball-net>figcaption{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px 20px;padding:16px 18px;border-top:1px solid #ced2bf;letter-spacing:0;text-transform:none}
 .pickleball-net>figcaption>div:first-child{flex:1;min-width:180px}
 .pickleball-net>figcaption strong{font-size:12px;font-weight:500}
@@ -14,3 +19,4 @@
 .pickleball-net__controls button{display:inline-flex;align-items:center;justify-content:center;min-width:36px;min-height:36px;padding:8px 11px;background:#f5f2e9;border:1px solid #a6ad96;font-size:10px;color:#35412b}
 .pickleball-net__controls button:hover{background:#dce1cd}
 @media(max-width:680px){.pickleball-net__viewport{aspect-ratio:4/3;min-height:200px}.pickleball-net>figcaption{padding:14px}.pickleball-net__controls button{min-width:40px;min-height:40px}}
+@media(max-width:680px){.pickleball-net__dimensions text{font-size:8px;letter-spacing:.2px}}

@@ -72,7 +72,26 @@ async function expectLoadedMedia(page: Page, expectedKinds: string[]) {
 async function expectNoOverflow(page: Page, label: string) {
   await page.evaluate(() => document.fonts.ready)
   const width = page.viewportSize()!.width
-  expect(await page.evaluate(() => document.documentElement.scrollWidth), label).toBeLessThanOrEqual(width)
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth), label).toBeLessThanOrEqual(width)
+}
+
+async function expectNetDimensions(page: Page) {
+  const dimensions = page.locator('.pickleball-net__dimensions')
+  await expect(dimensions).toBeVisible()
+  for (const [id, label] of Object.entries({ width: 'WIDTH · TBD m', height: 'HEIGHT · TBD m', 'center-height': 'CENTER HEIGHT · TBD m', tension: 'TENSION · TBD N' })) {
+    const dimension = dimensions.locator(`[data-net-dimension="${id}"]`)
+    await expect(dimension).toBeVisible()
+    await expect(dimension).toContainText(label)
+  }
+  await expect.poll(async () => {
+    const frame = await page.locator('.pickleball-net__viewport').boundingBox()
+    const labels = await dimensions.locator('text').evaluateAll(elements => elements.map(element => {
+      const { x, y, right, bottom } = element.getBoundingClientRect()
+      return { x, y, right, bottom }
+    }))
+    return frame !== null && labels.length === 4 && labels.every(label => label.x >= frame.x - 1 && label.y >= frame.y - 1 && label.right <= frame.x + frame.width + 1 && label.bottom <= frame.y + frame.height + 1)
+  }, 'dimension labels stay inside the net view').toBe(true)
+  return dimensions
 }
 
 async function expectProjectFacts(page: Page, title: string) {
@@ -639,6 +658,7 @@ test('without WebGL the circuit and all six navigation stories still work', asyn
     await expect(page.locator('.pickleball-net__fallback')).toBeVisible()
     await expect(page.locator('.pickleball-net__canvas')).toHaveCount(0)
     await expect(page.getByRole('main')).toContainText(/Static view/i)
+    await expectNetDimensions(page)
   } finally { await browser.close() }
 })
 
@@ -744,6 +764,14 @@ test('the net project renders a controllable three.js concept without mobile ove
   await expect.poll(() => canvas.evaluate((element: HTMLCanvasElement) => element.width)).toBeGreaterThan(100)
   await expect(scene.locator('.pickleball-net__fallback')).toBeHidden()
   await expect(scene).toContainText(/Concept visualization/i)
+  const dimensions = await expectNetDimensions(page)
+  const projectedPaths = () => dimensions.locator('path').evaluateAll(elements => elements.map(element => element.getAttribute('d')))
+  const initialPaths = await projectedPaths()
+  expect(initialPaths.length).toBeGreaterThan(0)
+  await scene.getByRole('button', { name: 'Rotate net left', exact: true }).click()
+  await expect.poll(projectedPaths).not.toEqual(initialPaths)
+  await scene.getByRole('button', { name: 'Reset view', exact: true }).click()
+  await expect.poll(projectedPaths).toEqual(initialPaths)
   for (const name of ['Rotate net left', 'Rotate net right', 'Reset view']) {
     const button = scene.getByRole('button', { name, exact: true })
     await button.focus()
@@ -754,6 +782,7 @@ test('the net project renders a controllable three.js concept without mobile ove
     await page.setViewportSize({ width, height: 900 })
     await expectNoOverflow(page, `net page overflow at ${width}px`)
     await expect(canvas).toBeVisible()
+    await expectNetDimensions(page)
   }
   const accessibility = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
   expect(accessibility.violations.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => node.target) }))).toEqual([])

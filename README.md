@@ -87,3 +87,7 @@ The wind-turbine project records team testing of four designs: Savonius, HAWT, V
 ## PID and BrightLight images — October 28, 2026
 
 The supplied transparent PNG replaces the PID car image on the homepage, in menus, and on its project page. Its background matches BrightLight’s concept art. The PID page also includes the supplied SUM vs. ERROR graph (`imageofPID.png`), displayed uncropped at full gallery width. BrightLight retains its concept image on the homepage and in menus; the two supplied portrait ESP32 photographs appear only in its full project page gallery, side by side on desktop and stacked on phones, with their natural proportions preserved.
+
+## Net model callouts — October 28, 2026
+
+The net model has one support base at each end; the gold extension replaces the right crossbar and feet. CAD-style dimension lines follow rotation and resizing, with matching callouts in the static fallback. Width, post height, and center height use meters; net tension uses newtons. All four values remain TBD until measured.
