@@ -117,10 +117,13 @@
 /* Supplied project and role images keep their complete original framing. */
 .project-photo-slot.portfolio-photo{background:#fff}
 .project-photo-slot.portfolio-photo>img{padding:46px 12px 36px}
-.project-art-line-follower .art-topline{background:#f5f2e9ed;padding:7px 9px}
+.project-art-line-follower .art-topline,.project-art-pilight .art-topline{background:#f5f2e9ed;padding:7px 9px}
 .experience-photo .portfolio-photo{aspect-ratio:auto}
 .experience-photo .portfolio-photo>img{height:auto}
 .experience-photo-button:hover .portfolio-photo{outline:1px solid #a1ac8e;outline-offset:3px}
 
-/* The transparent car cutout shares BrightLight’s concept-art background. */
-.photo-slot.placeholder-art-pilight,.photo-slot.portfolio-photo[data-photo="line-follower-platform"]{background:#e8e6d8}
+/* Supplied cutouts share a background and balanced framing on the project cards. */
+.photo-slot.placeholder-art-pilight,.photo-slot.portfolio-photo[data-photo="line-follower-platform"],.photo-slot.portfolio-photo[data-photo="brightlight-led-matrix"]{background:#e8e6d8}
+/* Center the visible display within the original PNG's transparent margins. */
+.photo-slot.portfolio-photo[data-photo="brightlight-led-matrix"]{aspect-ratio:700/356}
+.photo-slot.portfolio-photo[data-photo="brightlight-led-matrix"]>img{position:absolute;left:50%;top:50%;width:92%;height:auto;max-width:none;padding:0;transform:translate(-62.93%,-51.4%)}

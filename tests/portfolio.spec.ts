@@ -525,16 +525,16 @@ test('the pickleball section keeps its three nested projects and restores focus'
   await closeBoardStory(page)
 })
 
-test('project, experience, and pickleball spaces render their accessible photos and concept illustrations', async ({ page }) => {
+test('project, experience, and pickleball spaces render their accessible photos', async ({ page }) => {
   await page.goto('./')
   await expectLoadedMedia(page, ['pilight', 'line-follower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
-  for (const subject of ['line-follower', 'teaching', 'navy', 'admissions']) {
+  for (const subject of ['pilight', 'line-follower', 'teaching', 'navy', 'admissions']) {
     await expect(page.locator(`[data-photo-subject="${subject}"]`)).toHaveCount(1)
     await expect(page.locator(`[data-placeholder-illustration="${subject}"]`)).toHaveCount(0)
   }
   await expect(page.locator('[data-photo^="brightlight-esp32"]')).toHaveCount(0)
   const carBackground = await page.locator('[data-photo="line-follower-platform"]').evaluate(element => getComputedStyle(element).backgroundColor)
-  await expect(page.locator('[data-placeholder-illustration="pilight"]')).toHaveCSS('background-color', carBackground)
+  await expect(page.locator('[data-photo="brightlight-led-matrix"]')).toHaveCSS('background-color', carBackground)
   const pickleball = page.locator('#pickleball')
   await expect(pickleball.getByRole('heading', { level: 2 })).toBeVisible()
   await expect(pickleball).toContainText(/UCLA Club Pickleball/)
@@ -547,15 +547,14 @@ test('project, experience, and pickleball spaces render their accessible photos 
     await page.goto(`./#/projects/${kind}`)
     await expectLoadedMedia(page, Array(kind === 'line-follower' ? 2 : 3).fill(kind))
     if (kind === 'pilight') {
+      await expect(page.locator('.project-page-photo-wide [data-photo]')).toHaveAttribute('data-photo', 'brightlight-led-matrix')
       await expect(page.locator('.project-page-photo-grid [data-photo^="brightlight-esp32"]')).toHaveCount(2)
     }
     if (kind === 'line-follower') {
       await expect(page.locator('[data-photo="line-follower-sum-error"] img')).toHaveAttribute('src', /imageofPID/)
     }
-    if (kind !== 'pilight') {
-      await expect(page.locator('[data-placeholder-illustration]')).toHaveCount(0)
-      await expect(page.getByRole('main')).not.toContainText(/concept illustration|photography to follow/i)
-    }
+    await expect(page.locator('[data-placeholder-illustration]')).toHaveCount(0)
+    await expect(page.getByRole('main')).not.toContainText(/concept illustration|photography to follow/i)
     if (kind === 'dart-robot') {
       await expect(page.locator('.project-page-photo-wide img')).toHaveAccessibleName(/showcase.*Jared|Jared.*showcase/i)
       const galleryImages = page.locator('.project-page-photo-grid img')

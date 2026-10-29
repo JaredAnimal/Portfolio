@@ -11,6 +11,7 @@ import robotPlatform from './assets/photos/line-follower/robot-platform.png'
 import imageofPID from './assets/photos/line-follower/imageofPID.png'
 import brightLightDisplay from './assets/photos/brightlight/esp32-led-display.png'
 import brightLightBench from './assets/photos/brightlight/esp32-bench-test.png'
+import brightLightMain from './assets/photos/brightlight/led-matrix.png'
 import districtShowcase from './assets/photos/dart-robot/district-showcase.png'
 import dartFlowSimulation from './assets/photos/dart-robot/dart-flow-simulation.jpg'
 import launchAngleChart from './assets/photos/dart-robot/launch-angle-chart.png'
@@ -51,7 +52,11 @@ export const lineFollowerPhotos: PortfolioPhoto[] = [
   { id: 'line-follower-sum-error', subject: 'line-follower', src: imageofPID, width: 1178, height: 722, caption: 'SUM vs. ERROR', alt: 'PID line-following car SUM vs. ERROR graph showing the sensor sum plotted against error.' },
 ]
 
-// Full project page only; homepage and menu retain the BrightLight concept art.
+export const brightLightMainPhoto: PortfolioPhoto = {
+  id: 'brightlight-led-matrix', subject: 'pilight', src: brightLightMain, width: 700, height: 356, caption: 'BrightLight LED frequency display', alt: 'BrightLight LED matrix in a dark enclosure showing illuminated red audio-frequency bars.',
+}
+
+// Portrait build photographs appear only in the full project page gallery.
 export const brightLightPhotos: PortfolioPhoto[] = [
   { id: 'brightlight-esp32-display', subject: 'pilight', src: brightLightDisplay, width: 690, height: 1130, caption: 'ESP32 and LED display', alt: 'BrightLight ESP32 wired on a breadboard beside an illuminated LED matrix, with the controller labeled.' },
   { id: 'brightlight-esp32-bench', subject: 'pilight', src: brightLightBench, width: 514, height: 766, caption: 'ESP32 bench testing', alt: 'BrightLight ESP32 breadboard setup connected to test equipment, with waveform traces visible on an oscilloscope.' },
@@ -64,6 +69,7 @@ export const dartRobotPhotos: PortfolioPhoto[] = [
 ]
 
 export const projectPhotos: Partial<Record<ProjectKind | 'dart-robot', PortfolioPhoto[]>> = {
+  pilight: [brightLightMainPhoto],
   'line-follower': lineFollowerPhotos,
   'dart-robot': dartRobotPhotos,
   sunflower: sunflowerPhotos,

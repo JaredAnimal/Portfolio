@@ -51,7 +51,7 @@ To check the production build locally, run `npm run preview -- --port 4174 --str
 - `src/photos.ts`, `src/components/Photo.tsx`, and `src/assets/photos/`: the user-supplied project and experience images, with descriptive alt text, captions, natural dimensions, and lazy loading for gallery images.
 - `src/components/CircuitScene.tsx`: interactive circuit board with six components for projects, experience, transcript, about, pickleball, and resume. Labels and component markers support keyboard, touch, and a non-WebGL fallback. It renders on demand and respects reduced motion. Pointer motion uses camera-relative parallax and tilt so both the near and far edges follow the cursor consistently. This conceptual board is not a model of one of Jared's projects.
 - `src/components/ProjectArtwork.tsx`: conceptual project illustrations. Replace with real project photography when available.
-- `src/components/PlaceholderArt.tsx` and `src/assets/illustrations/`: seven generated olive-and-sand placeholder illustrations for BrightLight, the PID car, the dart robot, robotics instruction, hardware-data analysis, IT support, and pickleball. BrightLight still uses its concept illustration, with descriptive alt text and a visible label. Supplied images now replace the PID car, dart-robot, work-experience, pickleball, and USS Sunflower placeholders; unused originals remain archived in the assets directory.
+- `src/components/PlaceholderArt.tsx` and `src/assets/illustrations/`: seven generated olive-and-sand placeholder illustrations for BrightLight, the PID car, the dart robot, robotics instruction, hardware-data analysis, IT support, and pickleball. BrightLight uses its supplied transparent LED-display photograph as its lead image. Supplied images now replace the PID car, dart-robot, work-experience, pickleball, and USS Sunflower placeholders; unused originals remain archived in the assets directory.
 - `public/Jared-Ashman-Resume.pdf`: the user's approved, one-page LaTeX resume PDF, supplied October 26, 2026. The uploaded PDF is served unchanged, including its contact details.
 - `public/Jared-Ashman-Transcript.pdf`: the renamed, three-page unofficial UCLA transcript, available to view or download from the Transcript submenu. The public copy permanently redacts the university ID and birth-date field and uses clean metadata; extracted academic content was verified unchanged. The original upload is retained outside the checkout and is not published.
 
@@ -86,7 +86,7 @@ The wind-turbine project records team testing of four designs: Savonius, HAWT, V
 
 ## PID and BrightLight images — October 28, 2026
 
-The supplied transparent PNG replaces the PID car image on the homepage, in menus, and on its project page. Its background matches BrightLight’s concept art. The PID page also includes the supplied SUM vs. ERROR graph (`imageofPID.png`), displayed uncropped at full gallery width. BrightLight retains its concept image on the homepage and in menus; the two supplied portrait ESP32 photographs appear only in its full project page gallery, side by side on desktop and stacked on phones, with their natural proportions preserved.
+The supplied transparent PNG replaces the PID car image on the homepage, in menus, and on its project page. Its background matches BrightLight’s concept art. The PID page also includes the supplied SUM vs. ERROR graph (`imageofPID.png`), displayed uncropped at full gallery width. BrightLight’s two supplied portrait ESP32 photographs appear only in its full project page gallery, side by side on desktop and stacked on phones, with their natural proportions preserved.
 
 ## Net model callouts — October 28, 2026
 
@@ -95,3 +95,7 @@ The viewer depicts a standard pickleball net with a yellow box centered on the l
 ## Reservation-sharing total — October 29, 2026
 
 The website link is https://bit.ly/UCLAPB. Its estimated reservations-shared total starts at approximately 50 on October 29, 2026, then adds 2 for each subsequent weekday and 1 for each subsequent weekend day, using America/Los_Angeles calendar dates. `src/reservationTotals.ts` computes an integer total from the date; no backend or daily deployment is needed. The shared metrics component refreshes once per minute and when the page regains focus or visibility. The ≈ prefix identifies this rate-based estimate. The dart robot retains only its district-showcase link, with its pending project-files slot removed.
+
+## BrightLight main image — October 29, 2026
+
+The supplied transparent LED-display PNG is the lead image on the homepage, in BrightLight’s menu, and on its full project page. CSS centers the visible enclosure within the original image’s transparent margins, matching the PID car card’s background and balancing their scale. The source PNG is preserved unchanged. The two vertical ESP32 photographs remain exclusive to the full project page gallery.
