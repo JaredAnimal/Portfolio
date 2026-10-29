@@ -2,6 +2,8 @@ export interface ProjectMetric {
   caption: string
   /** Add a verified measurement when available; an omitted value stays a placeholder. */
   value?: string
+  /** A date-based value refreshed while the metric is visible. */
+  valueAtDate?: (date: Date) => string
 }
 
 export interface ProjectLink {
@@ -16,5 +18,4 @@ export interface ProjectLink {
 
 export const dartRobotLinks: ProjectLink[] = [
   { label: 'District showcase video', href: 'https://sites.google.com/sandi.net/sdusdccte-innovation-showcase/home' },
-  { label: 'Project files' },
 ]

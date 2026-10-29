@@ -1,4 +1,5 @@
 import type { ProjectLink, ProjectMetric } from './projectDetails'
+import { getEstimatedReservationsShared } from './reservationTotals'
 
 export type PickleballProjectId = 'reservation-bot' | 'reservation-sharing' | 'net-tensioner'
 
@@ -44,8 +45,8 @@ export const pickleballProjects: PickleballProject[] = [
       'Enforce court capacity and practice-time rules on the server, and synchronize reservations with a Google Sheet through an Apps Script bridge.',
     ],
     tags: ['TypeScript', 'Cloudflare Workers', 'D1', 'Google Apps Script'],
-    metrics: [{ caption: 'Active monthly users', value: '45' }],
-    links: [{ label: 'View project repository', href: 'https://github.com/JaredAnimal/UCLAPickleball' }, { label: 'Visit project website' }],
+    metrics: [{ caption: 'Reservations shared', valueAtDate: getEstimatedReservationsShared }],
+    links: [{ label: 'View project repository', href: 'https://github.com/JaredAnimal/UCLAPickleball' }, { label: 'Visit project website', href: 'https://bit.ly/UCLAPB' }],
   },
   {
     id: 'net-tensioner',

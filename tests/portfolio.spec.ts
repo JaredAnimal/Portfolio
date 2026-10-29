@@ -202,6 +202,7 @@ test('deep project URLs survive reload and the dart robot is an independent proj
   await expect(page.getByRole('heading', { level: 1, name: 'Dart-launching robot', exact: true })).toBeVisible()
   await expect(page.getByRole('main')).not.toContainText(/earlier|backstory|next chapter/i)
   await expect(page.getByRole('main').getByRole('link', { name: /district showcase/i })).toHaveAttribute('href', 'https://sites.google.com/sandi.net/sdusdccte-innovation-showcase/home')
+  await expect(page.getByRole('main').locator('.project-link-pending')).toHaveCount(0)
   await page.reload()
   await expect(page.getByRole('heading', { level: 1, name: 'Dart-launching robot', exact: true })).toBeVisible()
 })
@@ -382,13 +383,14 @@ test('USS Sunflower stays off the homepage while header and board project menus 
 })
 
 test('project measurements use the supplied values and unmeasured net results remain pending', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-10-29T19:00:00Z'))
   const expectedMetrics: Record<string, [RegExp, RegExp][]> = {
     brightlight: [[/Response latency/i, /<\s*50\s*ms/], [/Frequency resolution/i, /<\s*2\.5\s*Hz/i]],
     'line-follower': [[/Tracking error/i, /4\s*%/], [/loop (?:period|time|rate)/i, /17\s*ms/]],
-    sunflower: [[/Dive depth/i, /33\s*(?:ft|feet)/i], [/Underwater runtime/i, /10\s*min/i]],
+    sunflower: [[/Dive depth/i, /33\s*(?:ft|feet)/i], [/Underwater runtime/i, /30\s*min/i]],
     'reservation-bot': [[/Booking turnaround/i, /<\s*0?\.3\s*s/]],
     'wind-turbine': [[/Output voltage/i, /^17\s*V$/], [/Max RPM/i, /^82$/]],
-    'reservation-sharing': [[/Active monthly users/i, /^45$/]],
+    'reservation-sharing': [[/Reservations shared/i, /^≈50$/]],
   }
   for (const [id, metrics] of Object.entries(expectedMetrics)) {
     await page.goto(`./#/projects/${id}`)
@@ -403,6 +405,8 @@ test('project measurements use the supplied values and unmeasured net results re
   }
   await expect(page.getByRole('main')).not.toContainText(/Response time|Players served/i)
   await expect(page.getByRole('main').getByRole('link', { name: /View project repository/ })).toHaveAttribute('href', 'https://github.com/JaredAnimal/UCLAPickleball')
+  await expect(page.getByRole('main').getByRole('link', { name: /Visit project website/ })).toHaveAttribute('href', 'https://bit.ly/UCLAPB')
+  await expect(page.getByRole('main')).not.toContainText(/Active monthly users/i)
   await page.goto('./#/projects/wind-turbine')
   await expect(page.getByRole('main')).toContainText(/Savonius/i)
   await expect(page.getByRole('main')).toContainText(/HAWT/)
@@ -410,6 +414,21 @@ test('project measurements use the supplied values and unmeasured net results re
   await expect(page.getByRole('main')).toContainText(/bladeless/i)
   await page.goto('./#/projects/net-tensioner')
   await expect(page.getByRole('main').locator('[data-metric-pending]')).toHaveCount(2)
+})
+
+test('shared reservations update after Los Angeles midnight and stay consistent in the project menu', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-10-30T06:59:30Z') })
+  await page.goto('./#/projects/reservation-sharing')
+  const count = page.getByRole('main').locator('.project-metrics dd')
+  await expect(count).toHaveText('≈50')
+  await page.clock.fastForward(60_000)
+  await expect(count).toHaveText('≈52')
+  await page.clock.fastForward(60_000)
+  await expect(count).toHaveText('≈52')
+  await page.getByRole('button', { name: 'Project menu', exact: true }).click()
+  const menu = page.getByRole('dialog')
+  await expect(menu.locator('.project-metrics dd')).toHaveText('≈52')
+  await expect(menu.getByRole('link', { name: /Visit project website/ })).toHaveAttribute('href', 'https://bit.ly/UCLAPB')
 })
 
 test('home and each clickable job preserve current education, clearance, activities, and work history', async ({ page }) => {

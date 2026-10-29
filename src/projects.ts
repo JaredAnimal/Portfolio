@@ -73,7 +73,7 @@ export const projects: Project[] = [
       { title: 'Body and motor mounts', text: 'Custom split clamps and supporting brackets attach the motors to the cylindrical body, with openings to route wiring inside.' },
       { title: 'Control and fabrication', text: 'The design explores PS4 controller input, 3D-printed parts, and a shark fin with segmented laser engraving around the body.' },
     ],
-    metrics: [{ caption: 'Dive depth', value: '33 ft' }, { caption: 'Underwater runtime', value: '10 min' }],
+    metrics: [{ caption: 'Dive depth', value: '33 ft' }, { caption: 'Underwater runtime', value: '30 min' }],
     links: [{ label: 'Project files' }],
   },
   {
