@@ -13,6 +13,7 @@ const POST_RADIUS = .035
 const POST_X = 6.7056 / 2 + POST_RADIUS // 22 ft between the posts' inside faces.
 const netTop = (x: number) => CENTER_HEIGHT + (SIDE_HEIGHT - CENTER_HEIGHT) * (x / SIDELINE_X) ** 2
 const POST_TOP = netTop(NET_WIDTH / 2) + .055
+const PROPOSED_AREA_X = POST_X / 2
 
 const dimensions: { id: string; label: string; from: Point3; to: Point3; offset: Point3; labelAt: Point2; fallback: [Point2, Point2, Point2, Point2] }[] = [
   { id: 'width', label: 'NET WIDTH · 6.63 m', from: [-NET_WIDTH / 2, netTop(NET_WIDTH / 2), 0], to: [NET_WIDTH / 2, netTop(NET_WIDTH / 2), 0], offset: [0, .45, 0], labelAt: [.5, .12], fallback: [[122, 165], [568, 185], [122, 120], [568, 140]] },
@@ -27,13 +28,14 @@ function drawDimensions(svg: SVGSVGElement, width: number, height: number, proje
   const fallbackScale = Math.min(width / 720, height / 420)
   const fallbackX = (width - 720 * fallbackScale) / 2
   const fallbackY = (height - 420 * fallbackScale) / 2
+  const fallbackPoint = ([x, y]: Point2): Point2 => [fallbackX + x * fallbackScale, fallbackY + y * fallbackScale]
+  const coordinate = ([x, y]: Point2) => `${x.toFixed(2)},${y.toFixed(2)}`
   for (const dimension of dimensions) {
     const group = svg.querySelector(`[data-net-dimension="${dimension.id}"]`)!
     const offset = (point: Point3): Point3 => point.map((value, index) => value + dimension.offset[index]) as Point3
     const [from, to, start, end] = project
       ? [dimension.from, dimension.to, offset(dimension.from), offset(dimension.to)].map(project)
-      : dimension.fallback.map(([x, y]) => [fallbackX + x * fallbackScale, fallbackY + y * fallbackScale] as Point2)
-    const coordinate = ([x, y]: Point2) => `${x.toFixed(2)},${y.toFixed(2)}`
+      : dimension.fallback.map(fallbackPoint)
     const label: Point2 = [dimension.labelAt[0] * width, dimension.labelAt[1] * height]
     const midpoint: Point2 = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2]
     const isTension = dimension.id === 'tension'
@@ -46,6 +48,14 @@ function drawDimensions(svg: SVGSVGElement, width: number, height: number, proje
     text.setAttribute('x', `${label[0]}`)
     text.setAttribute('y', `${label[1]}`)
   }
+  const area = svg.querySelector('[data-net-extension-area]')!
+  const anchor = project ? project([PROPOSED_AREA_X, .15, .08]) : fallbackPoint([462, 277])
+  const label: Point2 = [width * .78, height * .79]
+  area.querySelector('path')!.setAttribute('d', `M${coordinate([label[0], label[1] - 12])}L${coordinate(anchor)}`)
+  const text = area.querySelector('text')!
+  text.setAttribute('x', `${label[0]}`)
+  text.setAttribute('y', `${label[1]}`)
+  text.querySelectorAll('tspan').forEach(span => span.setAttribute('x', `${label[0]}`))
 }
 
 function NetFallback() {
@@ -57,10 +67,15 @@ function NetFallback() {
     <path d="M122 165Q345 192 568 185V261L122 241Z" fill={`url(#${patternId})`} stroke="#657052" strokeWidth="2" />
     <path d="M122 165Q345 192 568 185" stroke="#f6f1df" strokeWidth="6" fill="none" />
     <path d="m122 241 446 20" stroke="#d9d8c3" strokeWidth="5" />
+    <g stroke="#b48c13" strokeWidth="1">
+      <path d="m445 278 29 1 9-6-29-1Z" fill="#ffdc55" />
+      <path d="m445 278 29 1v15l-29-1Z" fill="#f5c400" />
+      <path d="m474 279 9-6v15l-9 6Z" fill="#d5a900" />
+    </g>
   </svg>
 }
 
-/** A pickleball net reference model, without the proposed base extension. */
+/** A pickleball net with a yellow marker for the proposed extension area. */
 export default function PickleballNetScene() {
   const hostRef = useRef<HTMLDivElement>(null)
   const dimensionsRef = useRef<SVGSVGElement>(null)
@@ -126,6 +141,7 @@ export default function PickleballNetScene() {
     const vector = (x: number, y: number, z = 0) => new THREE.Vector3(x, y, z)
     // The lower rail joins the portable supports; both bases use the frame material.
     tube(vector(-POST_X, .06), vector(POST_X, .06), .03, frameMaterial)
+    box(.42, .14, .16, [PROPOSED_AREA_X, .08, 0], meshMaterial('#f5c400', .6))
     for (const side of [-1, 1]) {
       const x = side * POST_X
       tube(vector(x, .06), vector(x, POST_TOP), POST_RADIUS, frameMaterial)
@@ -283,7 +299,7 @@ export default function PickleballNetScene() {
   return <figure className={`pickleball-net${ready ? ' is-rendered' : ''}`} data-net-scene="">
     <div ref={hostRef} className="pickleball-net__viewport" tabIndex={ready ? 0 : undefined} role="group" aria-label="Pickleball net concept visualization" aria-describedby={descriptionId}>
       <NetFallback />
-      <svg ref={dimensionsRef} className="pickleball-net__dimensions" role="img" aria-label="Pickleball net: width 6.63 meters, sideline height 0.9144 meters, center height 0.8636 meters, tension 230 to 270 newtons.">
+      <svg ref={dimensionsRef} className="pickleball-net__dimensions" role="img" aria-label="Pickleball net: width 6.63 meters, sideline height 0.9144 meters, center height 0.8636 meters, tension 230 to 270 newtons. A yellow box on the lower rail halfway between the middle and right post marks the proposed area of net extension.">
         <defs><marker id={arrowId} viewBox="0 0 6 6" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 6 3 0 6Z" fill="currentColor" /></marker></defs>
         {dimensions.map(dimension => <g key={dimension.id} data-net-dimension={dimension.id}>
           <path className="pickleball-net__witness" />
@@ -291,6 +307,10 @@ export default function PickleballNetScene() {
           <path className="pickleball-net__leader" markerEnd={dimension.id === 'tension' ? `url(#${arrowId})` : undefined} />
           <text textAnchor="middle" dominantBaseline="middle">{dimension.label}</text>
         </g>)}
+        <g data-net-extension-area="">
+          <path className="pickleball-net__leader" markerEnd={`url(#${arrowId})`} />
+          <text textAnchor="middle" dominantBaseline="middle"><tspan>proposed area of </tspan><tspan dy="1.3em">net extension</tspan></text>
+        </g>
       </svg>
     </div>
     <figcaption>

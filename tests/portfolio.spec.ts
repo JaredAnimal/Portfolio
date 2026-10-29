@@ -83,15 +83,22 @@ async function expectNetDimensions(page: Page) {
     await expect(dimension).toBeVisible()
     await expect(dimension).toContainText(label)
   }
+  const extensionArea = dimensions.locator('[data-net-extension-area] text')
+  await expect(extensionArea).toBeVisible()
+  await expect(extensionArea).toHaveText('proposed area of net extension')
   await expect(page.locator('[data-net-scene]')).not.toContainText(/\bTBD\b/)
   await expect.poll(async () => {
     const frame = await page.locator('.pickleball-net__viewport').boundingBox()
-    const labels = await dimensions.locator('text').evaluateAll(elements => elements.map(element => {
+    const labels = await dimensions.locator('[data-net-dimension] text').evaluateAll(elements => elements.map(element => {
       const { x, y, right, bottom } = element.getBoundingClientRect()
       return { x, y, right, bottom }
     }))
-    return frame !== null && labels.length === 4 && labels.every(label => label.x >= frame.x - 1 && label.y >= frame.y - 1 && label.right <= frame.x + frame.width + 1 && label.bottom <= frame.y + frame.height + 1)
-  }, 'dimension labels stay inside the net view').toBe(true)
+    const area = await extensionArea.evaluate(element => {
+      const { x, y, right, bottom } = element.getBoundingClientRect()
+      return { x, y, right, bottom }
+    })
+    return frame !== null && labels.length === 4 && [...labels, area].every(label => label.x >= frame.x - 1 && label.y >= frame.y - 1 && label.right <= frame.x + frame.width + 1 && label.bottom <= frame.y + frame.height + 1)
+  }, 'dimension and extension-area labels stay inside the net view').toBe(true)
   return dimensions
 }
 
