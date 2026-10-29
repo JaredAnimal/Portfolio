@@ -545,7 +545,7 @@ test('project, experience, and pickleball spaces render their accessible photos'
   await expect(pickleball).not.toContainText(/concept illustration|photography to follow/i)
   for (const kind of ['pilight', 'line-follower', 'dart-robot']) {
     await page.goto(`./#/projects/${kind}`)
-    await expectLoadedMedia(page, Array(kind === 'line-follower' ? 2 : 3).fill(kind))
+    await expectLoadedMedia(page, Array(kind === 'line-follower' ? 2 : kind === 'dart-robot' ? 5 : 3).fill(kind))
     if (kind === 'pilight') {
       await expect(page.locator('.project-page-photo-wide [data-photo]')).toHaveAttribute('data-photo', 'brightlight-led-matrix')
       await expect(page.locator('.project-page-photo-grid [data-photo^="brightlight-esp32"]')).toHaveCount(2)
@@ -558,10 +558,19 @@ test('project, experience, and pickleball spaces render their accessible photos'
     if (kind === 'dart-robot') {
       await expect(page.locator('.project-page-photo-wide img')).toHaveAccessibleName(/showcase.*Jared|Jared.*showcase/i)
       const galleryImages = page.locator('.project-page-photo-grid img')
-      await expect(galleryImages).toHaveCount(2)
+      await expect(galleryImages).toHaveCount(4)
       expect(await galleryImages.evaluateAll(images => images.map(image => image.getAttribute('alt')).join(' '))).toMatch(/flow|simulation/i)
       expect(await galleryImages.evaluateAll(images => images.map(image => image.getAttribute('alt')).join(' '))).toMatch(/launch angle.*horizontal distance/i)
     }
+  }
+  await page.goto('./#/projects/wind-turbine')
+  const videos = page.locator('main video')
+  await expect(videos).toHaveCount(4)
+  for (const video of await videos.all()) {
+    await expect(video).toHaveAttribute('controls', '')
+    await expect(video).toHaveAttribute('preload', 'metadata')
+    await expect(video).toHaveAccessibleName(/wind turbine|h-rotor/i)
+    await expect.poll(() => video.evaluate((element: HTMLVideoElement) => element.readyState >= 1 && element.videoWidth > 0 && element.videoHeight > 0 && element.error === null), 'Wind turbine video metadata must load').toBe(true)
   }
 })
 

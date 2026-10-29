@@ -12,6 +12,8 @@ import imageofPID from './assets/photos/line-follower/imageofPID.png'
 import brightLightDisplay from './assets/photos/brightlight/esp32-led-display.png'
 import brightLightBench from './assets/photos/brightlight/esp32-bench-test.png'
 import brightLightMain from './assets/photos/brightlight/led-matrix.png'
+import dartTeam from './assets/photos/dart-robot/team-with-robot.jpg'
+import dartWiring from './assets/photos/dart-robot/robot-wiring.jpg'
 import districtShowcase from './assets/photos/dart-robot/district-showcase.png'
 import dartFlowSimulation from './assets/photos/dart-robot/dart-flow-simulation.jpg'
 import launchAngleChart from './assets/photos/dart-robot/launch-angle-chart.png'
@@ -66,6 +68,8 @@ export const dartRobotPhotos: PortfolioPhoto[] = [
   { id: 'dart-showcase', subject: 'dart-robot', src: districtShowcase, width: 2758, height: 1488, caption: 'District innovation showcase', alt: 'Showcase video still of Jared Ashman holding the dart-launching robot, with its launcher and wiring visible.' },
   { id: 'dart-flow-simulation', subject: 'dart-robot', src: dartFlowSimulation, width: 619, height: 323, caption: 'Dart flow simulation', alt: 'Simulation visualization of a dart-shaped body surrounded by flow arrows and a colored fluid-temperature scale.' },
   { id: 'dart-launch-angle', subject: 'dart-robot', src: launchAngleChart, width: 607, height: 463, caption: 'Launch angle and horizontal distance', alt: 'Dart launch angle scatter plot comparing angles in degrees with horizontal distance travelled in millimeters.' },
+  { id: 'dart-team', subject: 'dart-robot', src: dartTeam, width: 4032, height: 3024, caption: 'With the dart-launching robot', alt: 'Jared and a friend standing together with the dart-launching robot at a showcase.' },
+  { id: 'dart-wiring', subject: 'dart-robot', src: dartWiring, width: 4032, height: 3024, caption: 'Robot wiring', alt: 'Dart-launching robot wiring, motors, and circuit boards arranged on a workbench beside a notebook.' },
 ]
 
 export const projectPhotos: Partial<Record<ProjectKind | 'dart-robot', PortfolioPhoto[]>> = {
