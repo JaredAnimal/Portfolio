@@ -74,7 +74,7 @@ export const projects: Project[] = [
       { title: 'Control and fabrication', text: 'The design explores PS4 controller input, 3D-printed parts, and a shark fin with segmented laser engraving around the body.' },
     ],
     metrics: [{ caption: 'Dive depth', value: '33 ft' }, { caption: 'Underwater runtime', value: '30 min' }],
-    links: [{ label: 'Project files' }],
+    links: [],
   },
   {
     id: 'wind-turbine',
@@ -92,6 +92,6 @@ export const projects: Project[] = [
       { title: 'Building and testing', text: 'Worked as a team to build the turbine and compare the designs through testing.' },
     ],
     metrics: [{ caption: 'Output voltage', value: '17 V' }, { caption: 'Max RPM', value: '82' }],
-    links: [{ label: 'Project files' }],
+    links: [],
   },
 ]
