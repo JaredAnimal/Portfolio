@@ -126,4 +126,4 @@
 .photo-slot.placeholder-art-pilight,.photo-slot.portfolio-photo[data-photo="line-follower-platform"],.photo-slot.portfolio-photo[data-photo="brightlight-led-matrix"]{background:#e8e6d8}
 /* Center the visible display within the original PNG's transparent margins. */
 .photo-slot.portfolio-photo[data-photo="brightlight-led-matrix"]{aspect-ratio:700/356}
-.photo-slot.portfolio-photo[data-photo="brightlight-led-matrix"]>img{position:absolute;left:50%;top:50%;width:92%;height:auto;max-width:none;padding:0;transform:translate(-62.93%,-51.4%)}
+.photo-slot.portfolio-photo[data-photo="brightlight-led-matrix"]>img{position:absolute;left:50%;top:50%;width:102%;height:auto;max-width:none;padding:0;transform:translate(-62.93%,-51.4%)}
