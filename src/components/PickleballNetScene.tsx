@@ -4,12 +4,21 @@ import './PickleballNetScene.css'
 
 type Point3 = [number, number, number]
 type Point2 = [number, number]
-// Scene coordinates describe proportions only; physical measurements are pending.
+// USA Pickleball 2026, 3.B.2–3.B.7. Scene units are meters.
+const NET_WIDTH = 6.6294 // Minimum fabric width: 21 ft 9 in.
+const SIDELINE_X = 3.048
+const SIDE_HEIGHT = .9144
+const CENTER_HEIGHT = .8636
+const POST_RADIUS = .035
+const POST_X = 6.7056 / 2 + POST_RADIUS // 22 ft between the posts' inside faces.
+const netTop = (x: number) => CENTER_HEIGHT + (SIDE_HEIGHT - CENTER_HEIGHT) * (x / SIDELINE_X) ** 2
+const POST_TOP = netTop(NET_WIDTH / 2) + .055
+
 const dimensions: { id: string; label: string; from: Point3; to: Point3; offset: Point3; labelAt: Point2; fallback: [Point2, Point2, Point2, Point2] }[] = [
-  { id: 'width', label: 'WIDTH · TBD m', from: [-3.1, 1.58, 0], to: [3.1, 1.58, 0], offset: [0, .5, 0], labelAt: [.5, .12], fallback: [[112, 115], [578, 135], [112, 75], [578, 95]] },
-  { id: 'height', label: 'HEIGHT · TBD m', from: [-3.1, 0, 0], to: [-3.1, 1.58, 0], offset: [-.5, 0, 0], labelAt: [.13, .79], fallback: [[112, 276], [112, 115], [70, 276], [70, 115]] },
-  { id: 'center-height', label: 'CENTER HEIGHT · TBD m', from: [0, 0, 0], to: [0, 1.37, 0], offset: [.4, 0, .14], labelAt: [.5, .89], fallback: [[345, 280], [345, 131], [371, 280], [371, 131]] },
-  { id: 'tension', label: 'TENSION · TBD N', from: [2, 1.67, .01], to: [2.85, 1.67, .01], offset: [0, 0, 0], labelAt: [.81, .27], fallback: [[490, 118], [552, 121], [490, 118], [552, 121]] },
+  { id: 'width', label: 'NET WIDTH · ≥6.63 m', from: [-NET_WIDTH / 2, netTop(NET_WIDTH / 2), 0], to: [NET_WIDTH / 2, netTop(NET_WIDTH / 2), 0], offset: [0, .45, 0], labelAt: [.5, .12], fallback: [[122, 165], [568, 185], [122, 120], [568, 140]] },
+  { id: 'height', label: 'SIDE · 0.9144 m', from: [-SIDELINE_X, 0, 0], to: [-SIDELINE_X, SIDE_HEIGHT, 0], offset: [-.65, 0, 0], labelAt: [.13, .79], fallback: [[140, 271], [140, 166], [70, 271], [70, 166]] },
+  { id: 'center-height', label: 'CENTER · 0.8636 m', from: [0, 0, 0], to: [0, CENTER_HEIGHT, 0], offset: [.4, 0, .14], labelAt: [.5, .89], fallback: [[345, 280], [345, 184], [371, 280], [371, 184]] },
+  { id: 'tension', label: 'TENSION · NOT SPECIFIED', from: [2.2, netTop(2.2), .014], to: [2.2, netTop(2.2), .014], offset: [0, 0, 0], labelAt: [.79, .27], fallback: [[493, 187], [493, 187], [493, 187], [493, 187]] },
 ]
 
 function drawDimensions(svg: SVGSVGElement, width: number, height: number, project?: (point: Point3) => Point2) {
@@ -27,11 +36,12 @@ function drawDimensions(svg: SVGSVGElement, width: number, height: number, proje
     const coordinate = ([x, y]: Point2) => `${x.toFixed(2)},${y.toFixed(2)}`
     const label: Point2 = [dimension.labelAt[0] * width, dimension.labelAt[1] * height]
     const midpoint: Point2 = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2]
-    group.querySelector('.pickleball-net__witness')!.setAttribute('d', `M${coordinate(from)}L${coordinate(start)}M${coordinate(to)}L${coordinate(end)}`)
-    group.querySelector('.pickleball-net__measure')!.setAttribute('d', `M${coordinate(start)}L${coordinate(end)}`)
+    const isTension = dimension.id === 'tension'
+    group.querySelector('.pickleball-net__witness')!.setAttribute('d', isTension ? '' : `M${coordinate(from)}L${coordinate(start)}M${coordinate(to)}L${coordinate(end)}`)
+    group.querySelector('.pickleball-net__measure')!.setAttribute('d', isTension ? '' : `M${coordinate(start)}L${coordinate(end)}`)
     // Exterior callouts keep labels readable as the model turns, including on phones.
     const labelEdge: Point2 = [label[0], label[1] + (label[1] < midpoint[1] ? 10 : -10)]
-    group.querySelector('.pickleball-net__leader')!.setAttribute('d', `M${coordinate(midpoint)}L${coordinate(labelEdge)}`)
+    group.querySelector('.pickleball-net__leader')!.setAttribute('d', isTension ? `M${coordinate(labelEdge)}L${coordinate(from)}` : `M${coordinate(midpoint)}L${coordinate(labelEdge)}`)
     const text = group.querySelector('text')!
     text.setAttribute('x', `${label[0]}`)
     text.setAttribute('y', `${label[1]}`)
@@ -43,15 +53,15 @@ function NetFallback() {
   return <svg className="pickleball-net__fallback" viewBox="0 0 720 420" aria-hidden="true">
     <defs><pattern id={patternId} width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="#66705a" strokeWidth=".8" /></pattern></defs>
     <path d="M65 320 201 228H666L531 320Z" fill="#dce0ce" />
-    <g stroke="#4d583a" strokeWidth="8" strokeLinecap="round"><path d="M112 270V115m466 175V135M112 270l466 20M82 289l62-39" /></g>
-    <path d="m122 121 446 20v120l-446-20Z" fill={`url(#${patternId})`} stroke="#657052" strokeWidth="2" />
-    <path d="m122 121 446 20" stroke="#f6f1df" strokeWidth="12" />
+    <g stroke="#4d583a" strokeWidth="8" strokeLinecap="round"><path d="M112 270V159m466 131V179M112 270l466 20M82 289l62-39" /></g>
+    <path d="M122 165Q345 192 568 185V261L122 241Z" fill={`url(#${patternId})`} stroke="#657052" strokeWidth="2" />
+    <path d="M122 165Q345 192 568 185" stroke="#f6f1df" strokeWidth="6" fill="none" />
     <path d="m122 241 446 20" stroke="#d9d8c3" strokeWidth="5" />
-    <path d="m554 289 49 2m-9 9 36-23" stroke="#b28d50" strokeWidth="10" strokeLinecap="round" />
+    <path d="m554 289 49 2m-9 9 36-23" stroke="#4d583a" strokeWidth="8" strokeLinecap="round" />
   </svg>
 }
 
-/** A conceptual portable net with measurement callouts; physical values are pending. */
+/** Regulation net dimensions with a conceptual base extension. */
 export default function PickleballNetScene() {
   const hostRef = useRef<HTMLDivElement>(null)
   const dimensionsRef = useRef<SVGSVGElement>(null)
@@ -91,7 +101,6 @@ export default function PickleballNetScene() {
     const frameMaterial = meshMaterial('#4d583a', .65)
     const tapeMaterial = meshMaterial('#f4efdc')
     tapeMaterial.side = THREE.DoubleSide
-    const extensionMaterial = meshMaterial('#b08c50', .65)
     const footMaterial = meshMaterial('#303a2c')
     const groundMaterial = meshMaterial('#e3e5d6')
     const netMaterial = new THREE.LineBasicMaterial({ color: '#48563d', transparent: true, opacity: .7 })
@@ -116,43 +125,43 @@ export default function PickleballNetScene() {
       return mesh
     }
     const vector = (x: number, y: number, z = 0) => new THREE.Vector3(x, y, z)
-    // The lower rail joins the two portable supports. Gold marks the conceptual add-on.
-    tube(vector(-3.1, .13), vector(3.1, .13), .045, frameMaterial)
+    // The lower rail joins the portable supports; both bases use the frame material.
+    tube(vector(-POST_X, .06), vector(POST_X, .06), .03, frameMaterial)
     for (const side of [-1, 1]) {
-      const x = side * 3.1
-      tube(vector(x, .13), vector(x, 1.58), .045, frameMaterial)
+      const x = side * POST_X
+      tube(vector(x, .06), vector(x, POST_TOP), POST_RADIUS, frameMaterial)
       // The extension replaces the right support's crossbar and feet.
       if (side === -1) {
-        tube(vector(x, .09, -.55), vector(x, .09, .55), .045, frameMaterial)
-        for (const z of [-.55, .55]) box(.16, .07, .17, [x, .065, z], footMaterial)
+        tube(vector(x, .045, -.55), vector(x, .045, .55), .03, frameMaterial)
+        for (const z of [-.55, .55]) box(.16, .06, .17, [x, .03, z], footMaterial)
       }
-      box(.09, 1.25, .025, [side * 3, .865, 0], tapeMaterial)
+      box(.05, netTop(NET_WIDTH / 2) - .08, .025, [side * NET_WIDTH / 2, (netTop(NET_WIDTH / 2) + .08) / 2, 0], tapeMaterial)
     }
-    tube(vector(2.86, .13), vector(3.4, .13), .065, extensionMaterial)
-    box(.22, .15, .18, [3.32, .13, 0], extensionMaterial)
-    tube(vector(3.4, .09, -.66), vector(3.4, .09, .66), .04, extensionMaterial)
-    for (const z of [-.66, .66]) box(.13, .065, .15, [3.4, .06, z], footMaterial)
-    tube(vector(0, .13), vector(0, 1.38), .025, frameMaterial)
+    const extensionX = POST_X + .3
+    tube(vector(POST_X - .15, .06), vector(extensionX, .06), .045, frameMaterial)
+    box(.22, .1, .14, [extensionX - .08, .065, 0], frameMaterial)
+    tube(vector(extensionX, .045, -.66), vector(extensionX, .045, .66), .03, frameMaterial)
+    for (const z of [-.66, .66]) box(.13, .06, .15, [extensionX, .03, z], footMaterial)
+    tube(vector(0, .06), vector(0, CENTER_HEIGHT - .02), .015, frameMaterial)
 
-    const netTop = (x: number) => 1.49 - .12 * (1 - (x / 3) ** 2)
-    const netBottom = .27
+    const netBottom = .08
     const netPositions: number[] = []
     const tapePositions: number[] = []
     const columns = 64
     const rows = 12
     for (let column = 0; column <= columns; column++) {
-      const x = -3 + column * 6 / columns
+      const x = -NET_WIDTH / 2 + column * NET_WIDTH / columns
       netPositions.push(x, netBottom, 0, x, netTop(x), 0)
       if (column < columns) {
-        const next = x + 6 / columns
+        const next = x + NET_WIDTH / columns
         const y = netTop(x), nextY = netTop(next)
-        tapePositions.push(x, y, .012, next, nextY, .012, x, y - .075, .012,
-          next, nextY, .012, next, nextY - .075, .012, x, y - .075, .012)
+        tapePositions.push(x, y, .012, next, nextY, .012, x, y - .0508, .012,
+          next, nextY, .012, next, nextY - .0508, .012, x, y - .0508, .012)
       }
     }
     for (let row = 0; row <= rows; row++) {
       for (let column = 0; column < columns; column++) {
-        const x = -3 + column * 6 / columns, next = x + 6 / columns
+        const x = -NET_WIDTH / 2 + column * NET_WIDTH / columns, next = x + NET_WIDTH / columns
         const ratio = row / rows
         netPositions.push(x, netBottom + (netTop(x) - netBottom) * ratio, 0,
           next, netBottom + (netTop(next) - netBottom) * ratio, 0)
@@ -165,7 +174,7 @@ export default function PickleballNetScene() {
     tapeGeometry.computeVertexNormals()
     geometries.push(netGeometry, tapeGeometry)
     model.add(new THREE.LineSegments(netGeometry, netMaterial), new THREE.Mesh(tapeGeometry, tapeMaterial))
-    box(6.05, .045, .025, [0, netBottom, 0], tapeMaterial)
+    box(NET_WIDTH, .025, .025, [0, netBottom, 0], tapeMaterial)
 
     const floorGeometry = new THREE.PlaneGeometry(10, 5)
     geometries.push(floorGeometry)
@@ -283,18 +292,18 @@ export default function PickleballNetScene() {
   return <figure className={`pickleball-net${ready ? ' is-rendered' : ''}`} data-net-scene="">
     <div ref={hostRef} className="pickleball-net__viewport" tabIndex={ready ? 0 : undefined} role="group" aria-label="Pickleball net concept visualization" aria-describedby={descriptionId}>
       <NetFallback />
-      <svg ref={dimensionsRef} className="pickleball-net__dimensions" role="img" aria-label="CAD callouts: width, post height, and center height in meters; net tension in newtons. Values to be measured.">
+      <svg ref={dimensionsRef} className="pickleball-net__dimensions" role="img" aria-label="Regulation net: minimum width 6.63 meters, sideline height 0.9144 meters, center height 0.8636 meters. The rulebook does not specify a tension force in newtons.">
         <defs><marker id={arrowId} viewBox="0 0 6 6" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 6 3 0 6Z" fill="currentColor" /></marker></defs>
         {dimensions.map(dimension => <g key={dimension.id} data-net-dimension={dimension.id}>
           <path className="pickleball-net__witness" />
-          <path className="pickleball-net__measure" markerStart={dimension.id === 'tension' ? undefined : `url(#${arrowId})`} markerEnd={`url(#${arrowId})`} />
-          <path className="pickleball-net__leader" />
+          <path className="pickleball-net__measure" markerStart={dimension.id === 'tension' ? undefined : `url(#${arrowId})`} markerEnd={dimension.id === 'tension' ? undefined : `url(#${arrowId})`} />
+          <path className="pickleball-net__leader" markerEnd={dimension.id === 'tension' ? `url(#${arrowId})` : undefined} />
           <text textAnchor="middle" dominantBaseline="middle">{dimension.label}</text>
         </g>)}
       </svg>
     </div>
     <figcaption>
-      <div><strong>Net base extension</strong><p id={descriptionId}>Concept visualization; the gold section highlights the proposed extension. Dimensions in meters; tension in newtons. Values pending measurement.{ready ? ' Drag or use arrow keys to rotate.' : ' Static view.'}</p></div>
+      <div><strong>Net base extension</strong><p id={descriptionId}>Concept visualization with regulation net dimensions. Side and center heights allow ±0.00635 m. The rules do not specify a tension force in newtons.{ready ? ' Drag or use arrow keys to rotate.' : ' Static view.'}</p><a className="pickleball-net__source" href="https://usapickleball.org/docs/rules/USAP-Official-Rulebook.pdf#page=13" target="_blank" rel="noreferrer">USA Pickleball 2026 rules · 3.B</a></div>
       {ready && <div className="pickleball-net__controls" role="group" aria-label="Net view controls">
         <button type="button" aria-label="Rotate net left" onClick={() => rotateRef.current(-1)}>←</button>
         <button type="button" onClick={() => resetRef.current()}>Reset view</button>

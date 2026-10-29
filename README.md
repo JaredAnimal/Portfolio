@@ -90,4 +90,4 @@ The supplied transparent PNG replaces the PID car image on the homepage, in menu
 
 ## Net model callouts — October 28, 2026
 
-The net model has one support base at each end; the gold extension replaces the right crossbar and feet. CAD-style dimension lines follow rotation and resizing, with matching callouts in the static fallback. Width, post height, and center height use meters; net tension uses newtons. All four values remain TBD until measured.
+Both support bases and the extension share the same olive frame material. CAD-style dimensions follow rotation and resizing, with matching static callouts: minimum net width 6.63 m, height at the sidelines 0.9144 m, and center height 0.8636 m (height tolerance ±0.00635 m). These regulation references come from the [2026 USA Pickleball Rulebook, 3.B.2–3.B.7](https://usapickleball.org/docs/rules/USAP-Official-Rulebook.pdf#page=13), rather than measurements of the proposed part. Scene proportions follow those dimensions. The tension leader points directly to the net’s top edge; tension is labeled “not specified” because the rulebook sets no force in newtons. The base-extension geometry remains conceptual.

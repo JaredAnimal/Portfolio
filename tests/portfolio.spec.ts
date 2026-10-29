@@ -78,11 +78,12 @@ async function expectNoOverflow(page: Page, label: string) {
 async function expectNetDimensions(page: Page) {
   const dimensions = page.locator('.pickleball-net__dimensions')
   await expect(dimensions).toBeVisible()
-  for (const [id, label] of Object.entries({ width: 'WIDTH · TBD m', height: 'HEIGHT · TBD m', 'center-height': 'CENTER HEIGHT · TBD m', tension: 'TENSION · TBD N' })) {
+  for (const [id, label] of Object.entries({ width: 'NET WIDTH · ≥6.63 m', height: 'SIDE · 0.9144 m', 'center-height': 'CENTER · 0.8636 m', tension: 'TENSION · NOT SPECIFIED' })) {
     const dimension = dimensions.locator(`[data-net-dimension="${id}"]`)
     await expect(dimension).toBeVisible()
     await expect(dimension).toContainText(label)
   }
+  await expect(page.locator('[data-net-scene]')).not.toContainText(/\bTBD\b/)
   await expect.poll(async () => {
     const frame = await page.locator('.pickleball-net__viewport').boundingBox()
     const labels = await dimensions.locator('text').evaluateAll(elements => elements.map(element => {
@@ -764,6 +765,7 @@ test('the net project renders a controllable three.js concept without mobile ove
   await expect.poll(() => canvas.evaluate((element: HTMLCanvasElement) => element.width)).toBeGreaterThan(100)
   await expect(scene.locator('.pickleball-net__fallback')).toBeHidden()
   await expect(scene).toContainText(/Concept visualization/i)
+  await expect(scene.locator('a[href^="https://usapickleball.org/docs/rules/USAP-Official-Rulebook.pdf"]')).toBeVisible()
   const dimensions = await expectNetDimensions(page)
   const projectedPaths = () => dimensions.locator('path').evaluateAll(elements => elements.map(element => element.getAttribute('d')))
   const initialPaths = await projectedPaths()
