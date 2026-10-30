@@ -37,7 +37,7 @@ To check the production build locally, run `npm run preview -- --port 4174 --str
 
 ## Content
 
-- `src/projects.ts`: project descriptions, detail views, metric captions, and optional project URLs. The `featured` flag selects homepage cards. USS Sunflower stays in the Projects menu and its dedicated page, without a homepage card.
+- `src/projects.ts`: project descriptions, detail views, metric captions, and optional project URLs. The `featuredProjects` export selects the homepage cards: Dart-launching robot and Wind turbine. USS Sunflower stays in the Projects menu and its dedicated page, without a homepage card.
 - `src/App.tsx`: homepage, expanded work experience, UCLA Club Pickleball, board story dialogs, contact links, and hash navigation.
 - `src/components/PortfolioMenu.tsx`: shared native dialog with category, project, employment, and pickleball-project submenus; Back, Escape, and focus restoration work across nested views; the source-code viewer opens as a nested native dialog. Home project/job image and title controls, header categories, and the circuit components open these views.
 - `src/experience.ts`: the three employment entries, shared by the homepage and their submenus.
@@ -78,15 +78,15 @@ Photos supplied October 27, 2026 are preserved as original JPEGs in `src/assets/
 - **Pickleball:** `PB.zip` supplies three photos. `WCCI_WB-405071 (1).jpg` is `pickleball/team.jpg`, used as the large club-section photo and the Pickleball menu preview. `WCCI_WB-404575.jpg` and `WCCI_WB-404577.jpg` are the two supporting court photos.
 - **USS Sunflower:** `SF.zip` supplies six photos. `IMG_3085.JPG` is `sunflower/workbench.jpg`, used as the large project-page photo and menu preview. The five-photo gallery includes the upright hull (`IMG_3077`), poolside electronics (`IMG_1477`), workshop camera monitor (`IMG_3084`), poolside robot (`IMG_1478`), and pool camera monitor (`IMG_3090`). Photographs add visual documentation, not unverified performance measurements.
 
-The wind-turbine project records team testing of four designs: Savonius, HAWT, VAWT, and bladeless. Jared supplied an output voltage of 17 V and a maximum speed of 82 RPM; project photos remain pending. Decorative short sayings have been reduced throughout the homepage and project pages in favor of descriptive headings.
+The wind-turbine project records team testing of four designs: Savonius, HAWT, VAWT, and bladeless. Jared supplied an output voltage of 17 V and a maximum speed of 82 RPM; its supplied test-setup photo from `WTPHOTO.zip` leads the project, with four videos in the gallery. Decorative short sayings have been reduced throughout the homepage and project pages in favor of descriptive headings.
 
 ## Additional images — October 28, 2026
 
-`Addimages.zip` supplies seven images, preserved unchanged with descriptive filenames. The PID car uses `line-follower/robot-platform.jpg` on its homepage card, submenu, and dedicated page. The dart robot uses `dart-robot/district-showcase.png` as its lead, with `dart-flow-simulation.jpg` and `launch-angle-chart.png` as uncropped supporting diagrams. Experience entries and their submenus use `experience/underwater-robotics.jpg`, `navy-ships.jpg`, and `ucla-web-portals.jpg`. Captions describe visible content without treating the images as evidence of unconfirmed hardware specifications or individual contributions.
+`Addimages.zip` supplies seven images, preserved unchanged with descriptive filenames. The PID car uses `line-follower/robot-platform.jpg` in its submenu and dedicated page. The dart robot uses `dart-robot/district-showcase.png` as its lead, with `dart-flow-simulation.jpg` and `launch-angle-chart.png` as uncropped supporting diagrams. Experience entries and their submenus use `experience/underwater-robotics.jpg`, `navy-ships.jpg`, and `ucla-web-portals.jpg`. Captions describe visible content without treating the images as evidence of unconfirmed hardware specifications or individual contributions.
 
 ## PID and BrightLight images — October 28, 2026
 
-The supplied transparent PNG replaces the PID car image on the homepage, in menus, and on its project page. Its background matches BrightLight’s concept art. The PID page also includes the supplied SUM vs. ERROR graph (`imageofPID.png`), displayed uncropped at full gallery width. BrightLight’s two supplied portrait ESP32 photographs appear only in its full project page gallery, side by side on desktop and stacked on phones, with their natural proportions preserved.
+The supplied transparent PNG replaces the PID car image in menus and on its project page. Its background matches BrightLight’s concept art. The PID page also includes the supplied SUM vs. ERROR graph (`imageofPID.png`), displayed uncropped at full gallery width. BrightLight’s two supplied portrait ESP32 photographs appear only in its full project page gallery, side by side on desktop and stacked on phones, with their natural proportions preserved.
 
 ## Net model callouts — October 28, 2026
 
@@ -98,4 +98,4 @@ The website link is https://bit.ly/UCLAPB. Its estimated reservations-shared tot
 
 ## BrightLight main image — October 29, 2026
 
-The supplied transparent LED-display PNG is the lead image on the homepage, in BrightLight’s menu, and on its full project page. CSS centers the visible enclosure within the original image’s transparent margins, matching the PID car card’s background and balancing their scale. The source PNG is preserved unchanged. The two vertical ESP32 photographs remain exclusive to the full project page gallery.
+The supplied transparent LED-display PNG is the lead image in BrightLight’s menu and on its full project page. CSS centers the visible enclosure within the original image’s transparent margins, matching the PID car card’s background and balancing their scale. The source PNG is preserved unchanged. The two vertical ESP32 photographs remain exclusive to the full project page gallery.

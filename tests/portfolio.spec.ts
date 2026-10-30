@@ -19,6 +19,7 @@ const additionalProjects = [
   { title: 'Wind turbine', path: '#/projects/wind-turbine' },
 ]
 const allProjects = [...projects, ...additionalProjects]
+const featuredProjects = [additionalProjects[0], additionalProjects[5]]
 const supersededClaims = /\b(?:Underwater ROV|Raspberry Pi|Arduino Uno|UNO|Minim|Java)\b/i
 const homeHeading = /Curiosity,\s*wired\s*into\s*practice\./
 
@@ -106,6 +107,16 @@ async function expectNetDimensions(page: Page) {
 async function expectProjectFacts(page: Page, title: string) {
   const main = page.getByRole('main')
   await expect(page.getByRole('heading', { level: 1, name: title, exact: true })).toBeVisible()
+  if (title === 'Dart-launching robot') {
+    await expect(main.getByRole('link', { name: /district showcase/i })).toHaveAttribute('href', 'https://sites.google.com/sandi.net/sdusdccte-innovation-showcase/home')
+    return
+  }
+  if (title === 'Wind turbine') {
+    await expect(main).toContainText('Savonius')
+    await expect(main).toContainText('17 V')
+    await expect(main).toContainText('82')
+    return
+  }
   await expect(main).toContainText('ESP32')
   await expect(main).not.toContainText(supersededClaims)
   if (title === 'BrightLight') {
@@ -123,6 +134,15 @@ async function expectProjectSubmenu(page: Page, title: string) {
   const dialog = page.getByRole('dialog')
   await expect(dialog).toBeVisible()
   await expect(dialog.getByRole('heading', { name: title, exact: true })).toBeVisible()
+  if (title === 'Dart-launching robot') {
+    await expect(dialog.getByRole('link', { name: /district showcase/i })).toBeVisible()
+    return
+  }
+  if (title === 'Wind turbine') {
+    await expect(dialog).toContainText('Savonius')
+    await expect(dialog).toContainText('17 V')
+    return
+  }
   await expect(dialog).toContainText('ESP32')
   await expect(dialog).not.toContainText(supersededClaims)
   if (title === 'BrightLight') {
@@ -163,7 +183,7 @@ test('loads the portfolio and renders the interactive board without runtime fail
 
 test('project images and titles open submenus that lead to the full shareable stories', async ({ page }) => {
   await page.goto('./')
-  for (const project of projects) {
+  for (const project of featuredProjects) {
     const card = page.locator('#work .project-card').filter({ hasText: project.title })
     const trigger = card.getByRole('button', { name: `Explore ${project.title}`, exact: true }).first()
     await trigger.focus()
@@ -436,7 +456,7 @@ test('home and each clickable job preserve current education, clearance, activit
   await page.goto('./')
   const projectCards = page.locator('#work .project-card')
   await expect(projectCards).toHaveCount(2)
-  expect(await projectCards.getByRole('heading', { level: 3 }).allTextContents()).toEqual(expect.arrayContaining(projects.map(project => project.title)))
+  expect(await projectCards.getByRole('heading', { level: 3 }).allTextContents()).toEqual(featuredProjects.map(project => project.title))
   const main = page.getByRole('main')
   await expect(main).toContainText(/Expected June 2029/i)
   await expect(main).toContainText(/3\.9/)
@@ -528,14 +548,13 @@ test('the pickleball section keeps its three nested projects and restores focus'
 
 test('project, experience, and pickleball spaces render their accessible photos', async ({ page }) => {
   await page.goto('./')
-  await expectLoadedMedia(page, ['pilight', 'line-follower', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
-  for (const subject of ['pilight', 'line-follower', 'teaching', 'navy', 'admissions']) {
+  await expectLoadedMedia(page, ['dart-robot', 'wind-turbine', 'teaching', 'navy', 'admissions', 'pickleball', 'pickleball', 'pickleball'])
+  for (const subject of ['dart-robot', 'wind-turbine', 'teaching', 'navy', 'admissions']) {
     await expect(page.locator(`[data-photo-subject="${subject}"]`)).toHaveCount(1)
     await expect(page.locator(`[data-placeholder-illustration="${subject}"]`)).toHaveCount(0)
   }
   await expect(page.locator('[data-photo^="brightlight-esp32"]')).toHaveCount(0)
-  const carBackground = await page.locator('[data-photo="line-follower-platform"]').evaluate(element => getComputedStyle(element).backgroundColor)
-  await expect(page.locator('[data-photo="brightlight-led-matrix"]')).toHaveCSS('background-color', carBackground)
+  await expect(page.locator('#work [data-photo-subject="pilight"], #work [data-photo-subject="line-follower"]')).toHaveCount(0)
   const pickleball = page.locator('#pickleball')
   await expect(pickleball.getByRole('heading', { level: 2 })).toBeVisible()
   await expect(pickleball).toContainText(/UCLA Club Pickleball/)
@@ -619,7 +638,7 @@ test('home, project pages, and transcript story fit small phones through desktop
     await expect(dialog).toBeVisible()
     expect(await dialog.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
     await page.keyboard.press('Escape')
-    for (const project of projects) {
+    for (const project of [...featuredProjects, ...projects]) {
       await page.goto(`./${project.path}`)
       await expectProjectFacts(page, project.title)
       await expectNoOverflow(page, `${project.title} overflow at ${width}px`)
@@ -669,10 +688,10 @@ test('reduced-motion users can use every board hotspot and open project stories'
     await expect(page.getByRole('dialog')).toBeVisible()
     await closeBoardStory(page)
   }
-  await page.getByRole('button', { name: 'Explore BrightLight', exact: true }).first().click()
-  await expectProjectSubmenu(page, 'BrightLight')
+  await page.getByRole('button', { name: 'Explore Dart-launching robot', exact: true }).first().click()
+  await expectProjectSubmenu(page, 'Dart-launching robot')
   await page.getByRole('dialog').getByRole('link', { name: 'Read full project story', exact: true }).click()
-  await expectProjectFacts(page, 'BrightLight')
+  await expectProjectFacts(page, 'Dart-launching robot')
 })
 
 test('without WebGL the circuit and all six navigation stories still work', async ({ baseURL }) => {

@@ -12,7 +12,7 @@ Live site: https://jaredanimal.github.io/Portfolio/
 
 ## Completed work
 
-- Wind Turbine uses the unchanged photo from `LARP.zip`, renamed `completed-turbine.jpg`, as its project/menu lead. All four videos remain below it in the project gallery.
+- Wind Turbine uses the unchanged replacement photo from `WTPHOTO.zip`, renamed `completed-turbine.jpg`, as its project/menu lead. All four videos remain below it in the project gallery.
 
 - Added four Wind release videos to Wind Turbine (native playback controls, no autoplay) and the team/robot wiring photos to the Dart Launching Robot gallery. Videos are losslessly remuxed to browser-compatible MP4, with first-frame posters; original JPEGs are unchanged.
 
@@ -34,7 +34,7 @@ Live site: https://jaredanimal.github.io/Portfolio/
 - Replace the remaining concept illustrations with real photos when supplied; slots use `data-photo-slot` and `PlaceholderArt`.
 - Add further project specifications, results, or live links only when confirmed. The car and net extension remain in progress; dart-robot details are intentionally limited.
 - Separate LinkedIn updates remain unapplied. Copy-ready text is saved outside Git at `/workspace/linkedin-profile-updates.md`; no profile edits or posts were made.
-- USS Sunflower is available from the Projects menu and its dedicated page at `#/projects/sunflower`, while the homepage features BrightLight and the PID car.
+- USS Sunflower is available from the Projects menu and its dedicated page at `#/projects/sunflower`, while the homepage features the Dart-launching robot and Wind turbine. BrightLight and the PID car remain in the full Projects directory and menus.
 - The USS Sunflower design-snapshot link and video slots outside BrightLight have been removed. The source design PDF is not published. Wind turbine output voltage is 17 V and maximum speed is 82 RPM, supplied by Jared. Further wind project photos and net-extension metrics remain pending; other displayed measurements were also supplied by Jared. Picklebot links to the v0.2.6 Windows installer and shows the exact supplied JavaScript in an in-page viewer.
 
 ## Deployment instructions

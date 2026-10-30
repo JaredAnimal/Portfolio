@@ -1,3 +1,4 @@
+import { dartRobotLinks } from './projectDetails'
 import type { ProjectLink, ProjectMetric } from './projectDetails'
 
 export type ProjectKind = 'pilight' | 'line-follower' | 'sunflower' | 'wind-turbine'
@@ -23,7 +24,7 @@ export const projects: Project[] = [
     id: 'pilight',
     number: '01',
     title: 'BrightLight',
-    featured: true,
+    featured: false,
     eyebrow: 'Signal processing',
     subtitle: 'ESP32 reactive lighting with FFT analysis.',
     summary: 'An ESP32-based reactive LED system using Python and FFT analysis to turn frequency information into light.',
@@ -42,7 +43,7 @@ export const projects: Project[] = [
     id: 'line-follower',
     number: '02',
     title: 'PID Line-Following Car',
-    featured: true,
+    featured: false,
     eyebrow: 'Feedback control',
     subtitle: 'An ESP32 car with eight-sensor line tracking.',
     summary: 'An ESP32 car in progress, using eight brightness sensors and firmware designed to implement PID line-following control.',
@@ -80,7 +81,7 @@ export const projects: Project[] = [
     id: 'wind-turbine',
     number: '04',
     title: 'Wind turbine',
-    featured: false,
+    featured: true,
     eyebrow: 'Energy systems',
     subtitle: 'Building and testing four turbine designs.',
     summary: 'A team wind-turbine project comparing Savonius, horizontal-axis, vertical-axis, and bladeless designs.',
@@ -94,4 +95,19 @@ export const projects: Project[] = [
     metrics: [{ caption: 'Output voltage', value: '17 V' }, { caption: 'Max RPM', value: '82' }],
     links: [],
   },
+]
+
+// The homepage selection is independent of the complete project directory.
+export const featuredProjects = [
+  {
+    id: 'dart-robot' as const,
+    title: 'Dart-launching robot',
+    eyebrow: 'Robotics',
+    summary: 'A robotic dart launcher featured in the district innovation showcase.',
+    tags: ['Robotics', 'Mechanical design'],
+    status: 'Robotics project',
+    metrics: [],
+    links: dartRobotLinks,
+  },
+  ...projects.filter(project => project.featured),
 ]

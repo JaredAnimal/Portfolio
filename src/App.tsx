@@ -14,7 +14,7 @@ import { roles } from './experience'
 import type { RoleId } from './experience'
 import type { ProjectPageId } from './components/ProjectPage'
 import type { BoardPart } from './components/CircuitScene'
-import { projects } from './projects'
+import { featuredProjects } from './projects'
 import { pickleballProjects } from './pickleballProjects'
 import type { PickleballProjectId } from './pickleballProjects'
 
@@ -68,8 +68,8 @@ function Home({ onSelectPart, onOpenProject, onOpenRole }: { onSelectPart: (part
 
     <section id="work" className="work-section page-width" aria-labelledby="work-heading">
       <div className="section-heading"><div><div className="eyebrow"><span className="section-number">01 /</span> SELECTED PROJECTS</div><h2 id="work-heading">Engineering <em>projects.</em></h2></div></div>
-      <div className="project-grid">{projects.filter(project => project.featured).map(project => <article className="project-card" key={project.id}>
-        <button type="button" className={`project-art-button project-art-${project.id}`} onClick={() => onOpenProject(project.id)} aria-haspopup="dialog" aria-label={`Explore ${project.title}`}>{projectPhotos[project.id]?.[0] ? <Photo photo={projectPhotos[project.id]![0]} className="project-photo-slot" /> : <PlaceholderArt kind={project.id} label={project.title} className="project-photo-slot" />}<div className="art-topline"><span>{project.number} / {project.eyebrow}</span><span className="progress-badge"><i />{project.status.toUpperCase()}</span></div><span className="art-open"><Arrow diagonal /></span></button>
+      <div className="project-grid">{featuredProjects.map((project, index) => <article className="project-card" key={project.id}>
+        <button type="button" className={`project-art-button project-art-${project.id}`} onClick={() => onOpenProject(project.id)} aria-haspopup="dialog" aria-label={`Explore ${project.title}`}>{projectPhotos[project.id]?.[0] ? <Photo photo={projectPhotos[project.id]![0]} className="project-photo-slot" /> : <PlaceholderArt kind={project.id} label={project.title} className="project-photo-slot" />}<div className="art-topline"><span>0{index + 1} / {project.eyebrow}</span><span className="progress-badge"><i />{project.status.toUpperCase()}</span></div><span className="art-open"><Arrow diagonal /></span></button>
         <div className="project-info"><div className="project-title-row"><h3><button type="button" onClick={() => onOpenProject(project.id)} aria-haspopup="dialog">{project.title}</button></h3><Arrow diagonal /></div><p>{project.summary}</p><div className="project-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div><ProjectMetrics metrics={project.metrics} compact /><ProjectLinks links={project.links} compact /></div>
       </article>)}</div>
       <a className="all-projects-link" href="#/projects">View all projects <Arrow /></a>

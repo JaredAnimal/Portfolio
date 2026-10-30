@@ -117,7 +117,7 @@
 /* Supplied project and role images keep their complete original framing. */
 .project-photo-slot.portfolio-photo{background:#fff}
 .project-photo-slot.portfolio-photo>img{padding:46px 12px 36px}
-.project-art-line-follower .art-topline,.project-art-pilight .art-topline{background:#f5f2e9ed;padding:7px 9px}
+.project-art-button .art-topline{background:#f5f2e9ed;padding:7px 9px}
 .experience-photo .portfolio-photo{aspect-ratio:auto}
 .experience-photo .portfolio-photo>img{height:auto}
 .experience-photo-button:hover .portfolio-photo{outline:1px solid #a1ac8e;outline-offset:3px}

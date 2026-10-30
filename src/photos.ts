@@ -74,7 +74,7 @@ export const dartRobotPhotos: PortfolioPhoto[] = [
 ]
 
 export const projectPhotos: Partial<Record<ProjectKind | 'dart-robot', PortfolioPhoto[]>> = {
-  'wind-turbine': [{ id: 'wind-turbine-main', subject: 'wind-turbine', src: windTurbine, width: 447, height: 447, caption: 'Wind turbine', alt: 'A wind turbine with colorful blades, a white tail, and a wired generator mounted on a pole beside a pond.' }],
+  'wind-turbine': [{ id: 'wind-turbine-main', subject: 'wind-turbine', src: windTurbine, width: 1024, height: 768, caption: 'Wind turbine test setup', alt: 'A wind turbine with blue-and-white blades beside an electronics box and a wind-speed sensor on a test stand indoors.' }],
   pilight: [brightLightMainPhoto],
   'line-follower': lineFollowerPhotos,
   'dart-robot': dartRobotPhotos,
