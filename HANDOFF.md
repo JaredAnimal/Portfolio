@@ -12,6 +12,8 @@ Live site: https://jaredanimal.github.io/Portfolio/
 
 ## Completed work
 
+- Wind Turbine uses the unchanged photo from `LARP.zip`, renamed `completed-turbine.jpg`, as its project/menu lead. All four videos remain below it in the project gallery.
+
 - Added four Wind release videos to Wind Turbine (native playback controls, no autoplay) and the team/robot wiring photos to the Dart Launching Robot gallery. Videos are losslessly remuxed to browser-compatible MP4, with first-frame posters; original JPEGs are unchanged.
 
 - Added all seven images from `Addimages.zip`: PID robot, dart showcase plus two diagrams, and imagery for robotics teaching, Navy SSEP, and admissions IT. Reused the corresponding lead images in homepage cards and menus. Original files and uncropped chart content are preserved.

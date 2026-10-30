@@ -36,6 +36,7 @@ async function expectLoadedMedia(page: Page, expectedKinds: string[]) {
     admissions: /workstations?|computer|\bIT\b|admissions|UCLA.*portal/i,
     pickleball: /pickleball|paddles?|court/i,
     sunflower: /USS Sunflower|workshop|pool|camera/i,
+    'wind-turbine': /wind turbine|blades|generator/i,
   }
   for (let index = 0; index < expectedKinds.length; index++) {
     const slot = slots.nth(index)
@@ -564,7 +565,9 @@ test('project, experience, and pickleball spaces render their accessible photos'
     }
   }
   await page.goto('./#/projects/wind-turbine')
-  const videos = page.locator('main video')
+  await expectLoadedMedia(page, ['wind-turbine'])
+  await expect(page.locator('.project-page-photo-wide [data-photo]')).toHaveAttribute('data-photo', 'wind-turbine-main')
+  const videos = page.getByRole('group', { name: 'Wind turbine video gallery' }).locator('video')
   await expect(videos).toHaveCount(4)
   for (const video of await videos.all()) {
     await expect(video).toHaveAttribute('controls', '')

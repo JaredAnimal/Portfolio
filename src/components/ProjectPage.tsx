@@ -32,8 +32,8 @@ export function NetProjectMedia() {
   return <div className="net-project-media"><Suspense fallback={<div className="net-scene-loading">Loading net model…</div>}><PickleballNetScene /></Suspense></div>
 }
 
-function TurbineVideo({ video, lead = false }: { video: typeof windTurbineVideos[number]; lead?: boolean }) {
-  return <figure className={`project-page-photo project-page-photo-real ${lead ? 'project-page-supplied-lead' : ''}`}>
+function TurbineVideo({ video }: { video: typeof windTurbineVideos[number] }) {
+  return <figure className="project-page-photo project-page-photo-real">
     <video className="project-page-video" controls playsInline preload="metadata" poster={video.poster} aria-label={video.caption}>
       <source src={video.src} type="video/mp4" />
       <a href={video.src}>Watch {video.caption}</a>
@@ -68,8 +68,7 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
       </header>
       <ProjectLinks links={links} /><ProjectMetrics metrics={metrics} />
 
-      {leadPhoto ? <figure className={`project-page-photo project-page-photo-wide project-page-photo-real ${projectId === 'sunflower' ? 'sunflower-lead-figure' : 'project-page-supplied-lead'}`}><Photo photo={leadPhoto} className={projectId === 'sunflower' ? 'project-page-photo-lead sunflower-crop' : 'project-page-photo-natural'} loading="eager" /><figcaption><span>{leadPhoto.caption}</span></figcaption></figure>
-        : projectId === 'wind-turbine' ? <TurbineVideo video={windTurbineVideos[0]} lead />
+      {leadPhoto ? <figure className={`project-page-photo project-page-photo-wide project-page-photo-real ${projectId === 'sunflower' ? 'sunflower-lead-figure' : projectId === 'wind-turbine' ? 'project-page-supplied-lead wind-turbine-lead-figure' : 'project-page-supplied-lead'}`}><Photo photo={leadPhoto} className={projectId === 'sunflower' ? 'project-page-photo-lead sunflower-crop' : 'project-page-photo-natural'} loading="eager" /><figcaption><span>{leadPhoto.caption}</span></figcaption></figure>
         : projectId === 'net-tensioner' ? <NetProjectMedia />
         : !pickleball && <PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="01" caption="PROJECT OVERVIEW" wide />}
 
@@ -81,7 +80,7 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
       {galleryPhotos ? galleryPhotos.length > 0 && <div className={`project-page-photo-grid ${projectId === 'sunflower' ? 'project-page-photo-grid--sunflower' : projectId === 'pilight' ? 'project-page-photo-grid--portrait' : 'project-page-photo-grid--supplied'}`} role="group" aria-label={`${title} ${projectId === 'sunflower' ? 'photo' : 'image'} gallery`}>{galleryPhotos.map(photo => <figure className="project-page-photo project-page-photo-real" key={photo.id}><Photo photo={photo} className={projectId === 'sunflower' ? 'project-page-photo-detail' : 'project-page-photo-natural'} /><figcaption><span>{photo.caption}</span></figcaption></figure>)}</div>
         : !pickleball && projectId !== 'wind-turbine' && <div className="project-page-photo-grid"><PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="02" caption="DETAIL" /><PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="03" caption="BUILD" /></div>}
 
-      {projectId === 'wind-turbine' && <div className="project-page-photo-grid project-page-photo-grid--supplied" role="group" aria-label="Wind turbine video gallery">{windTurbineVideos.slice(1).map(video => <TurbineVideo key={video.src} video={video} />)}</div>}
+      {projectId === 'wind-turbine' && <div className="project-page-photo-grid project-page-photo-grid--supplied" role="group" aria-label="Wind turbine video gallery">{windTurbineVideos.map(video => <TurbineVideo key={video.src} video={video} />)}</div>}
 
       {related && <section className="project-page-next" aria-label="Related project"><a className="project-page-related" href={projectHref(related.id)}><div><span className="project-page-kicker">Related project</span><h2>{related.title}</h2><p>{related.summary}</p></div><span className="project-page-related-arrow"><Arrow /></span></a></section>}
       <div className="project-page-bottom"><a href="#/projects"><Arrow back />All projects</a><a href="mailto:jaredashman0209@gmail.com">Contact Jared <Arrow /></a></div>

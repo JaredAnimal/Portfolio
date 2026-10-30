@@ -1,3 +1,4 @@
+import windTurbine from './assets/photos/wind-turbine/completed-turbine.jpg'
 import pickleballTeam from './assets/photos/pickleball/team.jpg'
 import pickleballCourt from './assets/photos/pickleball/on-court.jpg'
 import pickleballDoubles from './assets/photos/pickleball/doubles.jpg'
@@ -25,7 +26,7 @@ import type { ProjectKind } from './projects'
 
 export interface PortfolioPhoto {
   id: string
-  subject: 'pickleball' | 'sunflower' | 'pilight' | 'line-follower' | 'dart-robot' | RoleId
+  subject: 'pickleball' | 'sunflower' | 'pilight' | 'line-follower' | 'dart-robot' | 'wind-turbine' | RoleId
   src: string
   alt: string
   caption: string
@@ -73,6 +74,7 @@ export const dartRobotPhotos: PortfolioPhoto[] = [
 ]
 
 export const projectPhotos: Partial<Record<ProjectKind | 'dart-robot', PortfolioPhoto[]>> = {
+  'wind-turbine': [{ id: 'wind-turbine-main', subject: 'wind-turbine', src: windTurbine, width: 447, height: 447, caption: 'Wind turbine', alt: 'A wind turbine with colorful blades, a white tail, and a wired generator mounted on a pole beside a pond.' }],
   pilight: [brightLightMainPhoto],
   'line-follower': lineFollowerPhotos,
   'dart-robot': dartRobotPhotos,
