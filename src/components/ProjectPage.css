@@ -109,3 +109,6 @@
 .project-page-video{display:block;width:100%;height:auto;max-height:660px;object-fit:contain;background:#e8e7da;border:1px solid #dfdfcf}
 
 .wind-turbine-lead-figure{max-width:900px}
+
+.project-page-net-context{padding-top:44px}
+.project-page-net-context>h2{font-family:var(--serif);font-size:34px;color:var(--olive);margin-bottom:22px}

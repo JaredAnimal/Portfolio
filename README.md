@@ -99,3 +99,5 @@ The website link is https://bit.ly/UCLAPB. Its estimated reservations-shared tot
 ## BrightLight main image — October 29, 2026
 
 The supplied transparent LED-display PNG is the lead image in BrightLight’s menu and on its full project page. CSS centers the visible enclosure within the original image’s transparent margins, matching the PID car card’s background and balancing their scale. The source PNG is preserved unchanged. The two vertical ESP32 photographs remain exclusive to the full project page gallery.
+
+The net extension detail page uses `NetExtenderPrototype.tsx` to display the original STL from `FINAlSOLUTION.zip`. The model and its static preview live in `src/assets/models/`. Automatic rotation respects reduced-motion preferences, visibility, and pause controls; the existing net diagram remains below it for context.

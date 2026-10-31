@@ -12,6 +12,7 @@ import { dartRobotLinks } from '../projectDetails'
 import './ProjectPage.css'
 
 const PickleballNetScene = lazy(() => import('./PickleballNetScene'))
+const NetExtenderPrototype = lazy(() => import('./NetExtenderPrototype'))
 export type ProjectPageId = ProjectKind | 'dart-robot' | PickleballProjectId
 export const projectHref = (id: ProjectPageId) => `#/projects/${id === 'pilight' ? 'brightlight' : id}`
 export function projectTitle(id: ProjectPageId) { return projects.find(item => item.id === id)?.title ?? pickleballProjects.find(item => item.id === id)?.title ?? 'Dart-launching robot' }
@@ -69,7 +70,7 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
       <ProjectLinks links={links} /><ProjectMetrics metrics={metrics} />
 
       {leadPhoto ? <figure className={`project-page-photo project-page-photo-wide project-page-photo-real ${projectId === 'sunflower' ? 'sunflower-lead-figure' : projectId === 'wind-turbine' ? 'project-page-supplied-lead wind-turbine-lead-figure' : 'project-page-supplied-lead'}`}><Photo photo={leadPhoto} className={projectId === 'sunflower' ? 'project-page-photo-lead sunflower-crop' : 'project-page-photo-natural'} loading="eager" /><figcaption><span>{leadPhoto.caption}</span></figcaption></figure>
-        : projectId === 'net-tensioner' ? <NetProjectMedia />
+        : projectId === 'net-tensioner' ? <Suspense fallback={<div className="net-scene-loading">Loading prototype…</div>}><NetExtenderPrototype /></Suspense>
         : !pickleball && <PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="01" caption="PROJECT OVERVIEW" wide />}
 
       <section className="project-page-overview" aria-labelledby="project-overview-title"><div><h2 id="project-overview-title">Overview</h2></div><div className="project-page-overview-copy"><p>{overview}</p></div></section>
@@ -80,6 +81,7 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
       {galleryPhotos ? galleryPhotos.length > 0 && <div className={`project-page-photo-grid ${projectId === 'sunflower' ? 'project-page-photo-grid--sunflower' : projectId === 'pilight' ? 'project-page-photo-grid--portrait' : 'project-page-photo-grid--supplied'}`} role="group" aria-label={`${title} ${projectId === 'sunflower' ? 'photo' : 'image'} gallery`}>{galleryPhotos.map(photo => <figure className="project-page-photo project-page-photo-real" key={photo.id}><Photo photo={photo} className={projectId === 'sunflower' ? 'project-page-photo-detail' : 'project-page-photo-natural'} /><figcaption><span>{photo.caption}</span></figcaption></figure>)}</div>
         : !pickleball && projectId !== 'wind-turbine' && <div className="project-page-photo-grid"><PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="02" caption="DETAIL" /><PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="03" caption="BUILD" /></div>}
 
+      {projectId === 'net-tensioner' && <section className="project-page-net-context" aria-labelledby="net-context-title"><h2 id="net-context-title">Net setup</h2><NetProjectMedia /></section>}
       {projectId === 'wind-turbine' && <div className="project-page-photo-grid project-page-photo-grid--supplied" role="group" aria-label="Wind turbine video gallery">{windTurbineVideos.map(video => <TurbineVideo key={video.src} video={video} />)}</div>}
 
       {related && <section className="project-page-next" aria-label="Related project"><a className="project-page-related" href={projectHref(related.id)}><div><span className="project-page-kicker">Related project</span><h2>{related.title}</h2><p>{related.summary}</p></div><span className="project-page-related-arrow"><Arrow /></span></a></section>}

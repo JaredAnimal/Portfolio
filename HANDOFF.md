@@ -12,6 +12,8 @@ Live site: https://jaredanimal.github.io/Portfolio/
 
 ## Completed work
 
+- The net extension page leads with the actual `FINAlSOLUTION.zip` STL prototype in Three.js, with slow rotation, pause/manual controls, and a static preview fallback. The existing net setup diagram remains below the implementation text.
+
 - Wind Turbine uses the unchanged replacement photo from `WTPHOTO.zip`, renamed `completed-turbine.jpg`, as its project/menu lead. All four videos remain below it in the project gallery.
 
 - Added four Wind release videos to Wind Turbine (native playback controls, no autoplay) and the team/robot wiring photos to the Dart Launching Robot gallery. Videos are losslessly remuxed to browser-compatible MP4, with first-frame posters; original JPEGs are unchanged.
