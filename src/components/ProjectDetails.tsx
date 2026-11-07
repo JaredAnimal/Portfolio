@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ProjectLink, ProjectMetric } from '../projectDetails'
+import type { SourceCodeId } from '../sourceCode'
 import SourceCodeViewer from './SourceCodeViewer'
 import './ProjectDetails.css'
 
@@ -35,13 +36,13 @@ function LinkIcon() {
 }
 
 export function ProjectLinks({ links, compact = false }: { links: ProjectLink[]; compact?: boolean }) {
-  const [sourceOpen, setSourceOpen] = useState(false)
+  const [sourceOpen, setSourceOpen] = useState<SourceCodeId | null>(null)
   if (!links.length) return null
   return <><ul className={`project-links${compact ? ' project-links--compact' : ''}`} aria-label="Project links">
     {links.map(link => <li key={link.label}>
-      {link.source === 'picklebot' ? <button type="button" onClick={() => setSourceOpen(true)} aria-haspopup="dialog"><LinkIcon /><span>{link.label}</span></button>
+      {link.source ? <button type="button" onClick={() => setSourceOpen(link.source!)} aria-haspopup="dialog"><LinkIcon /><span>{link.label}</span></button>
         : link.href ? <a href={link.href} download={link.download || undefined} target={link.download ? undefined : '_blank'} rel={link.download ? undefined : 'noreferrer'}><LinkIcon /><span>{link.label}</span>{!link.download && <span className="sr-only"> (opens in a new tab)</span>}</a>
         : <span className="project-link-pending" data-project-link-slot={link.label}><LinkIcon /><span>{link.label}</span><small>Coming soon</small></span>}
     </li>)}
-  </ul>{sourceOpen && <SourceCodeViewer onClose={() => setSourceOpen(false)} />}</>
+  </ul>{sourceOpen && <SourceCodeViewer sourceId={sourceOpen} onClose={() => setSourceOpen(null)} />}</>
 }

@@ -13,6 +13,7 @@ import imageofPID from './assets/photos/line-follower/imageofPID.png'
 import brightLightDisplay from './assets/photos/brightlight/esp32-led-display.png'
 import brightLightBench from './assets/photos/brightlight/esp32-bench-test.png'
 import brightLightMain from './assets/photos/brightlight/led-matrix.png'
+import musicMatrixPreview from './assets/photos/music-matrix/spectrum-preview.png'
 import dartTeam from './assets/photos/dart-robot/team-with-robot.jpg'
 import dartWiring from './assets/photos/dart-robot/robot-wiring.jpg'
 import districtShowcase from './assets/photos/dart-robot/district-showcase.png'
@@ -26,7 +27,7 @@ import type { ProjectKind } from './projects'
 
 export interface PortfolioPhoto {
   id: string
-  subject: 'pickleball' | 'sunflower' | 'pilight' | 'line-follower' | 'dart-robot' | 'wind-turbine' | RoleId
+  subject: 'pickleball' | ProjectKind | 'dart-robot' | RoleId
   src: string
   alt: string
   caption: string
@@ -74,6 +75,7 @@ export const dartRobotPhotos: PortfolioPhoto[] = [
 ]
 
 export const projectPhotos: Partial<Record<ProjectKind | 'dart-robot', PortfolioPhoto[]>> = {
+  'music-matrix': [{ id: 'music-matrix-spectrum', subject: 'music-matrix', src: musicMatrixPreview, width: 640, height: 640, caption: 'Latest spectrum layout · illustrative preview with sample levels', alt: 'Illustrative Music Matrix preview showing eight mirrored rainbow frequency bars, white peak caps, and evenly spaced note labels with stacked sharps on a black LED grid.' }],
   'wind-turbine': [{ id: 'wind-turbine-main', subject: 'wind-turbine', src: windTurbine, width: 1024, height: 768, caption: 'Wind turbine test setup', alt: 'A wind turbine with blue-and-white blades beside an electronics box and a wind-speed sensor on a test stand indoors.' }],
   pilight: [brightLightMainPhoto],
   'line-follower': lineFollowerPhotos,

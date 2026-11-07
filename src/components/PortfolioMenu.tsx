@@ -119,6 +119,7 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
 
       {selection.type === 'project' && !pickleball && <>
         {projectPhoto ? <Photo photo={projectPhoto} className={`submenu-media ${selection.id === 'sunflower' ? 'submenu-sunflower-photo' : 'submenu-supplied-photo'}`} /> : <PlaceholderArt kind={project?.id ?? 'dart-robot'} label={title} className="submenu-media" />}
+        {selection.id === 'music-matrix' && <p className="submenu-image-caption">Illustrative spectrum preview with sample levels</p>}
         {project ? <><p className="submenu-status">{project.status}</p><p>{project.overview}</p><ul className="submenu-details">{project.contributions.map(item => <li key={item.title}><strong>{item.title}.</strong> {item.text}</li>)}</ul><Tags values={project.tags} /></> : <p>I built a dart-launching robot. See the district innovation showcase for the project presentation.</p>}
         {project && <ProjectMetrics metrics={project.metrics} />}
         <ProjectLinks links={project?.links ?? dartRobotLinks} />

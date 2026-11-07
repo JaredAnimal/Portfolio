@@ -17,6 +17,7 @@ const additionalProjects = [
   { title: pickleballProjects[1], path: '#/projects/reservation-sharing' },
   { title: pickleballProjects[2], path: '#/projects/net-tensioner' },
   { title: 'Wind turbine', path: '#/projects/wind-turbine' },
+  { title: 'Music Matrix', path: '#/projects/music-matrix' },
 ]
 const allProjects = [...projects, ...additionalProjects]
 const featuredProjects = [additionalProjects[0], additionalProjects[5]]
@@ -30,6 +31,7 @@ async function expectLoadedMedia(page: Page, expectedKinds: string[]) {
   expect(actualKinds).toEqual([...expectedKinds].sort())
   const descriptions: Record<string, RegExp> = {
     pilight: /ESP32|LED|audio|sound|frequency|BrightLight/i,
+    'music-matrix': /Music Matrix|spectrum|frequency|rainbow/i,
     'line-follower': /line.follow|car|robot|sensor/i,
     'dart-robot': /dart|launcher|launch angle|horizontal distance/i,
     teaching: /teaching|robot|biomimetic|students?|classroom/i,
@@ -814,6 +816,77 @@ test('Picklebot source opens as exact text in the same page and nested dialogs r
   await expect(viewer).not.toBeVisible()
   await expect(menu).not.toBeVisible()
   expect(await page.evaluate(() => document.body.style.overflow)).toBe('')
+})
+
+test('Music Matrix shows its latest layout and copies both complete source files', async ({ page, context }) => {
+  const errors: string[] = []
+  page.on('pageerror', error => errors.push(error.message))
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.goto('./#/projects/music-matrix')
+  await expect(page.getByRole('heading', { level: 1, name: 'Music Matrix', exact: true })).toBeVisible()
+  const preview = page.locator('[data-photo="music-matrix-spectrum"] img')
+  await expect(preview).toHaveAccessibleName(/illustrative.*mirrored rainbow.*stacked sharps/i)
+  await expect.poll(() => preview.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth === 640 && image.naturalHeight === 640)).toBe(true)
+  await expect(page.locator('.project-page-photo-wide figcaption')).toContainText(/illustrative preview with sample levels/i)
+  const openSource = page.getByRole('main').getByRole('button', { name: 'Source code', exact: true })
+  await openSource.click()
+  const viewer = page.locator('.source-code-dialog')
+  for (const filename of ['MusicMatrix.ino', 'SpectrumUi.h']) {
+    const source = await readFile(new URL(`../src/assets/source/music-matrix/${filename}`, import.meta.url), 'utf8')
+    await viewer.getByRole('button', { name: filename, exact: true }).click()
+    await expect(viewer).toHaveAccessibleName(filename)
+    expect(await viewer.locator('pre code').textContent()).toBe(source)
+    await viewer.getByRole('button', { name: 'Copy code', exact: true }).click()
+    await expect(viewer.getByRole('status')).toHaveText('Source copied to clipboard.')
+    // Clipboard line endings follow the host operating system.
+    expect((await page.evaluate(() => navigator.clipboard.readText())).replace(/\r/g, '')).toBe(source.replace(/\r/g, ''))
+  }
+  expect(context.pages()).toHaveLength(1)
+  await page.keyboard.press('Escape')
+  await expect(openSource).toBeFocused()
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe('')
+
+  await page.getByRole('button', { name: /Project menu/i }).click()
+  const menu = page.locator('#portfolio-menu')
+  await expect(menu.getByRole('heading', { name: 'Music Matrix', exact: true })).toBeVisible()
+  await expect(menu.locator('[data-photo="music-matrix-spectrum"]')).toBeVisible()
+  const nestedSource = menu.getByRole('button', { name: 'Source code', exact: true })
+  await nestedSource.click()
+  await expect(viewer).toHaveAccessibleName('MusicMatrix.ino')
+  await page.keyboard.press('Escape')
+  await expect(nestedSource).toBeFocused()
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe('hidden')
+  await nestedSource.click()
+  await page.evaluate(() => { window.location.hash = '#/projects' })
+  await expect(viewer).not.toBeVisible()
+  await expect(menu).not.toBeVisible()
+  expect(await page.evaluate(() => document.body.style.overflow)).toBe('')
+  expect(errors).toEqual([])
+})
+
+test('Music Matrix and its source selector fit phones and pass accessibility checks', async ({ page }) => {
+  await page.goto('./#/projects/music-matrix')
+  for (const width of [320, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await expectNoOverflow(page, `Music Matrix at ${width}px`)
+    const preview = page.locator('[data-photo="music-matrix-spectrum"] img')
+    await expect(preview).toHaveCSS('object-fit', 'contain')
+    await expect(preview).toHaveCSS('image-rendering', 'pixelated')
+  }
+  await page.setViewportSize({ width: 320, height: 812 })
+  await page.getByRole('main').getByRole('button', { name: 'Source code', exact: true }).click()
+  const viewer = page.locator('.source-code-dialog')
+  for (const filename of ['MusicMatrix.ino', 'SpectrumUi.h']) {
+    const selector = viewer.getByRole('button', { name: filename, exact: true })
+    await selector.focus()
+    await page.keyboard.press('Enter')
+    await expect(selector).toHaveAttribute('aria-pressed', 'true')
+    await expect(viewer).toHaveAccessibleName(filename)
+    expect(await viewer.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+    await expectNoOverflow(page, `${filename} viewer at 320px`)
+    const result = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
+    expect(result.violations.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => node.target) }))).toEqual([])
+  }
 })
 
 test('the net project renders a controllable three.js net without mobile overflow', async ({ page }) => {

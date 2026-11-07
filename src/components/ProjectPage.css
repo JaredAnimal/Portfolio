@@ -112,3 +112,8 @@
 
 .project-page-net-context{padding-top:44px}
 .project-page-net-context>h2{font-family:var(--serif);font-size:34px;color:var(--olive);margin-bottom:22px}
+
+/* Preserve the latest pixel-layout preview without cropping or smoothing. */
+.project-page-supplied-lead:has([data-photo="music-matrix-spectrum"]){max-width:560px}
+[data-photo="music-matrix-spectrum"]{background:#000}
+[data-photo="music-matrix-spectrum"]>img{image-rendering:pixelated}

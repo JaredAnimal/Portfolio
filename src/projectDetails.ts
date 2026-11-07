@@ -1,3 +1,5 @@
+import type { SourceCodeId } from './sourceCode'
+
 export interface ProjectMetric {
   caption: string
   /** Add a verified measurement when available; an omitted value stays a placeholder. */
@@ -11,7 +13,7 @@ export interface ProjectLink {
   /** Leave empty until the project destination is ready to share. */
   href?: string
   /** Opens the supplied source in the page instead of navigating away. */
-  source?: 'picklebot'
+  source?: SourceCodeId
   /** Downloadable release assets should not open another tab. */
   download?: boolean
 }

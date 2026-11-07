@@ -1,7 +1,7 @@
 import { dartRobotLinks } from './projectDetails'
 import type { ProjectLink, ProjectMetric } from './projectDetails'
 
-export type ProjectKind = 'pilight' | 'line-follower' | 'sunflower' | 'wind-turbine'
+export type ProjectKind = 'pilight' | 'line-follower' | 'sunflower' | 'wind-turbine' | 'music-matrix'
 
 export interface Project {
   id: ProjectKind
@@ -20,6 +20,25 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+  {
+    id: 'music-matrix',
+    number: '05',
+    title: 'Music Matrix',
+    featured: false,
+    eyebrow: 'Embedded signal processing',
+    subtitle: 'Live music, translated into a rainbow spectrum.',
+    summary: 'A standalone ESP32 music visualizer that turns microphone input into eight mirrored rainbow bands on a 64 × 64 LED matrix.',
+    tags: ['ESP32', 'Arduino IDE', 'C++', 'FFT'],
+    status: 'In development',
+    metrics: [{ caption: 'LED matrix', value: '64 × 64' }, { caption: 'FFT size', value: '1,024 samples' }],
+    links: [{ label: 'Source code', source: 'music-matrix' }],
+    overview: 'Music Matrix analyzes live microphone input directly on an ESP32 and turns it into a colorful spectrum on a 64 × 64 HUB75 LED panel. Written in C++ for the Arduino IDE, the sketch uses a 1,024-point FFT to group audio into eight frequency bands. Rainbow bars expand above and below the center line, with peak markers and musical pitch references beneath them. The system runs offline, without a computer processing the audio.',
+    contributions: [
+      { title: 'From sound to spectrum', text: 'Continuously sample a MAX9814 analog microphone at a requested 32 kHz, remove the measured DC bias, and apply a Hann window before FFT analysis. Sum power into eight logarithmically spaced frequency bands.' },
+      { title: 'Capture and display', text: 'Keep audio capture and FFT processing on one ESP32 core while the other draws the latest spectrum. Double-buffered panel output, fast rise, slower decay, and held peak markers keep the display responsive.' },
+      { title: 'Tuning the response', text: 'Use a noise gate and cubic response curve to suppress quiet input. Mirrored rainbow bars retain white caps at rest; evenly spaced note labels use stacked sharps. Labels reference band centers rather than detecting individual notes.' },
+    ],
+  },
   {
     id: 'pilight',
     number: '01',

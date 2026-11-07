@@ -43,9 +43,9 @@ To check the production build locally, run `npm run preview -- --port 4174 --str
 - `src/experience.ts`: the three employment entries, shared by the homepage and their submenus.
 - `src/pickleballProjects.ts`: the reservation bot, reservation-sharing website, and 3D-printed net-base extension. They appear on the all-projects page and in both the Projects and Pickleball menus, with dedicated shareable pages. Bot and website descriptions were recovered from the user's public [UCLAPickleball repository](https://github.com/JaredAnimal/UCLAPickleball); the net extension is described as a design goal, with no invented measurements or results.
 - `src/components/BrandMark.tsx` and `public/favicon.svg`: matching circuit-inspired chip-and-connections emblem.
-- `src/components/ProjectsPage.tsx`: the all-projects index at `#/projects`, covering all eight projects.
+- `src/components/ProjectsPage.tsx`: the all-projects index at `#/projects`, covering all nine projects.
 - `src/components/ProjectPage.tsx`: dedicated engineering and pickleball project pages. BrightLight uses `#/projects/brightlight` and retains `#/projects/pilight` as an alias; other routes use each project’s stable ID. Direct links and refreshes work on GitHub Pages without server routing.
-- `src/components/SourceCodeViewer.tsx`: an accessible, syntax-highlighted in-page viewer for the supplied Picklebot JavaScript. The source is displayed as escaped text and never executed.
+- `src/components/SourceCodeViewer.tsx` and `src/sourceCode.ts`: an accessible, syntax-highlighted in-page viewer for Picklebot JavaScript and both Music Matrix C++ files. Multiple files use a file selector; copy operates on the selected file. Source is displayed as escaped text and never executed.
 - `src/components/PickleballNetScene.tsx`: an interactive Three.js concept model for the net-base extension, with reduced-motion support and a non-WebGL fallback.
 - `src/styles.css`: palette, layout, and responsive styles.
 - `src/photos.ts`, `src/components/Photo.tsx`, and `src/assets/photos/`: the user-supplied project and experience images, with descriptive alt text, captions, natural dimensions, and lazy loading for gallery images.
@@ -101,3 +101,9 @@ The website link is https://bit.ly/UCLAPB. Its estimated reservations-shared tot
 The supplied transparent LED-display PNG is the lead image in BrightLight’s menu and on its full project page. CSS centers the visible enclosure within the original image’s transparent margins, matching the PID car card’s background and balancing their scale. The source PNG is preserved unchanged. The two vertical ESP32 photographs remain exclusive to the full project page gallery.
 
 The net extension detail page uses `NetExtenderPrototype.tsx` to display the original STL from `FINAlSOLUTION.zip`. The model and its static preview live in `src/assets/models/`. Automatic rotation respects reduced-motion preferences, visibility, and pause controls; the existing net diagram remains below it for context.
+
+## Music Matrix — November 6, 2026
+
+Music Matrix is a separate engineering entry at `#/projects/music-matrix`, available in the Projects directory and menu. Its current Arduino sketch captures a MAX9814 microphone on GPIO34, uses a requested 32 kHz sample rate and a 1,024-point FFT, and draws eight mirrored rainbow bands on a 64 × 64 HUB75 panel. These are code settings, not measured latency or acoustic performance. The existing BrightLight project and its supplied metrics remain as documented.
+
+The latest `MusicMatrix/preview.png` is copied unchanged to `src/assets/photos/music-matrix/spectrum-preview.png`. Captions identify it as an illustrative layout with sample levels. The complete `MusicMatrix.ino` and `SpectrumUi.h` are copied unchanged to `src/assets/source/music-matrix/` and shown in the same source dialog as Picklebot, with file selection and copying. The latest layout retains white caps at rest, mirrored bars, evenly spaced note references, stacked sharps, and the cubic quiet-suppression response. Note labels reference band centers; they are not note detection. The current UI still needs verification on the physical panel after upload, as recorded in the sketch's local README.

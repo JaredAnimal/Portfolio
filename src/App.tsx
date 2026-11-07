@@ -33,7 +33,7 @@ function LinkedInIcon() { return <svg viewBox="0 0 24 24" fill="currentColor" ar
 type PortfolioRoute = ProjectPageId | 'index' | null
 function readProjectRoute(): PortfolioRoute {
   if (/^#\/projects\/?$/.test(window.location.hash)) return 'index'
-  const match = window.location.hash.match(/^#\/projects\/(brightlight|pilight|line-follower|dart-robot|sunflower|wind-turbine|reservation-bot|reservation-sharing|net-tensioner)\/?$/)
+  const match = window.location.hash.match(/^#\/projects\/(brightlight|pilight|music-matrix|line-follower|dart-robot|sunflower|wind-turbine|reservation-bot|reservation-sharing|net-tensioner)\/?$/)
   return match ? (match[1] === 'brightlight' ? 'pilight' : match[1]) as ProjectPageId : null
 }
 function projectMenuSelection(id: ProjectPageId): MenuSelection {
