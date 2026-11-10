@@ -6,7 +6,8 @@ import type { PickleballProjectId } from '../pickleballProjects'
 import PlaceholderArt from './PlaceholderArt'
 import Photo from './Photo'
 import { brightLightPhotos, projectPhotos } from '../photos'
-import { windTurbineVideos } from '../videos'
+import { pidCarVideo, windTurbineVideos } from '../videos'
+import type { ProjectVideoAsset } from '../videos'
 import { ProjectLinks, ProjectMetrics } from './ProjectDetails'
 import { dartRobotLinks } from '../projectDetails'
 import './ProjectPage.css'
@@ -33,13 +34,16 @@ export function NetProjectMedia() {
   return <div className="net-project-media"><Suspense fallback={<div className="net-scene-loading">Loading net model…</div>}><PickleballNetScene /></Suspense></div>
 }
 
-function TurbineVideo({ video }: { video: typeof windTurbineVideos[number] }) {
+function ProjectVideo({ video }: { video: ProjectVideoAsset }) {
   return <figure className="project-page-photo project-page-photo-real">
     <video className="project-page-video" controls playsInline preload="metadata" poster={video.poster} aria-label={video.caption}>
       <source src={video.src} type="video/mp4" />
       <a href={video.src}>Watch {video.caption}</a>
     </video>
-    <figcaption><span>{video.caption}</span></figcaption>
+    <figcaption>
+      <span>{video.caption}</span>
+      {video.originalUrl && <a href={video.originalUrl}>Download original (MOV)</a>}
+    </figcaption>
   </figure>
 }
 
@@ -73,7 +77,11 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
         : projectId === 'net-tensioner' ? <Suspense fallback={<div className="net-scene-loading">Loading prototype…</div>}><NetExtenderPrototype /></Suspense>
         : !pickleball && <PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="01" caption="PROJECT OVERVIEW" wide />}
 
-      <section className="project-page-overview" aria-labelledby="project-overview-title"><div><h2 id="project-overview-title">Overview</h2></div><div className="project-page-overview-copy"><p>{overview}</p></div></section>
+      <section className={projectId === 'line-follower' ? 'project-page-overview project-page-overview--pid' : 'project-page-overview'} aria-labelledby="project-overview-title">
+        <div><h2 id="project-overview-title">Overview</h2></div>
+        <div className="project-page-overview-copy"><p>{overview}</p></div>
+        {projectId === 'line-follower' && <ProjectVideo video={pidCarVideo} />}
+      </section>
 
       {project && <section className="project-page-contributions" aria-labelledby="project-focus-title"><div className="project-page-section-head"><h2 id="project-focus-title">Design and implementation</h2></div><div className="project-page-contribution-grid">{project.contributions.map((contribution, index) => <section key={contribution.title}><span className="project-page-contribution-number">0{index + 1}</span><h3>{contribution.title}</h3><p>{contribution.text}</p></section>)}</div></section>}
       {pickleball && <section className="project-page-implementation" aria-labelledby="project-implementation-title"><h2 id="project-implementation-title">Implementation</h2><ul>{pickleball.details.map(detail => <li key={detail}>{detail}</li>)}</ul></section>}
@@ -82,7 +90,7 @@ export default function ProjectPage({ projectId, onOpenMenu }: Props) {
         : !pickleball && projectId !== 'wind-turbine' && <div className="project-page-photo-grid"><PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="02" caption="DETAIL" /><PhotoSpace projectId={projectId as ProjectKind | 'dart-robot'} title={title} number="03" caption="BUILD" /></div>}
 
       {projectId === 'net-tensioner' && <section className="project-page-net-context" aria-labelledby="net-context-title"><h2 id="net-context-title">Net setup</h2><NetProjectMedia /></section>}
-      {projectId === 'wind-turbine' && <div className="project-page-photo-grid project-page-photo-grid--supplied" role="group" aria-label="Wind turbine video gallery">{windTurbineVideos.map(video => <TurbineVideo key={video.src} video={video} />)}</div>}
+      {projectId === 'wind-turbine' && <div className="project-page-photo-grid project-page-photo-grid--supplied" role="group" aria-label="Wind turbine video gallery">{windTurbineVideos.map(video => <ProjectVideo key={video.src} video={video} />)}</div>}
 
       {related && <section className="project-page-next" aria-label="Related project"><a className="project-page-related" href={projectHref(related.id)}><div><span className="project-page-kicker">Related project</span><h2>{related.title}</h2><p>{related.summary}</p></div><span className="project-page-related-arrow"><Arrow /></span></a></section>}
       <div className="project-page-bottom"><a href="#/projects"><Arrow back />All projects</a><a href="mailto:jaredashman0209@gmail.com">Contact Jared <Arrow /></a></div>

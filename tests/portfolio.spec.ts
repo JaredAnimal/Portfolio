@@ -574,6 +574,13 @@ test('project, experience, and pickleball spaces render their accessible photos'
     }
     if (kind === 'line-follower') {
       await expect(page.locator('[data-photo="line-follower-sum-error"] img')).toHaveAttribute('src', /imageofPID/)
+      const video = page.locator('video')
+      await expect(video).toHaveAccessibleName('PID car following the marked course')
+      await expect(video).toHaveJSProperty('controls', true)
+      await expect(video).toHaveJSProperty('autoplay', false)
+      await expect.poll(() => video.evaluate((el: HTMLVideoElement) =>
+        el.videoHeight > el.videoWidth && el.videoWidth > 0 && Math.round(el.duration) === 20
+      )).toBe(true)
     }
     await expect(page.locator('[data-placeholder-illustration]')).toHaveCount(0)
     await expect(page.getByRole('main')).not.toContainText(/concept illustration|photography to follow/i)
