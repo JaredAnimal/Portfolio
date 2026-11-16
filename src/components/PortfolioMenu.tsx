@@ -7,7 +7,7 @@ import { pickleballPhotos, projectPhotos, rolePhotos } from '../photos'
 import { ProjectLinks, ProjectMetrics } from './ProjectDetails'
 import { dartRobotLinks } from '../projectDetails'
 import type { BoardPart } from './CircuitScene'
-import { NetProjectMedia, projectHref } from './ProjectPage'
+import { projectHref } from './ProjectPage'
 import type { ProjectPageId } from './ProjectPage'
 import { projects } from '../projects'
 import { roles } from '../experience'
@@ -106,7 +106,7 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
       </>}
       {selection.type === 'part' && selection.id === 'pickleball' && <>
         <Photo photo={pickleballPhotos[0]} className="submenu-media submenu-team-photo" />
-        <p>Software and hardware projects for UCLA Club Pickleball.</p>
+        <p>Software projects for UCLA Club Pickleball.</p>
         <div className="submenu-list" data-pickleball-project-menu="">{pickleballProjects.map(item => <Choice key={item.id} id={item.id} title={item.title} description={item.summary} onClick={() => onSelect({ type: 'pickleball-project', id: item.id })} />)}</div>
         <a className="text-link" href="#pickleball" onClick={onClose}>Back to the club section <Arrow /></a>
       </>}
@@ -130,7 +130,6 @@ export default function PortfolioMenu({ selection, onSelect, onClose, triggerRef
         <a className="text-link" href="#experience" onClick={onClose}>View the full work history <Arrow /></a>
       </>}
       {pickleball && <>
-        {pickleball.id === 'net-tensioner' && <NetProjectMedia />}
         <p className="submenu-status">{pickleball.kind}{pickleball.status ? ` · ${pickleball.status}` : ''}</p><p>{pickleball.overview}</p><ul className="submenu-details">{pickleball.details.map(detail => <li key={detail}>{detail}</li>)}</ul><Tags values={pickleball.tags} />
         <ProjectMetrics metrics={pickleball.metrics} />
         <ProjectLinks links={pickleball.links} />

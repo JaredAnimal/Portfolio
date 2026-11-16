@@ -33,8 +33,9 @@ function LinkedInIcon() { return <svg viewBox="0 0 24 24" fill="currentColor" ar
 type PortfolioRoute = ProjectPageId | 'index' | null
 function readProjectRoute(): PortfolioRoute {
   if (/^#\/projects\/?$/.test(window.location.hash)) return 'index'
-  const match = window.location.hash.match(/^#\/projects\/(brightlight|pilight|music-matrix|line-follower|dart-robot|sunflower|wind-turbine|reservation-bot|reservation-sharing|net-tensioner)\/?$/)
-  return match ? (match[1] === 'brightlight' ? 'pilight' : match[1]) as ProjectPageId : null
+  const match = window.location.hash.match(/^#\/projects\/(brightlight|pilight|music-matrix|line-follower|dart-robot|sunflower|wind-turbine|reservation-bot|reservation-sharing)\/?$/)
+  if (match) return (match[1] === 'brightlight' ? 'pilight' : match[1]) as ProjectPageId
+  return window.location.hash.startsWith('#/projects/') ? 'index' : null
 }
 function projectMenuSelection(id: ProjectPageId): MenuSelection {
   return pickleballProjects.some(item => item.id === id) ? { type: 'pickleball-project', id: id as PickleballProjectId, parent: 'projects' } : { type: 'project', id }
@@ -85,7 +86,7 @@ function Home({ onSelectPart, onOpenProject, onOpenRole }: { onSelectPart: (part
     </section>
 
     <section id="pickleball" className="pickleball-section" aria-labelledby="pickleball-heading"><div className="pickleball-inner page-width">
-      <div className="pickleball-copy"><div className="eyebrow"><span className="section-number">03 /</span> CLUB ACTIVITIES</div><h2 id="pickleball-heading"><button type="button" className="pickleball-title" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog">UCLA Club<br /><em>Pickleball.</em></button></h2><p>I’m a member of UCLA Club Pickleball, where I also build software and hardware to support the club.</p><button type="button" className="text-link pickleball-projects-trigger" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog">Explore pickleball projects <Arrow /></button></div>
+      <div className="pickleball-copy"><div className="eyebrow"><span className="section-number">03 /</span> CLUB ACTIVITIES</div><h2 id="pickleball-heading"><button type="button" className="pickleball-title" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog">UCLA Club<br /><em>Pickleball.</em></button></h2><p>I’m a member of UCLA Club Pickleball, where I also build software to support the club.</p><button type="button" className="text-link pickleball-projects-trigger" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog">Explore pickleball projects <Arrow /></button></div>
       <button type="button" className="pickleball-open-photo pickleball-main-photo" onClick={() => onSelectPart('pickleball')} aria-haspopup="dialog" aria-label="Explore UCLA Club Pickleball"><Photo photo={pickleballPhotos[0]} /></button><div className="pickleball-photo-pair">{pickleballPhotos.slice(1).map(photo => <Photo key={photo.id} photo={photo} />)}</div>
     </div></section>
 
@@ -107,7 +108,12 @@ function App() {
   const openMenu = (selection: MenuSelection) => { menuTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; setActiveMenu(selection); setMenuOpen(false) }
   const menuButton = useRef<HTMLButtonElement>(null)
   useEffect(() => {
-    const updateRoute = () => { setRoute(readProjectRoute()); setMenuOpen(false); setActiveMenu(null) }
+    const updateRoute = () => {
+      const nextRoute = readProjectRoute()
+      if (nextRoute === 'index' && !/^#\/projects\/?$/.test(window.location.hash)) window.history.replaceState(window.history.state, '', '#/projects')
+      setRoute(nextRoute); setMenuOpen(false); setActiveMenu(null)
+    }
+    updateRoute()
     window.addEventListener('hashchange', updateRoute)
     return () => window.removeEventListener('hashchange', updateRoute)
   }, [])

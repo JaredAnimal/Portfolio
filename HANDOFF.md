@@ -1,6 +1,6 @@
 # Portfolio handoff
 
-Saved October 28, 2026. Repository: `JaredAnimal/Portfolio`.
+Updated November 16, 2026. Repository: `JaredAnimal/Portfolio`.
 Live site: https://jaredanimal.github.io/Portfolio/
 
 ## Project setup
@@ -12,7 +12,7 @@ Live site: https://jaredanimal.github.io/Portfolio/
 
 ## Completed work
 
-- The net extension page leads with the actual `FINAlSOLUTION.zip` STL prototype in Three.js, with slow rotation, pause/manual controls, and a static preview fallback. The existing net setup diagram remains below the implementation text.
+- Removed the net-extension project, its viewers, and its model assets from the portfolio. Old project links return to the directory. Pickleball now has two software projects.
 
 - Wind Turbine uses the unchanged replacement photo from `WTPHOTO.zip`, renamed `completed-turbine.jpg`, as its project/menu lead. All four videos remain below it in the project gallery.
 
@@ -23,8 +23,8 @@ Live site: https://jaredanimal.github.io/Portfolio/
 
 - Jared’s supplied portrait appears beside the homepage introduction, below the headline. Its original JPEG is renamed `src/assets/photos/jared-ashman-portrait.jpg`, with a CSS head-and-shoulders crop, responsive sizing, and descriptive alt text. Preserve the original face and image; the crop only changes the visible framing.
 - Interactive circuit board with six accessible hotspots, keyboard/touch support, reduced motion, and a non-WebGL fallback.
-- Project pages, employment details, concept illustrations, and nested menus with Back, Escape, and focus restoration. The net-extension project includes an interactive Three.js concept model; the dart robot is independent and links to the district showcase. Decorative short sayings were reduced in favor of descriptive labels.
-- All eight projects appear at `#/projects`, including the three pickleball projects and the wind turbine. Pickleball projects also remain in the club submenu and have dedicated shareable pages. BrightLight is the new display name, with the old `pilight` route preserved as an alias.
+- Project pages, employment details, concept illustrations, and nested menus with Back, Escape, and focus restoration. The dart robot is independent and links to the district showcase. Decorative short sayings were reduced in favor of descriptive labels.
+- All eight projects appear at `#/projects`, including the two pickleball projects, Music Matrix, and the wind turbine. Pickleball projects also remain in the club submenu and have dedicated shareable pages. BrightLight is the new display name, with the old `pilight` route preserved as an alias.
 - Approved resume preserved unchanged. Renamed unofficial transcript published as `public/Jared-Ashman-Transcript.pdf`, with student ID and birth date removed and academic content preserved. Never publish the original upload.
 - The portfolio now includes the restored “Curiosity, wired into practice” headline, a matching LinkedIn icon/link beside the résumé, USS Sunflower with design details and photo/link slots, project metric captions and link slots, and consistent circuit-board pointer motion. The circuit figure’s top caption has been removed; internship wording uses computer engineering.
 - Browser validation covers project and source dialogs, routes, metrics, downloads, accessibility, pointer motion, touch, reduced motion, and non-WebGL fallbacks.
@@ -34,10 +34,10 @@ Live site: https://jaredanimal.github.io/Portfolio/
 
 - Pickleball now uses three supplied photos, led by the team portrait. USS Sunflower uses six photos, led by the close-up on the workshop table. Photos live in `src/assets/photos/` with captions and ordering in `src/photos.ts`.
 - Replace the remaining concept illustrations with real photos when supplied; slots use `data-photo-slot` and `PlaceholderArt`.
-- Add further project specifications, results, or live links only when confirmed. The car and net extension remain in progress; dart-robot details are intentionally limited.
+- Add further project specifications, results, or live links only when confirmed. The car remains in progress; dart-robot details are intentionally limited.
 - Separate LinkedIn updates remain unapplied. Copy-ready text is saved outside Git at `/workspace/linkedin-profile-updates.md`; no profile edits or posts were made.
 - USS Sunflower is available from the Projects menu and its dedicated page at `#/projects/sunflower`, while the homepage features the Dart-launching robot and Wind turbine. BrightLight and the PID car remain in the full Projects directory and menus.
-- The USS Sunflower design-snapshot link and video slots outside BrightLight have been removed. The source design PDF is not published. Wind turbine output voltage is 17 V and maximum speed is 82 RPM, supplied by Jared. Further wind project photos and net-extension metrics remain pending; other displayed measurements were also supplied by Jared. Picklebot links to the v0.2.6 Windows installer and shows the exact supplied JavaScript in an in-page viewer.
+- The USS Sunflower design-snapshot link and video slots outside BrightLight have been removed. The source design PDF is not published. Wind turbine output voltage is 17 V and maximum speed is 82 RPM, supplied by Jared. Other displayed measurements were also supplied by Jared. Picklebot links to the v0.2.6 Windows installer and shows the exact supplied JavaScript in an in-page viewer.
 
 ## Deployment instructions
 

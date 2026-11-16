@@ -1,7 +1,7 @@
 import type { ProjectLink, ProjectMetric } from './projectDetails'
 import { getEstimatedReservationsShared } from './reservationTotals'
 
-export type PickleballProjectId = 'reservation-bot' | 'reservation-sharing' | 'net-tensioner'
+export type PickleballProjectId = 'reservation-bot' | 'reservation-sharing'
 
 export interface PickleballProject {
   id: PickleballProjectId
@@ -47,20 +47,5 @@ export const pickleballProjects: PickleballProject[] = [
     tags: ['TypeScript', 'Cloudflare Workers', 'D1', 'Google Apps Script'],
     metrics: [{ caption: 'Reservations shared', valueAtDate: getEstimatedReservationsShared }],
     links: [{ label: 'View project repository', href: 'https://github.com/JaredAnimal/UCLAPickleball' }, { label: 'Visit project website', href: 'https://bit.ly/UCLAPB' }],
-  },
-  {
-    id: 'net-tensioner',
-    title: '3D-printed net base extension',
-    kind: 'Hardware',
-    summary: 'Designing an add-on that extends a pickleball net’s base, with the goal of increasing net tension.',
-    overview: 'This project starts with a physical adjustment to the net setup: a 3D-printed add-on for the base. I’m designing the extension to increase the base’s effective length, with the goal of increasing tension in the net.',
-    details: [
-      'Design a 3D-printed add-on for the pickleball net’s base.',
-      'Increase the base’s effective length to explore a way of increasing net tension.',
-    ],
-    tags: ['3D printing', 'Mechanical design', 'Prototyping'],
-    status: 'In design',
-    metrics: [{ caption: 'Added base length' }, { caption: 'Net tension' }],
-    links: [{ label: 'Design files' }, { label: 'Build photos' }],
   },
 ]

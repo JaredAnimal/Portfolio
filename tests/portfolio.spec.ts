@@ -9,18 +9,17 @@ const projects = [
 ]
 const boardParts = ['projects', 'experience', 'transcript', 'about', 'pickleball', 'resume']
 const roleTitles = ['Student Teacher', 'Student Trainee (SSEP)', 'IT Specialist']
-const pickleballProjects = ['Picklebot reservation bot', 'Reservation-sharing website', '3D-printed net base extension']
+const pickleballProjects = ['Picklebot reservation bot', 'Reservation-sharing website']
 const additionalProjects = [
   { title: 'Dart-launching robot', path: '#/projects/dart-robot' },
   { title: 'USS Sunflower', path: '#/projects/sunflower' },
   { title: pickleballProjects[0], path: '#/projects/reservation-bot' },
   { title: pickleballProjects[1], path: '#/projects/reservation-sharing' },
-  { title: pickleballProjects[2], path: '#/projects/net-tensioner' },
   { title: 'Wind turbine', path: '#/projects/wind-turbine' },
   { title: 'Music Matrix', path: '#/projects/music-matrix' },
 ]
 const allProjects = [...projects, ...additionalProjects]
-const featuredProjects = [additionalProjects[0], additionalProjects[5]]
+const featuredProjects = allProjects.filter(project => ['#/projects/dart-robot', '#/projects/wind-turbine'].includes(project.path))
 const supersededClaims = /\b(?:Underwater ROV|Raspberry Pi|Arduino Uno|UNO|Minim|Java)\b/i
 const homeHeading = /Curiosity,\s*wired\s*into\s*practice\./
 
@@ -77,33 +76,6 @@ async function expectNoOverflow(page: Page, label: string) {
   await page.evaluate(() => document.fonts.ready)
   const width = page.viewportSize()!.width
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth), label).toBeLessThanOrEqual(width)
-}
-
-async function expectNetDimensions(page: Page) {
-  const dimensions = page.locator('.pickleball-net__dimensions')
-  await expect(dimensions).toBeVisible()
-  for (const [id, label] of Object.entries({ width: 'NET WIDTH · 6.63 m', height: 'SIDE · 0.9144 m', 'center-height': 'CENTER · 0.8636 m', tension: 'TENSION · 230–270 N' })) {
-    const dimension = dimensions.locator(`[data-net-dimension="${id}"]`)
-    await expect(dimension).toBeVisible()
-    await expect(dimension).toContainText(label)
-  }
-  const extensionArea = dimensions.locator('[data-net-extension-area] text')
-  await expect(extensionArea).toBeVisible()
-  await expect(extensionArea).toHaveText('proposed area of net extension')
-  await expect(page.locator('[data-net-scene]')).not.toContainText(/\bTBD\b/)
-  await expect.poll(async () => {
-    const frame = await page.locator('.pickleball-net__viewport').boundingBox()
-    const labels = await dimensions.locator('[data-net-dimension] text').evaluateAll(elements => elements.map(element => {
-      const { x, y, right, bottom } = element.getBoundingClientRect()
-      return { x, y, right, bottom }
-    }))
-    const area = await extensionArea.evaluate(element => {
-      const { x, y, right, bottom } = element.getBoundingClientRect()
-      return { x, y, right, bottom }
-    })
-    return frame !== null && labels.length === 4 && [...labels, area].every(label => label.x >= frame.x - 1 && label.y >= frame.y - 1 && label.right <= frame.x + frame.width + 1 && label.bottom <= frame.y + frame.height + 1)
-  }, 'dimension and extension-area labels stay inside the net view').toBe(true)
-  return dimensions
 }
 
 async function expectProjectFacts(page: Page, title: string) {
@@ -405,7 +377,7 @@ test('USS Sunflower stays off the homepage while header and board project menus 
   }
 })
 
-test('project measurements use the supplied values and unmeasured net results remain pending', async ({ page }) => {
+test('project measurements use the supplied values', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-10-29T19:00:00Z'))
   const expectedMetrics: Record<string, [RegExp, RegExp][]> = {
     brightlight: [[/Response latency/i, /<\s*50\s*ms/], [/Frequency resolution/i, /<\s*2\.5\s*Hz/i]],
@@ -435,8 +407,6 @@ test('project measurements use the supplied values and unmeasured net results re
   await expect(page.getByRole('main')).toContainText(/HAWT/)
   await expect(page.getByRole('main')).toContainText(/VAWT/)
   await expect(page.getByRole('main')).toContainText(/bladeless/i)
-  await page.goto('./#/projects/net-tensioner')
-  await expect(page.getByRole('main').locator('[data-metric-pending]')).toHaveCount(2)
 })
 
 test('shared reservations update after Los Angeles midnight and stay consistent in the project menu', async ({ page }) => {
@@ -517,20 +487,20 @@ test('home and each clickable job preserve current education, clearance, activit
   await closeBoardStory(page)
 })
 
-test('the pickleball section keeps its three nested projects and restores focus', async ({ page }) => {
+test('the pickleball section keeps its two software projects and restores focus', async ({ page }) => {
   await page.goto('./')
   await expectPickleballProjectsAbsent(page)
   await page.locator('[data-board-part="pickleball"]').click()
   const dialog = page.getByRole('dialog')
   await expect(dialog.locator('[data-photo="pickleball-team"] img')).toHaveAccessibleName(/UCLA Club Pickleball team/i)
-  await expect(dialog.locator('button:not([aria-label="Close story"])')).toHaveCount(3)
+  await expect(dialog.locator('[data-pickleball-project-menu] [data-menu-item]')).toHaveCount(2)
   for (const title of pickleballProjects) {
     await expect(page.getByRole('main')).not.toContainText(title)
     const choice = dialog.getByRole('button').filter({ hasText: title }).first()
     await choice.click()
     await expect(dialog.getByRole('heading', { name: title, exact: true })).toBeVisible()
     await dialog.getByRole('button', { name: /Back to pickleball/i }).click()
-    await expect(dialog.locator('button:not([aria-label="Close story"])')).toHaveCount(3)
+    await expect(dialog.locator('[data-pickleball-project-menu] [data-menu-item]')).toHaveCount(2)
     await expect(choice).toBeFocused()
   }
   await page.keyboard.press('Escape')
@@ -539,12 +509,12 @@ test('the pickleball section keeps its three nested projects and restores focus'
   const section = page.locator('#pickleball')
   const image = section.locator('button').filter({ has: page.locator('img') }).first()
   await image.click()
-  await expect(dialog.locator('button:not([aria-label="Close story"])')).toHaveCount(3)
+  await expect(dialog.locator('[data-pickleball-project-menu] [data-menu-item]')).toHaveCount(2)
   await closeBoardStory(page)
   await expectPickleballProjectsAbsent(page)
   const headingButton = section.getByRole('heading', { level: 2 }).getByRole('button')
   await headingButton.click()
-  await expect(dialog.locator('button:not([aria-label="Close story"])')).toHaveCount(3)
+  await expect(dialog.locator('[data-pickleball-project-menu] [data-menu-item]')).toHaveCount(2)
   await closeBoardStory(page)
 })
 
@@ -637,7 +607,7 @@ test('mobile navigation opens category menus, restores visible focus, and reache
 })
 
 test('home, project pages, and transcript story fit small phones through desktop', async ({ page }) => {
-  test.setTimeout(60_000)
+  test.setTimeout(120_000)
   for (const width of [320, 375, 680, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     await page.goto('./')
@@ -647,9 +617,11 @@ test('home, project pages, and transcript story fit small phones through desktop
     await expect(dialog).toBeVisible()
     expect(await dialog.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
     await page.keyboard.press('Escape')
-    for (const project of [...featuredProjects, ...projects]) {
+    await page.goto('./#/projects')
+    await expectNoOverflow(page, `project directory at ${width}px`)
+    for (const project of allProjects) {
       await page.goto(`./${project.path}`)
-      await expectProjectFacts(page, project.title)
+      await expect(page.getByRole('heading', { level: 1, name: project.title, exact: true })).toBeVisible()
       await expectNoOverflow(page, `${project.title} overflow at ${width}px`)
     }
   }
@@ -720,19 +692,6 @@ test('without WebGL the circuit and all six navigation stories still work', asyn
     await expectProjectSubmenu(page, 'Dart-launching robot')
     await page.getByRole('dialog').getByRole('link', { name: 'Read full project story', exact: true }).click()
     await expectProjectFacts(page, 'Dart-launching robot')
-    await page.goto(new URL('./#/projects/net-tensioner', baseURL).href)
-    const prototype = page.locator('[data-prototype-scene]')
-    await expect(prototype).toHaveAttribute('data-state', 'fallback')
-    await expect(prototype).toHaveAttribute('data-rotating', 'false')
-    const poster = prototype.locator('.net-prototype__poster')
-    await expect(poster).toBeVisible()
-    await expect(poster).toHaveAccessibleName(/net extender.*prototype|prototype.*net extender/i)
-    await expect.poll(() => poster.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true)
-    await expect(prototype.getByRole('link', { name: /STL/i })).toHaveAttribute('href', /net-extender-prototype.*\.stl/)
-    await expect(page.locator('.pickleball-net__fallback')).toBeVisible()
-    await expect(page.locator('.pickleball-net__canvas')).toHaveCount(0)
-    await expect(page.getByRole('main')).toContainText(/Static view/i)
-    await expectNetDimensions(page)
   } finally { await browser.close() }
 })
 
@@ -745,6 +704,8 @@ test('the projects directory includes pickleball and wind projects with shareabl
   await expect(page).toHaveURL(/#\/projects$/)
   await expect(page.getByRole('heading', { level: 1, name: /Projects/i })).toBeVisible()
   const directory = page.getByRole('main')
+  await expect(directory.locator('.projects-directory-card')).toHaveCount(allProjects.length)
+  await expect(directory).not.toContainText('3D-printed net base extension')
   for (const project of allProjects) {
     const entry = directory.locator(`a[href="${project.path}"]`).first()
     await expect(entry).toBeVisible()
@@ -896,103 +857,37 @@ test('Music Matrix and its source selector fit phones and pass accessibility che
   }
 })
 
-test('the net project renders a controllable three.js net without mobile overflow', async ({ page }) => {
-  const errors: string[] = []
-  page.on('pageerror', error => errors.push(error.message))
-  await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('./#/projects/net-tensioner')
-  const scene = page.locator('[data-net-scene]')
-  await scene.scrollIntoViewIfNeeded()
-  await expect(scene).toHaveClass(/is-rendered/)
-  const canvas = scene.locator('.pickleball-net__canvas')
-  await expect(canvas).toBeVisible()
-  await expect.poll(() => canvas.evaluate((element: HTMLCanvasElement) => element.width)).toBeGreaterThan(100)
-  await expect(scene.locator('.pickleball-net__fallback')).toBeHidden()
-  await expect(scene.locator('figcaption strong')).toHaveText('Pickleball net')
-  await expect(scene.locator('a[href*="usapickleball.org"]')).toHaveCount(0)
-  await expect(scene).not.toContainText(/regulation|USA Pickleball|tension force/i)
-  const dimensions = await expectNetDimensions(page)
-  const projectedPaths = () => dimensions.locator('path').evaluateAll(elements => elements.map(element => element.getAttribute('d')))
-  const initialPaths = await projectedPaths()
-  expect(initialPaths.length).toBeGreaterThan(0)
-  await scene.getByRole('button', { name: 'Rotate net left', exact: true }).click()
-  await expect.poll(projectedPaths).not.toEqual(initialPaths)
-  await scene.getByRole('button', { name: 'Reset view', exact: true }).click()
-  await expect.poll(projectedPaths).toEqual(initialPaths)
-  for (const name of ['Rotate net left', 'Rotate net right', 'Reset view']) {
-    const button = scene.getByRole('button', { name, exact: true })
-    await button.focus()
-    await page.keyboard.press('Enter')
-    await expect(button).toBeFocused()
-  }
-  for (const width of [320, 768, 1440]) {
+test('removed project links return to the directory and pickleball menus fit every screen', async ({ page }) => {
+  test.setTimeout(90_000)
+  for (const width of [320, 375, 680, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 })
-    await expectNoOverflow(page, `net page overflow at ${width}px`)
-    await expect(canvas).toBeVisible()
-    await expectNetDimensions(page)
+    await page.goto('./#/projects/net-tensioner')
+    await expect(page).toHaveURL(/#\/projects$/)
+    await expect(page.getByRole('heading', { level: 1, name: 'Projects', exact: true })).toBeVisible()
+    await expect(page.locator('[href*="net-tensioner"], [data-net-scene], [data-prototype-scene]')).toHaveCount(0)
+    await page.reload()
+    await expect(page.getByRole('heading', { level: 1, name: 'Projects', exact: true })).toBeVisible()
+    await page.goto('./#pickleball')
+    const trigger = page.getByRole('button', { name: 'Explore pickleball projects', exact: true })
+    await trigger.click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.locator('[data-pickleball-project-menu] [data-menu-item]')).toHaveCount(2)
+    await expect(dialog).not.toContainText(/net base extension|hardware/i)
+    expect(await dialog.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+    for (const title of pickleballProjects) {
+      const choice = dialog.getByRole('button', { name: `Open ${title}`, exact: true })
+      await choice.click()
+      await expect(dialog.getByRole('heading', { name: title, exact: true })).toBeVisible()
+      expect(await dialog.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true)
+      await dialog.getByRole('button', { name: 'Back to pickleball', exact: true }).click()
+      await expect(choice).toBeFocused()
+    }
+    await page.keyboard.press('Escape')
+    await expect(trigger).toBeFocused()
+    await expectNoOverflow(page, `pickleball section at ${width}px`)
+    await page.locator('[data-board-part="projects"]').click()
+    await expect(dialog.locator('[data-menu-item]')).toHaveCount(allProjects.length)
+    await expect(dialog).not.toContainText('3D-printed net base extension')
+    await page.keyboard.press('Escape')
   }
-  const accessibility = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
-  expect(accessibility.violations.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => node.target) }))).toEqual([])
-  expect(errors).toEqual([])
-})
-
-test('the uploaded net extender prototype loads and its slow rotation can be paused and resumed', async ({ page }) => {
-  const errors: string[] = []
-  page.on('pageerror', error => errors.push(error.message))
-  const modelResponse = page.waitForResponse(response => /net-extender-prototype.*\.stl(?:\?|$)/.test(response.url()))
-  await page.goto('./#/projects/net-tensioner')
-  const scene = page.locator('[data-prototype-scene]')
-  await scene.scrollIntoViewIfNeeded()
-  expect((await modelResponse).ok()).toBe(true)
-  await expect(scene).toHaveAttribute('data-state', 'ready')
-  await expect(scene.locator('canvas')).toBeVisible()
-  await expect(scene.locator('.net-prototype__poster')).toBeHidden()
-  await expect(scene).toHaveAttribute('data-rotating', 'true')
-  const angle = () => scene.getAttribute('data-angle').then(value => Number(value))
-  const initialAngle = await angle()
-  await expect.poll(async () => Math.abs(await angle() - initialAngle)).toBeGreaterThan(.005)
-
-  await scene.getByRole('button', { name: 'Pause rotation', exact: true }).click()
-  await expect(scene).toHaveAttribute('data-rotating', 'false')
-  await page.waitForTimeout(300)
-  const pausedAngle = await angle()
-  await page.waitForTimeout(300)
-  expect(await angle()).toBeCloseTo(pausedAngle, 4)
-  await scene.getByRole('button', { name: 'Resume rotation', exact: true }).click()
-  await expect(scene).toHaveAttribute('data-rotating', 'true')
-  await expect.poll(async () => Math.abs(await angle() - pausedAngle)).toBeGreaterThan(.005)
-
-  await page.locator('.project-page-bottom').scrollIntoViewIfNeeded()
-  await expect(scene).toHaveAttribute('data-rotating', 'false')
-  await scene.scrollIntoViewIfNeeded()
-  await expect(scene).toHaveAttribute('data-rotating', 'true')
-  await page.goto('./#/projects')
-  await expect(scene).toHaveCount(0)
-  expect(errors).toEqual([])
-})
-
-test('the net extender prototype respects reduced motion and supports keyboard viewing on phones', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('./#/projects/net-tensioner')
-  const scene = page.locator('[data-prototype-scene]')
-  await scene.scrollIntoViewIfNeeded()
-  await expect(scene).toHaveAttribute('data-state', 'ready')
-  await expect(scene).toHaveAttribute('data-rotating', 'false')
-  const initialAngle = Number(await scene.getAttribute('data-angle'))
-  await page.waitForTimeout(300)
-  expect(Number(await scene.getAttribute('data-angle'))).toBeCloseTo(initialAngle, 4)
-  const viewport = scene.getByRole('group', { name: 'Net extender prototype 3D viewer', exact: true })
-  await viewport.focus()
-  await page.keyboard.press('ArrowRight')
-  await expect.poll(async () => Math.abs(Number(await scene.getAttribute('data-angle')) - initialAngle)).toBeGreaterThan(.01)
-  await scene.getByRole('button', { name: 'Reset view', exact: true }).click()
-  await expect.poll(async () => Number(await scene.getAttribute('data-angle'))).toBeCloseTo(initialAngle, 3)
-  await expect(scene).toHaveAttribute('data-rotating', 'false')
-  for (const width of [320, 768, 1440]) {
-    await page.setViewportSize({ width, height: 900 })
-    await expectNoOverflow(page, `prototype page overflow at ${width}px`)
-    await expect(scene.locator('canvas')).toBeVisible()
-  }
-  const accessibility = await new AxeBuilder({ page }).include('[data-prototype-scene]').withTags(['wcag2a', 'wcag2aa']).analyze()
-  expect(accessibility.violations.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => node.target) }))).toEqual([])
 })
